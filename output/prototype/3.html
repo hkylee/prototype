@@ -1141,26 +1141,33 @@
 
           </div><!-- /scroll -->
 
-          <!-- ── 바텀 시트 (초기 hidden) ── -->
+          <!-- ── BottomGroup (updated 9046:9661) ── -->
           <div id="s2-bottom-sheet"
-               class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px] z-50 px-5 pt-4 pb-8"
-               style="box-shadow:0 -5px 30px rgba(0,0,0,0.3); transform:translateY(100%); transition:transform 0.3s ease-in-out;">
-            <!-- T 안심보상 텍스트 -->
-            <div class="flex items-center gap-1 pb-4 px-1">
-              <img src="../../assets/images/scenario1/shape-t-icon.svg" class="w-4 h-4 flex-shrink-0" alt="">
-              <span class="text-sm text-[#222] tracking-[-0.98px] whitespace-nowrap">55만원의 T 안심보상가 적용이 대기 중이에요.</span>
+               class="absolute bottom-0 left-0 right-0 z-50"
+               style="padding:16px 20px 24px;
+                      background:linear-gradient(179.767deg, rgba(227,228,229,0) 0.597%, rgb(246,247,249) 16.558%);
+                      transform:translateY(100%); transition:transform 0.3s ease-in-out;">
+            <!-- 상단: Navigate 아이콘 + 안심보상 텍스트 -->
+            <div class="flex items-center gap-1" style="padding:0 24px 12px;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                <path d="M8 0.5L10.364 5.636L15.5 8L10.364 10.364L8 15.5L5.636 10.364L0.5 8L5.636 5.636L8 0.5Z" fill="#101010"/>
+              </svg>
+              <span style="flex:1; font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px; line-height:1.5;">55만원의 T 안심보상가 적용이 대기 중이에요.</span>
             </div>
             <!-- 버튼 행 -->
-            <div class="flex items-center gap-2.5">
-              <!-- T 아이콘 원형 버튼 -->
-              <button class="flex-shrink-0 flex items-center justify-center rounded-full border border-black/10 cursor-pointer bg-white"
-                      style="width:52px; height:52px; box-shadow:0 0 20px rgba(0,0,0,0.2);">
-                <img src="../../assets/images/scenario1/shape-t-agent.svg" class="w-6 h-6" alt="">
+            <div class="flex items-center gap-[10px]" style="padding:0 0px;">
+              <!-- T 에이전트 원형 버튼 -->
+              <button class="flex-shrink-0 relative rounded-full cursor-pointer border-0 p-0 overflow-hidden"
+                      style="width:52px; height:52px; background:transparent;">
+                <div style="position:absolute; inset:0; background:rgba(255,255,255,0.1); border-radius:26px; box-shadow:0 0 20px rgba(0,0,0,0.2);"></div>
+                <img src="../../assets/images/scenario1/shape-t-agent.svg" class="w-6 h-6"
+                     style="position:absolute; left:14px; top:14px;" alt="">
               </button>
               <!-- CTA 버튼 -->
-              <div id="btn-start-s3" class="flex-1 bg-[#222] rounded-[20px] py-4 flex items-center justify-center cursor-pointer"
-                   style="box-shadow:0 8px 8px rgba(106,106,106,0.16);">
-                <span class="text-base font-semibold text-white tracking-[-0.64px] text-center">선택된 옵션으로 가입 시작하기</span>
+              <div id="btn-start-s3" class="flex-1 flex items-center justify-center cursor-pointer"
+                   style="background:#222; border-radius:20px; padding:16px 32px;
+                          box-shadow:0 8px 8px rgba(106,106,106,0.16);">
+                <span style="font-size:16px; font-weight:600; color:white; letter-spacing:-0.64px; line-height:1.3; text-align:center;">선택된 옵션으로 가입 시작하기</span>
               </div>
             </div>
           </div>
