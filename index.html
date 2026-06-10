@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SKT 쇼핑 탭</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box; margin: 0; padding: 0;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── 컨트롤 바 ── */
+  #controls .preset {
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid #d1d5db; background: #f9fafb;
+    font-size: 12px; font-weight: 500; color: #374151;
+    cursor: pointer; transition: background .15s, border-color .15s; white-space: nowrap;
+  }
+  #controls .preset:hover  { background: #ede9fe; border-color: #8b5cf6; color: #5940df; }
+  #controls .preset.active { background: #ede9fe; border-color: #5940df; color: #5940df; }
+  #controls .div { width: 1px; height: 20px; background: #e5e7eb; }
+  #controls input[type=number] {
+    width: 52px; padding: 3px 6px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 13px; font-weight: 500; text-align: center; color: #374151; background: #f9fafb; outline: none;
+  }
+  #controls input[type=number]:focus { border-color: #5940df; }
+  #controls input[type=number]::-webkit-inner-spin-button,
+  #controls input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  #controls label { color: #6b7280; font-size: 12px; }
+  #apply-btn {
+    padding: 4px 12px; border-radius: 6px; border: none;
+    background: #5940df; color: #fff; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  #apply-btn:hover { opacity: .85; }
+
+  /* ── 반응형 ── */
+  @media (max-width: 767px) {
+    body { background: #d2d4d9; }
+    #controls { display: none !important; }
+    #frame { width: 100vw !important; height: 100dvh !important; }
+  }
+  @media (min-width: 768px) {
+    body {
+      padding: 24px 0 48px; background: #d1d5db;
+      display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 100vh;
+    }
+    #controls {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+      background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 8px 12px;
+      font-size: 13px; font-weight: 500; color: #374151;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+    #frame { flex-shrink: 0; box-shadow: 0 24px 48px rgba(0,0,0,.25), 0 8px 16px rgba(0,0,0,.12); }
+  }
+
+  /* ── 프레임 & 스테이지 ── */
+  #frame {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+  #ut-stage {
+    position: relative; width: 100%; height: 100%;
+    overflow: hidden;
+  }
+
+  /* ── 페이지 레이아웃 ── */
+  .page {
+    position: relative; width: 100%; height: 100%;
+    background: #d2d4d9; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* 배경 그라데이션 레이어 */
+  .bg-layer {
+    position: absolute; left: 0; top: 0; width: 100%; height: 216px;
+    opacity: .5; pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .bg-layer img { width: 100%; height: 100%; object-fit: cover; object-position: bottom; }
+
+  /* ── 헤더 (Rule 3: z-index 충분히) ── */
+  header {
+    position: sticky; top: 0; z-index: 50;  /* Rule 3: sticky + z-index */
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    flex-shrink: 0;
+    margin: 0 -19.084px; /* content-scroll 수평 패딩 상쇄 */
+  }
+  .header-left { width: 48px; height: 48px; flex-shrink: 0; }
+  .header-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  /* Rule 1: background rgba (NOT opacity on container)
+     Rule 2: backdrop-filter blur 필수
+     Rule 3: border 1px semi-transparent + z-index */
+  .header-btn {
+    width: 48px; height: 48px; border-radius: 999px; flex-shrink: 0;
+    background: rgba(255,255,255,.4);        /* Rule 1 */
+    backdrop-filter: blur(12px);              /* Rule 2 */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.3);  /* Rule 3 */
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 20px rgba(0,0,0,.05); cursor: pointer; outline: none;
+  }
+  .header-btn svg { width: 24px; height: 24px; }
+
+  /* ── 칩 탭 2행 ── */
+  .chip-wrap {
+    display: flex; flex-direction: column; gap: 5.725px;
+    padding: 0 0 4px 0;
+    flex-shrink: 0;
+    margin: 0 -19.084px; /* content-scroll padding 상쇄 → full-bleed */
+  }
+  .chip-row {
+    display: flex; gap: 5.725px;
+    flex-wrap: nowrap;
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    padding: 0 19.084px; /* 스크롤 시작·끝에 여백 유지 */
+  }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip {
+    display: flex; align-items: center; gap: 7.634px;
+    background: rgba(255,255,255,.5);        /* Rule 1 */
+    backdrop-filter: blur(8px);               /* Rule 2 */
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 95.42px;
+    padding: 3.817px 11.45px 3.817px 3.817px; flex-shrink: 0; cursor: pointer;
+  }
+  .chip-icon {
+    width: 30.534px; height: 30.534px; border-radius: 953px; overflow: hidden;
+    background: white; box-shadow: 0 0 11.45px rgba(0,0,0,.04);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative;
+  }
+  .chip-icon img { width: 19.084px; height: 19.084px; object-fit: contain; }
+  .chip-icon.galaxy {
+    background: linear-gradient(165deg, rgba(92,92,92,.8) 52.9%, rgb(64,64,64) 121.9%);
+  }
+  .chip-icon.galaxy img {
+    width: 16.188px; height: 16.188px;
+    filter: drop-shadow(0px 3.817px 5.725px rgba(0,0,0,.2));
+  }
+  .chip span {
+    font-size: 13.359px; font-weight: 500; color: #101010;
+    letter-spacing: -0.9542px; line-height: 1.4; white-space: nowrap;
+  }
+
+  /* ── 콘텐츠 스크롤 영역 ── */
+  .content-scroll {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    padding: 0 19.084px 130px; /* 130px = GNB 57 + safe area 34 + 여유 39 */
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .content-scroll::-webkit-scrollbar { display: none; }
+
+  /* ── 카드 공통 ── */
+  .card {
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 26.718px; overflow: hidden; width: 100%;
+    flex-shrink: 0;
+  }
+
+  /* ── 카드 상단 배너 이미지 (node 8496:9973) ── */
+  .card-banner { width: 100%; height: 164.122px; overflow: hidden; border-radius: 19.084px; flex-shrink: 0; }
+  .card-banner img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ── 카드 타이틀 영역 (node 8496:10050) ── */
+  .card-title { padding: 0 20px; }
+  .card-title-text { display: flex; flex-direction: column; gap: 3.817px; }
+  .card-title h2 {
+    font-size: 17.176px; font-weight: 500; color: #101010;
+    letter-spacing: -0.5153px; line-height: 1.3; margin: 0;
+  }
+  .card-subtitle {
+    display: flex; align-items: center; gap: 1.908px;
+  }
+  .card-subtitle span {
+    font-size: 11.45px; font-weight: 500; color: #101010;
+    opacity: .6; letter-spacing: -0.458px; line-height: 1.3;
+  }
+  .card-subtitle svg { width: 11.45px; height: 11.45px; opacity: .6; flex-shrink: 0; }
+
+  /* ── 상품 가로 스크롤 (node 8496:9981) ── */
+  .product-scroll {
+    display: flex; gap: 7.634px;
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    padding: 20px 0 20px 20px;
+  }
+  .product-scroll::-webkit-scrollbar { display: none; }
+  .product-item { flex-shrink: 0; width: 122.137px; display: flex; flex-direction: column; gap: 11.45px; }
+  .product-thumb {
+    width: 122.137px; height: 122.137px; border-radius: 15.267px;
+    background: #f4f5fa; overflow: hidden; position: relative; flex-shrink: 0;
+  }
+  .product-thumb img {
+    position: absolute; left: 50%; top: 0; bottom: 0;
+    transform: translateX(-50%); height: 100%; width: auto; max-width: none;
+    object-fit: contain;
+  }
+  .product-info { padding: 0 3.817px; display: flex; flex-direction: column; gap: 5.725px; }
+  .product-name {
+    font-size: 13.359px; font-weight: 500; color: #101010;
+    letter-spacing: -0.5344px; line-height: 1.2;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .product-price { display: flex; align-items: center; gap: 1.908px; }
+  .product-discount {
+    font-size: 13.359px; font-weight: 600; color: #3617ce;
+    letter-spacing: -0.5344px; line-height: 1.2;
+  }
+  .product-amount {
+    font-size: 13.359px; font-weight: 600; color: #101010;
+    letter-spacing: -0.5344px; line-height: 1.2; white-space: nowrap;
+  }
+
+  /* ── 미니 배너 ── */
+  .mini-banner {
+    width: 100%; height: 107px; border-radius: 27px; overflow: hidden;
+    background: rgba(253,253,254,.5); border: 1px solid white;
+    display: flex; align-items: center; position: relative; flex-shrink: 0;
+  }
+  .mini-banner-text {
+    position: relative; z-index: 2; padding: 25px 27px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .mini-banner-text h3 {
+    font-size: 15.5px; font-weight: 600; color: #101010;
+    opacity: .8; letter-spacing: -0.61px; line-height: 1.3;
+  }
+  .mini-banner-text p {
+    font-size: 11.5px; font-weight: 500; color: #101010;
+    opacity: .4; letter-spacing: -0.46px; line-height: 1.3;
+  }
+  .mini-banner-img {
+    position: absolute; right: 8px; top: 15px; width: 76px; height: 76px;
+    border-radius: 12px; overflow: hidden; z-index: 1;
+  }
+  .mini-banner-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ── 요금제 리스트 아이템 (node 8496:10057) ── */
+  .plan-list { padding: 28.626px 20px; display: flex; flex-direction: column; gap: 15.267px; }
+  .plan-item {
+    display: flex; gap: 15.267px; align-items: flex-start;
+  }
+  .plan-img {
+    width: 45.8px; height: 45.8px; border-radius: 11.45px; overflow: hidden;
+    flex-shrink: 0; position: relative;
+  }
+  .plan-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3.817px; }
+  .plan-name {
+    font-size: 13.359px; font-weight: 500; color: #101010;
+    letter-spacing: -0.5344px; line-height: 1.2;
+  }
+  .plan-price {
+    font-size: 13.359px; font-weight: 600; color: #101010;
+    letter-spacing: -0.5344px; line-height: 1.2; white-space: nowrap;
+  }
+  .plan-tags {
+    display: flex; gap: 3.817px; align-items: center; opacity: .4;
+    flex-wrap: wrap;
+  }
+  .plan-tag {
+    font-size: 11.45px; font-weight: 400; color: #101010;
+    letter-spacing: -0.458px; line-height: 1.2; white-space: nowrap;
+  }
+  .plan-divider { width: 0.954px; height: 7.634px; background: #d9d9d9; flex-shrink: 0; }
+
+  /* ── 데이터 선택 아이템 ── */
+  .data-item {
+    display: flex; gap: 15px; align-items: center;
+  }
+  .data-icon {
+    width: 45.802px; height: 45.802px; border-radius: 7.634px;
+    background: #f1f1f1; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    position: relative;
+  }
+  .data-icon img { width: 27.481px; height: 27.481px; object-fit: contain; }
+  .data-icon > .icon-inner {
+    position: relative; width: 27.481px; height: 27.481px; flex-shrink: 0;
+  }
+
+  /* ── 구독 카드 썸네일 ── */
+  .sub-thumb {
+    width: 122.137px; height: 122.137px; border-radius: 15.267px;
+    background: #f4f5fa; overflow: hidden; position: relative; flex-shrink: 0;
+  }
+  .data-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .data-label {
+    font-size: 13.5px; font-weight: 500; color: #101010;
+    letter-spacing: -0.53px; line-height: 1.2;
+  }
+  .data-sub {
+    display: flex; gap: 4px; align-items: center; opacity: .4;
+  }
+  .data-sub span {
+    font-size: 11.5px; font-weight: 400; color: #101010;
+    letter-spacing: -0.46px; line-height: 1.2; white-space: nowrap;
+  }
+
+  /* ── 하단 페이드 그라데이션 ── */
+  .bottom-fade {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 134px;
+    background: linear-gradient(to bottom, rgba(210,212,217,0) 0%, rgba(210,212,217,0.95) 65%);
+    pointer-events: none; z-index: 20;
+  }
+
+  /* ── GNB (node 8496:10321) ── */
+  .gnb {
+    position: absolute; bottom: 34px; left: 0; right: 0; z-index: 30;
+    height: 57.252px;
+    padding: 0 19.084px;
+    display: flex; align-items: center; gap: 7.642px;
+    pointer-events: none; /* 자식에서만 pointer-events 허용 */
+  }
+  /* T 홈 버튼 — Rule 1+2+3 */
+  .gnb-t {
+    width: 49.618px; height: 49.618px; flex-shrink: 0;
+    border-radius: 24.809px;
+    background: rgba(255,255,255,.5);        /* Rule 1 */
+    backdrop-filter: blur(12px);              /* Rule 2 */
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.3);  /* Rule 3 */
+    box-shadow: 0 0 19.084px rgba(0,0,0,.05);
+    overflow: hidden; position: relative;
+    pointer-events: auto; cursor: pointer;
+  }
+  .gnb-t-icon-wrap {
+    position: absolute;
+    left: 13.359px; top: 13.359px;
+    width: 22.901px; height: 22.901px;
+  }
+  .gnb-t-home {
+    position: absolute;
+    left: calc(50% - 0.95px); top: 2.863px;
+    transform: translateX(-50%);
+    width: 17.176px; height: 17.176px;
+  }
+  .gnb-t-star {
+    position: absolute;
+    left: 14.313px; top: 13.359px;
+    width: 6.679px; height: 6.679px;
+  }
+  /* 메인 탭 필 — Rule 1+2+3 */
+  .gnb-pill {
+    flex: 1; height: 57.252px;
+    border-radius: 953.244px;
+    background: rgba(255,255,255,.5);        /* Rule 1 */
+    backdrop-filter: blur(16px);              /* Rule 2 */
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.3);  /* Rule 3 */
+    box-shadow: 0 0 19.084px rgba(0,0,0,.05);
+    display: flex; align-items: stretch;
+    position: relative; overflow: hidden;
+    pointer-events: auto;
+  }
+  /* 활성 탭 하이라이트 */
+  .gnb-active-bg {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(calc(-50% + 0.48px), -50%);
+    width: 89.695px; height: 49.618px;
+    border-radius: 47.71px;
+    background: rgba(214,214,214,.8);
+    pointer-events: none;
+  }
+  /* 탭 공통 */
+  .gnb-tab {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.908px; padding: 4.771px 0;
+    cursor: pointer; position: relative; z-index: 1;
+  }
+  .gnb-tab.inactive { opacity: .3; }
+  .gnb-tab img { width: 22.901px; height: 22.901px; object-fit: contain; flex-shrink: 0; }
+  .gnb-tab span {
+    font-size: 11.45px; font-weight: 500; color: #101010;
+    letter-spacing: -0.1145px; line-height: 1.3; white-space: nowrap;
+  }
+  .gnb-tab.active span { color: #000; }
+</style>
+</head>
+<body>
+
+  <!-- ── 컨트롤 바 ── -->
+  <div id="controls">
+    <span style="font-weight:600;color:#111827;">프레임</span>
+    <div class="div"></div>
+    <button class="preset active" data-w="375" data-h="812">iPhone SE  375×812</button>
+    <button class="preset" data-w="390" data-h="844">iPhone 14  390×844</button>
+    <button class="preset" data-w="393" data-h="852">iPhone 15 Pro  393×852</button>
+    <button class="preset" data-w="430" data-h="932">iPhone 15 Plus  430×932</button>
+    <button class="preset" data-w="360" data-h="800">Android  360×800</button>
+    <div class="div"></div>
+    <label>W</label>
+    <input type="number" id="inp-w" value="375" min="320" max="768">
+    <label>H</label>
+    <input type="number" id="inp-h" value="812" min="480" max="1200">
+    <button id="apply-btn">적용</button>
+  </div>
+
+  <!-- ── 프레임 ── -->
+  <div id="frame" style="width:375px;height:812px;">
+    <div id="ut-stage">
+
+      <div class="page" id="screen-1">
+
+        <!-- 배경 -->
+        <div class="bg-layer">
+          <img src="assets/images/scenario3/background.png" alt="">
+        </div>
+
+        <!-- ══ 콘텐츠 스크롤 ══ -->
+        <div class="content-scroll">
+
+          <!-- ══ 헤더 (node 8496:10320) — 콘텐츠와 함께 스크롤 ══ -->
+          <header>
+            <div class="header-left"></div>
+            <div class="header-right">
+              <button class="header-btn" aria-label="바코드 스캔">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#101010" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 9V4h5"/><path d="M20 9V4h-5"/>
+                  <path d="M4 15v5h5"/><path d="M20 15v5h-5"/>
+                  <line x1="5" y1="12" x2="19" y2="12" stroke-width="1.5"/>
+                </svg>
+              </button>
+              <button class="header-btn" aria-label="장바구니">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#101010" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 11V7.5a3 3 0 0 1 6 0V11"/>
+                  <rect x="4" y="10" width="16" height="11" rx="2.5"/>
+                </svg>
+              </button>
+              <button class="header-btn" aria-label="메뉴">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <line x1="3" y1="7" x2="21" y2="7" stroke="#101010" stroke-width="1.8" stroke-linecap="round"/>
+                  <line x1="3" y1="12" x2="21" y2="12" stroke="#101010" stroke-width="1.8" stroke-linecap="round"/>
+                  <line x1="3" y1="17" x2="21" y2="17" stroke="#101010" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </header>
+
+          <!-- ── list_tab 2행 (node 8496:9936) — 스크롤 영역 내 위치 ── -->
+          <div class="chip-wrap">
+            <!-- Row 1: Galaxy S29 / 휴대폰 / 모바일 요금제 / 구독 -->
+            <div class="chip-row">
+              <div class="chip" id="chip-galaxy-s29" style="cursor:pointer;">
+                <div class="chip-icon" style="background:linear-gradient(165deg,rgba(92,92,92,.8) 52.9%,rgb(64,64,64) 121.9%);">
+                  <img src="assets/images/scenario3/list-tab-galaxy.png" alt="Galaxy S29"
+                    style="width:16.188px;height:16.188px;filter:drop-shadow(0 3.817px 5.725px rgba(0,0,0,.2));">
+                </div>
+                <span>Galaxy S29</span>
+              </div>
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <img src="assets/images/scenario3/list-tab-phone.svg" alt="휴대폰"
+                      style="position:absolute;left:4.55px;top:2.73px;width:9.542px;height:13.359px;">
+                  </div>
+                </div>
+                <span>휴대폰</span>
+              </div>
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <div style="position:absolute;left:4.1px;top:9.1px;width:2.863px;height:5.725px;border-radius:1.4px;background:#010101;"></div>
+                    <div style="position:absolute;left:7.74px;top:6.37px;width:2.863px;height:8.588px;border-radius:1.4px;background:#010101;"></div>
+                    <div style="position:absolute;left:11.38px;top:3.64px;width:2.863px;height:11.45px;border-radius:1.4px;background:#010101;"></div>
+                  </div>
+                </div>
+                <span>모바일 요금제</span>
+              </div>
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <div style="position:absolute;left:4.1px;top:9.1px;width:2.863px;height:5.725px;border-radius:1.4px;background:#010101;"></div>
+                    <div style="position:absolute;left:7.74px;top:6.37px;width:2.863px;height:8.588px;border-radius:1.4px;background:#010101;"></div>
+                    <div style="position:absolute;left:11.38px;top:3.64px;width:2.863px;height:11.45px;border-radius:1.4px;background:#010101;"></div>
+                  </div>
+                </div>
+                <span>구독</span>
+              </div>
+            </div>
+            <!-- Row 2: 결합상품 / 구독 / 부가서비스 / 액세서리 -->
+            <div class="chip-row">
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <img src="assets/images/scenario3/list-tab-combination.svg" alt="결합상품"
+                      style="position:absolute;left:50%;top:calc(50% + 0.48px);transform:translate(-50%,-50%);width:15.267px;height:8.588px;">
+                  </div>
+                </div>
+                <span>결합상품</span>
+              </div>
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <img src="assets/images/scenario3/list-tab-subscribe.svg" alt="구독"
+                      style="position:absolute;left:3.19px;top:2.73px;width:12.405px;height:13.358px;">
+                  </div>
+                </div>
+                <span>구독</span>
+              </div>
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <img src="assets/images/scenario3/list-tab-addition.svg" alt="부가서비스"
+                      style="position:absolute;left:3.17px;top:3.17px;width:13.359px;height:13.359px;">
+                  </div>
+                </div>
+                <span>부가서비스</span>
+              </div>
+              <div class="chip">
+                <div class="chip-icon" style="background:white;">
+                  <div style="position:relative;width:19.084px;height:19.084px;">
+                    <img src="assets/images/scenario3/list-tab-accessory.svg" alt="액세서리"
+                      style="position:absolute;left:calc(50% + 0.44px);top:calc(50% + 0.44px);transform:translate(-50%,-50%);width:13.359px;height:13.358px;">
+                  </div>
+                </div>
+                <span>액세서리</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 카드1: 최근 본 아이폰 ── -->
+          <div class="card">
+            <div class="card-banner">
+              <img src="assets/images/scenario3/banner-iphone.png" alt="아이폰 배너">
+            </div>
+            <div class="card-title" style="padding-top:16px;">
+              <h2>최근 본 아이폰을<br>혜택으로 만나보세요</h2>
+              <div class="card-subtitle">
+                <span>단말기 추천</span>
+                <svg viewBox="0 0 12 12" fill="none" style="transform:rotate(-90deg)">
+                  <path d="M3 5l3 3 3-3" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="product-scroll">
+              <div class="product-item">
+                <div class="product-thumb">
+                  <img src="assets/images/scenario3/product-iphone-thumb.png" alt="iPhone 20 Air">
+                </div>
+                <div class="product-info">
+                  <p class="product-name">iPhone 20 Air</p>
+                  <div class="product-price">
+                    <span class="product-discount">7%</span>
+                    <span class="product-amount">1,165,600원</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-item">
+                <div class="product-thumb">
+                  <img src="assets/images/scenario3/product-iphone-thumb.png" alt="iPhone 20 Air">
+                </div>
+                <div class="product-info">
+                  <p class="product-name">iPhone 20 Air</p>
+                  <div class="product-price">
+                    <span class="product-discount">7%</span>
+                    <span class="product-amount">1,165,600원</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-item">
+                <div class="product-thumb">
+                  <img src="assets/images/scenario3/product-iphone-thumb.png" alt="iPhone 20 Air">
+                </div>
+                <div class="product-info">
+                  <p class="product-name">iPhone 20 Air</p>
+                  <div class="product-price">
+                    <span class="product-discount">7%</span>
+                    <span class="product-amount">1,165,600원</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 미니 배너: iPhone 20 사전예약 ── -->
+          <div class="mini-banner">
+            <div class="mini-banner-text">
+              <h3>iPhone 20 사전 예약 시<br>에어팟 프로 증정</h3>
+              <p>사전예약 클럽 멤버십 혜택</p>
+            </div>
+            <div class="mini-banner-img">
+              <img src="assets/images/scenario3/product-airpods.png" alt="에어팟 프로">
+            </div>
+          </div>
+
+          <!-- ── 카드2: 요금제 추천 (node 8496:10047) ── -->
+          <div class="card">
+            <div class="card-banner">
+              <img src="assets/images/scenario3/plan-fee-banner.png" alt="요금제 배너">
+            </div>
+            <div class="card-title">
+              <div class="card-title-text">
+                <h2>약정 만료 시 위약금 없이<br>이어갈 수 있는 요금제에요</h2>
+                <div class="card-subtitle">
+                  <span>전체 요금제</span>
+                  <svg viewBox="0 0 12 12" fill="none" style="transform:rotate(-90deg)">
+                    <path d="M3 5l3 3 3-3" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="plan-list">
+              <div class="plan-item">
+                <div class="plan-img">
+                  <img src="assets/images/scenario3/plan-icon-netflix.png" alt="0 청년 109 넷플릭스" style="width:100%;height:100%;object-fit:cover;display:block;">
+                </div>
+                <div class="plan-text">
+                  <p class="plan-name">0 청년 109(넷플릭스)</p>
+                  <p class="plan-price">월 99,000원</p>
+                  <div class="plan-tags">
+                    <span class="plan-tag">데이터 500GB</span>
+                    <div class="plan-divider"></div>
+                    <span class="plan-tag">넷플릭스 프리미엄 제공</span>
+                    <span class="plan-tag">+2</span>
+                  </div>
+                </div>
+              </div>
+              <div class="plan-item">
+                <div class="plan-img">
+                  <img src="assets/images/scenario3/plan-icon-naver.png" alt="0 청년 109 네이버 플러스 스토어" style="width:100%;height:100%;object-fit:cover;display:block;">
+                </div>
+                <div class="plan-text">
+                  <p class="plan-name">0 청년 109(네이버 플러스 스토어)</p>
+                  <p class="plan-price">월 99,000원</p>
+                  <div class="plan-tags">
+                    <span class="plan-tag">데이터 500GB</span>
+                    <div class="plan-divider"></div>
+                    <span class="plan-tag">넷플릭스 프리미엄 제공</span>
+                    <span class="plan-tag">+2</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 카드3: 데이터 얼마나 필요하세요? (node 8496:10128) ── -->
+          <div class="card" style="padding:28.626px 26.718px;">
+            <div style="margin-bottom:28.626px;">
+              <h2 style="font-size:17.176px;font-weight:500;color:#101010;letter-spacing:-0.5153px;line-height:1.3;">
+                일상 생활 속 데이터<br>얼마나 필요하세요?
+              </h2>
+              <p style="font-size:11.45px;font-weight:500;color:#101010;opacity:.6;letter-spacing:-0.458px;line-height:1.3;margin-top:3.817px;">
+                SKT 고객을 위한 요금제
+              </p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:15.267px;">
+              <!-- 아이콘1: 무제한 -->
+              <div class="data-item">
+                <div class="data-icon">
+                  <img src="assets/images/scenario3/icon-data-unlimited.svg" alt=""
+                       style="width:28.59px;height:29.08px;">
+                </div>
+                <div class="data-text">
+                  <p class="data-label">데이터 걱정 없이 마음껏 사용해요</p>
+                  <div class="data-sub">
+                    <span>무제한</span>
+                    <div class="plan-divider"></div>
+                    <span>69,000원 부터</span>
+                  </div>
+                </div>
+              </div>
+              <!-- 아이콘2: 50~100GB -->
+              <div class="data-item">
+                <div class="data-icon">
+                  <div class="icon-inner">
+                    <div style="position:absolute;background:#c7c7c7;width:20.611px;height:14.722px;border-radius:4px;left:0.98px;top:3.93px;"></div>
+                    <div style="position:absolute;background:#121212;width:20.611px;height:14.722px;border-radius:4px;
+                                left:50%;top:50%;transform:translate(calc(-50% + 2.45px),calc(-50% + 2.45px));
+                                box-shadow:0.624px 0.624px 2.872px rgba(21,15,51,.2);"></div>
+                    <img src="assets/images/scenario3/icon-data-mid.svg" alt=""
+                         style="position:absolute;left:13.74px;top:12.76px;width:5.889px;height:6.87px;transform:rotate(90deg);transform-origin:center;">
+                  </div>
+                </div>
+                <div class="data-text">
+                  <p class="data-label">영상도 보고 여유 있게 사용해요</p>
+                  <div class="data-sub">
+                    <span>50~100GB</span>
+                    <div class="plan-divider"></div>
+                    <span>48,000원 부터</span>
+                  </div>
+                </div>
+              </div>
+              <!-- 아이콘3: 5~10GB -->
+              <div class="data-item">
+                <div class="data-icon">
+                  <div class="icon-inner">
+                    <img src="assets/images/scenario3/icon-data-light1.svg" alt=""
+                         style="position:absolute;left:1.93px;top:2.89px;width:17.666px;height:17.666px;transform:scaleY(-1) rotate(180deg);">
+                    <img src="assets/images/scenario3/icon-data-light2.svg" alt=""
+                         style="position:absolute;left:7.71px;top:5.78px;width:17.666px;height:17.666px;">
+                    <img src="assets/images/scenario3/icon-data-light3.svg" alt=""
+                         style="position:absolute;left:12.27px;top:13.74px;width:8.833px;height:1.963px;">
+                  </div>
+                </div>
+                <div class="data-text">
+                  <p class="data-label">메신저 위주로 가볍게 사용해요</p>
+                  <div class="data-sub">
+                    <span>5~10GB</span>
+                    <div class="plan-divider"></div>
+                    <span>34,000원 부터</span>
+                  </div>
+                </div>
+              </div>
+              <!-- 아이콘4: 직접 찾기 -->
+              <div class="data-item">
+                <div class="data-icon">
+                  <img src="assets/images/scenario3/icon-data-search.svg" alt="">
+                </div>
+                <div class="data-text">
+                  <p class="data-label">원하는 요금제를 직접 찾아볼게요</p>
+                  <div class="data-sub">
+                    <span>19,000원 부터</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 카드4: 기프티콘 (node 8496:10170) ── -->
+          <div class="card">
+            <div class="card-title" style="padding-top:28.626px;padding-bottom:0;">
+              <h2>더 저렴하게 살 수 있는<br>기프티콘이 있어요</h2>
+              <div class="card-subtitle">
+                <span>기프티콘</span>
+                <svg viewBox="0 0 12 12" fill="none" style="transform:rotate(-90deg)">
+                  <path d="M3 5l3 3 3-3" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <!-- card-scroll: 가로 스크롤 (node 8496:10176) -->
+            <div class="product-scroll">
+              <div class="product-item">
+                <div class="product-thumb" style="background:none;">
+                  <img src="assets/images/scenario3/gifticon-thumb-perfume.png" alt="영 메모리즈 오드퍼퓸"
+                       style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:none;">
+                </div>
+                <div class="product-info">
+                  <p class="product-name" style="white-space:normal;line-height:1.2;">영 메모리즈 오드<br>퍼퓸 100ml</p>
+                  <div class="product-price">
+                    <span class="product-discount">20%</span>
+                    <span class="product-amount">235,000원</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-item">
+                <div class="product-thumb" style="background:none;">
+                  <img src="assets/images/scenario3/gifticon-thumb-snowman.png" alt="SNOWMAN8 스피커"
+                       style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:none;">
+                </div>
+                <div class="product-info">
+                  <p class="product-name" style="white-space:normal;line-height:1.2;">SNOWMAN8 Portable<br>WARMGREY TAIL</p>
+                  <div class="product-price">
+                    <span class="product-discount">5%</span>
+                    <span class="product-amount">46,550원</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-item">
+                <div class="product-thumb" style="background:none;">
+                  <img src="assets/images/scenario3/gifticon-thumb-bodywash.png" alt="로즈마리 바디워시"
+                       style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:none;">
+                </div>
+                <div class="product-info">
+                  <p class="product-name" style="white-space:normal;line-height:1.2;">로즈마리 바디워시<br>+ 바디로션 세트</p>
+                  <div class="product-price">
+                    <span class="product-discount">20%</span>
+                    <span class="product-amount">83,160원</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 미니 배너 2: Marshall Stockwell ── -->
+          <div class="mini-banner">
+            <div class="mini-banner-text">
+              <h3>Marshall Stockwell<br>블루투스 스피커</h3>
+              <p>사전예약 클럽 멤버십 혜택</p>
+            </div>
+            <div class="mini-banner-img">
+              <img src="assets/images/scenario3/product-speaker.png" alt="Marshall 스피커">
+            </div>
+          </div>
+
+          <!-- ── 카드5: SKT 구독 혜택 (node 8496:10242) ── -->
+          <div class="card">
+            <div class="card-title" style="padding-top:28.626px;padding-bottom:0;">
+              <h2>SKT에만 있는<br>구독 혜택이예요</h2>
+              <div class="card-subtitle">
+                <span>구독 상품</span>
+                <svg viewBox="0 0 12 12" fill="none" style="transform:rotate(-90deg)">
+                  <path d="M3 5l3 3 3-3" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div class="product-scroll">
+              <div class="product-item">
+                <div class="product-thumb" style="background:#f4f5fa;position:relative;">
+                  <img src="assets/images/scenario3/subscription-coupon1.png" alt="주말 장보기 패스"
+                       style="position:absolute;left:calc(50% + 0.13px);top:calc(50% + 0.15px);transform:translate(-50%,-50%);width:94px;height:67px;object-fit:cover;">
+                </div>
+                <div class="product-info">
+                  <p class="product-name" style="white-space:normal;line-height:1.2;">주말 장보기 패스<br>(네이버+컬리)</p>
+                  <div class="product-price">
+                    <span class="product-amount">월 8,900원</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-item">
+                <div class="product-thumb" style="background:#f4f5fa;position:relative;">
+                  <img src="assets/images/scenario3/subscription-coupon2.png" alt="쇼핑 올인원"
+                       style="position:absolute;left:calc(50% + 0.36px);top:calc(50% + 0.15px);transform:translate(-50%,-50%);width:94px;height:67px;object-fit:cover;">
+                </div>
+                <div class="product-info">
+                  <p class="product-name" style="white-space:normal;line-height:1.2;">쇼핑 올인원<br>(무신사+EQL)</p>
+                  <div class="product-price">
+                    <span class="product-amount">월 9,900원</span>
+                  </div>
+                </div>
+              </div>
+              <div class="product-item">
+                <div class="product-thumb" style="background:#f4f5fa;position:relative;">
+                  <img src="assets/images/scenario3/subscription-coupon3.png" alt="편의점 데일리팩"
+                       style="position:absolute;left:calc(50% - 0.41px);top:calc(50% + 0.15px);transform:translate(-50%,-50%);width:94px;height:67px;object-fit:cover;">
+                </div>
+                <div class="product-info">
+                  <p class="product-name" style="white-space:normal;line-height:1.2;">편의점 데일리팩<br>(CU+GS25)</p>
+                  <div class="product-price">
+                    <span class="product-discount">20%</span>
+                    <span class="product-amount">7,200원</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /content-scroll -->
+
+        <!-- 하단 페이드 -->
+        <div class="bottom-fade"></div>
+
+        <!-- ══ GNB (node 8496:10321) ══ -->
+        <nav class="gnb">
+
+          <!-- T 홈 버튼 -->
+          <button class="gnb-t" aria-label="T 홈">
+            <div class="gnb-t-icon-wrap">
+              <img class="gnb-t-home" src="assets/images/scenario3/gnb-icon-thome.svg" alt="">
+              <img class="gnb-t-star" src="assets/images/scenario3/gnb-icon-star.svg" alt="">
+            </div>
+          </button>
+
+          <!-- 메인 탭 필 (혜택 / 쇼핑 / 마이) -->
+          <div class="gnb-pill">
+            <div class="gnb-active-bg"></div>
+
+            <!-- 혜택 (비활성) -->
+            <div class="gnb-tab inactive" role="button" aria-label="혜택">
+              <img src="assets/images/scenario3/gnb-icon-benefit.svg" alt="">
+              <span>혜택</span>
+            </div>
+
+            <!-- 쇼핑 (활성) -->
+            <div class="gnb-tab active" role="button" aria-label="쇼핑">
+              <img src="assets/images/scenario3/gnb-icon-shopping.svg" alt="">
+              <span>쇼핑</span>
+            </div>
+
+            <!-- 마이 (비활성) -->
+            <div class="gnb-tab inactive" role="button" aria-label="마이">
+              <img src="assets/images/scenario3/gnb-icon-my.svg" alt="">
+              <span>마이</span>
+            </div>
+          </div>
+
+        </nav>
+
+      </div><!-- /page -->
+
+<!-- ══ SCREEN 2: Galaxy S29 상품 상세 (재작성) ══ -->
+      <div id="screen-2" class="absolute inset-0 overflow-hidden bg-[#f7f8fa]" style="display:none;">
+
+        <!-- [1] 반응형 컨테이너 -->
+        <div class="w-full max-w-[400px] mx-auto h-full flex flex-col relative overflow-hidden">
+
+          <!-- ── 헤더 [2] 아이콘 겹침 해결 ── -->
+          <div class="flex justify-between items-center px-4 py-3 bg-[#f7f8fa] flex-shrink-0">
+            <!-- 뒤로가기 -->
+            <button id="btn-back-s2" class="w-8 h-8 flex items-center justify-center -ml-1 cursor-pointer bg-transparent border-0 p-0">
+              <svg class="w-6 h-6 text-[#1f1f1f]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <!-- 우측 아이콘들 [2] gap으로 묶기 -->
+            <div class="flex items-center gap-3">
+              <button class="flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer" style="width:24px;height:28px;">
+                <img src="assets/images/scenario1/icon-menu.svg" style="width:24px;height:28px;transform:scaleY(-1);" alt="메뉴">
+              </button>
+              <button class="flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer" style="width:24px;height:28px;">
+                <img src="assets/images/scenario1/icon-cart.svg" style="width:24px;height:28px;transform:scaleY(-1);" alt="장바구니">
+              </button>
+            </div>
+          </div>
+
+          <!-- ── 스크롤 콘텐츠 ── -->
+          <div class="flex-1 overflow-y-auto px-5 pb-44 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+            <!-- [5] 상품 이미지 플레이스홀더 -->
+            <div class="w-full aspect-square bg-gray-200 rounded-2xl mb-4"></div>
+
+            <!-- 모델번호 + 상품명 -->
+            <div class="flex flex-col gap-1 mb-3">
+              <p class="text-sm font-medium text-[#aeaeb2] tracking-[-0.42px]">SM-S942NV</p>
+              <h1 class="text-[20px] font-semibold text-[#1c1c1e] leading-[30px] tracking-[-0.6px] m-0">갤럭시 S29 256GB</h1>
+            </div>
+
+            <!-- 가격 -->
+            <div class="flex flex-col gap-1 mb-4">
+              <div class="flex items-center gap-1">
+                <img src="assets/images/scenario1/vector-star.svg" class="w-2 h-2 flex-shrink-0" alt="">
+                <span class="text-xs font-semibold text-[#5940df] tracking-[-0.36px] opacity-80">안심보상가 적용</span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-base font-semibold text-[#6245ff] tracking-[-0.48px]">44%</span>
+                <span class="text-base font-semibold text-black tracking-[-0.48px]">754,000원</span>
+              </div>
+              <p class="text-xs font-medium text-[#aeaeb2] tracking-[-0.36px] m-0">출고가 1,254,000원</p>
+            </div>
+
+            <!-- [4] T 에이전트 분석 박스 -->
+            <div class="bg-[rgba(89,64,223,0.08)] border border-[#5940df] rounded-xl p-4 mb-6">
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-1">
+                  <img src="assets/images/scenario1/mingcute-ai-fill.svg" class="w-4 h-4 flex-shrink-0" alt="">
+                  <span class="text-xs font-semibold text-[#5940df] tracking-[-0.36px]">T 에이전트 분석</span>
+                </div>
+                <p class="text-xs text-[#5940df] leading-relaxed tracking-[-0.2px] m-0">갤럭시 S26 반납 보상금 55만 원 적용이 가능한 상품이에요. 민수님께서 확인하셨던 할부금(월 29,330원) 그대로 담을 수 있어요.</p>
+              </div>
+            </div>
+
+            <!-- ── 색상 [3] 엉킴 해결 ── -->
+            <div class="flex flex-col gap-3 mb-6">
+              <p class="text-xs font-semibold text-[#444] tracking-[-0.2px] leading-4 m-0">색상</p>
+              <div class="flex items-center justify-between">
+                <!-- 컬러 칩 4개 -->
+                <div class="flex gap-2.5 items-center">
+                  <div class="w-8 h-8 rounded-full bg-[#1c1c1e] ring-2 ring-offset-1 ring-[#1c1c1e] flex-shrink-0 cursor-pointer"></div>
+                  <div class="w-8 h-8 rounded-full bg-[#f0eeec] border border-gray-300 flex-shrink-0 cursor-pointer"></div>
+                  <div class="w-8 h-8 rounded-full bg-[#c9c5c0] border border-gray-300 flex-shrink-0 cursor-pointer"></div>
+                  <div class="w-8 h-8 rounded-full bg-[#dce3e8] border border-gray-300 flex-shrink-0 cursor-pointer"></div>
+                </div>
+                <!-- 텍스트 + 배지 [3] 같은 선상에 중앙 정렬 -->
+                <div class="flex items-center gap-2">
+                  <span class="text-[13px] text-[#444] tracking-[-0.4px]">블랙</span>
+                  <div class="bg-[#5940df] text-white text-[10px] font-medium px-1.5 rounded leading-4 h-4 flex items-center tracking-[-0.2px]">AI 추천</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── 용량 ── -->
+            <div class="flex flex-col gap-3 mb-6">
+              <p class="text-xs font-semibold text-[#444] tracking-[-0.2px] leading-4 m-0">용량</p>
+              <div class="flex flex-col gap-1">
+                <!-- 256G -->
+                <div class="s2-opt flex items-center justify-between p-3 rounded border border-[#e5e5e5] bg-white cursor-pointer transition-all duration-150 select-none"
+                     data-group="cap" data-val="256g">
+                  <span class="text-[13px] text-[#444] tracking-[-0.4px]">256G</span>
+                  <span class="text-[13px] text-[#444] tracking-[-0.4px]">1,254,000원</span>
+                </div>
+                <!-- 512G -->
+                <div class="s2-opt flex items-center justify-between p-3 rounded border border-[#e5e5e5] bg-white cursor-pointer transition-all duration-150 select-none"
+                     data-group="cap" data-val="512g">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[13px] text-[#444] tracking-[-0.4px]">512G</span>
+                    <div class="bg-[#5940df] text-white text-[10px] font-medium px-1.5 rounded leading-4 h-4 flex items-center tracking-[-0.2px]">AI 추천</div>
+                  </div>
+                  <span class="text-[13px] text-[#444] tracking-[-0.4px]">1,507,000원</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── 배송 정보 ── -->
+            <div class="flex flex-col gap-3 mb-6">
+              <!-- 섹션 헤더 -->
+              <div class="flex justify-between items-center">
+                <p class="text-xs font-semibold text-[#444] tracking-[-0.2px] m-0">배송 정보</p>
+                <div class="flex items-center gap-1">
+                  <img src="assets/images/scenario1/vector-location.svg" class="w-2.5 h-3.5 flex-shrink-0" alt="">
+                  <span class="text-xs font-semibold text-[#444] tracking-[-0.2px] underline opacity-80">우리 집</span>
+                </div>
+              </div>
+              <!-- 2×2 그리드 [1] 상대 너비 -->
+              <div class="grid grid-cols-2 gap-1">
+                <div class="s2-opt flex flex-col items-center justify-center gap-2 h-24 rounded-2xl border border-[#e5e5e5] bg-white cursor-pointer p-3 transition-all duration-150 select-none text-center"
+                     data-group="del" data-val="바로도착">
+                  <span class="text-[13px] font-medium text-[#444] tracking-[-0.4px]">바로도착</span>
+                  <div class="text-xs text-[#444] leading-4">
+                    <p class="m-0">평일 기준</p>
+                    <p class="m-0">18시 주문까지 가능</p>
+                  </div>
+                </div>
+                <div class="s2-opt flex flex-col items-center justify-center gap-2 h-24 rounded-2xl border border-[#e5e5e5] bg-white cursor-pointer p-3 transition-all duration-150 select-none text-center"
+                     data-group="del" data-val="행복배송">
+                  <span class="text-[13px] font-medium text-black tracking-[-0.4px]">행복배송</span>
+                  <div class="text-xs text-[#444] leading-4">
+                    <p class="m-0">평일 기준</p>
+                    <p class="m-0">15시 주문까지 가능</p>
+                  </div>
+                </div>
+                <div class="s2-opt flex flex-col items-center justify-center gap-2 h-24 rounded-2xl border border-[#e5e5e5] bg-white cursor-pointer p-3 transition-all duration-150 select-none text-center"
+                     data-group="del" data-val="택배">
+                  <span class="text-[13px] font-medium text-black tracking-[-0.4px]">택배</span>
+                  <div class="text-xs text-[#444] leading-4">
+                    <p class="m-0">월요일~토요일</p>
+                    <p class="m-0">14시 주문까지 익일 배송</p>
+                  </div>
+                </div>
+                <div class="s2-opt flex flex-col items-center justify-center gap-2 h-24 rounded-2xl border border-[#e5e5e5] bg-white cursor-pointer p-3 transition-all duration-150 select-none text-center"
+                     data-group="del" data-val="바로픽업">
+                  <span class="text-[13px] font-medium text-black tracking-[-0.4px]">바로픽업</span>
+                  <div class="text-xs text-[#444] leading-4">
+                    <p class="m-0">주문하고 가까운</p>
+                    <p class="m-0">대리점에서 바로 찾기</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- [4] AI 추천 아코디언 ── Rule 1 단일 래퍼 구조 -->
+            <div id="agent-accordion" class="bg-[#ece8ff] rounded-[24px] overflow-hidden w-full mb-5">
+
+              <!-- ── 헤더 (닫힘 상태에서만 노출) ── -->
+              <button id="agent-accordion-btn"
+                      class="w-full flex justify-between items-center px-4 py-4 cursor-pointer bg-transparent border-0 text-left"
+                      style="outline:none;
+                             max-height:80px; overflow:hidden;
+                             transition:max-height 0.3s ease-in-out, opacity 0.25s ease-in-out,
+                                        padding-top 0.3s ease-in-out, padding-bottom 0.3s ease-in-out;">
+                <div class="flex items-center gap-2">
+                  <img src="assets/images/scenario1/mingcute-ai-fill.svg"
+                       class="w-[18px] h-[18px] flex-shrink-0" alt="">
+                  <span class="text-xs font-medium text-[#1c1c1e] tracking-[-0.8px] leading-[18px] truncate">민수님과 비슷한 고객들은 어떻게 구매했을까요?</span>
+                </div>
+                <svg id="agent-chevron"
+                     class="flex-shrink-0 ml-2 text-[#5940df]"
+                     style="width:14px;height:14px;transition:transform 0.3s ease-in-out;"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6,9 12,15 18,9"/>
+                </svg>
+              </button>
+
+              <!-- ── 콘텐츠 (grid-rows 트릭) ── -->
+              <div id="agent-content-grid"
+                   style="display:grid;grid-template-rows:0fr;opacity:0;
+                          transition:grid-template-rows 0.3s ease-in-out,opacity 0.3s ease-in-out;">
+                <div style="overflow:hidden;min-height:0;">
+
+                  <!-- Figma 8783:10805 — pt:16 pb:20 px:16 gap:16 -->
+                  <div class="flex flex-col gap-4 px-4 pb-5" style="padding-top:16px;">
+
+                    <!-- 상단 블록: AI 아이콘 + 텍스트 + 태그 (gap-8) -->
+                    <div class="flex flex-col gap-2">
+                      <!-- AI 아이콘 + 그라디언트 텍스트 (gap-4) -->
+                      <div class="flex flex-col gap-1">
+                        <img src="assets/images/scenario1/mingcute-ai-fill.svg"
+                             class="w-[18px] h-[18px]" alt="">
+                        <p class="m-0 text-sm font-semibold leading-[1.4] tracking-[-0.796px]"
+                           style="background:linear-gradient(to right,#5940df,#0d0052);
+                                  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                                  background-clip:text;">
+                          민수님과 비슷한 고객들은 기기값 방어가 잘 되는 블랙 512GB 모델을 가장 많이 골랐어요.
+                        </p>
+                      </div>
+                      <!-- 태그 -->
+                      <div class="flex gap-1 flex-wrap">
+                        <span class="bg-[rgba(255,255,255,0.8)] text-[#5940df] font-medium rounded-[4px] px-2 py-1 tracking-[-0.398px] leading-[18px]"
+                              style="font-size:11.9px;">철저한 보안(Knox)</span>
+                        <span class="bg-[rgba(255,255,255,0.8)] text-[#5940df] font-medium rounded-[4px] px-2 py-1 tracking-[-0.398px] leading-[18px]"
+                              style="font-size:11.9px;">큰 화면</span>
+                        <span class="bg-[rgba(255,255,255,0.8)] text-[#5940df] font-medium rounded-[4px] px-2 py-1 tracking-[-0.398px] leading-[18px]"
+                              style="font-size:11.9px;">넉넉한 배터리</span>
+                      </div>
+                    </div>
+
+                    <!-- 구분선 -->
+                    <div class="w-full h-px bg-white opacity-80"></div>
+
+                    <!-- 하단 블록: 레이블 + 옵션 (gap-16) -->
+                    <div class="flex flex-col gap-4">
+                      <p class="m-0 text-[13px] font-semibold text-[#5940df] tracking-[-0.8px] leading-[18px]">
+                        50대 남성의 패턴에 맞게 최적 옵션을 설정했어요.
+                      </p>
+                      <div class="flex flex-col gap-2">
+                        <!-- 색상 -->
+                        <div class="flex items-center justify-between">
+                          <span class="text-[13px] text-[#1c1c1e] opacity-60 tracking-[-0.8px] leading-[18px]">색상</span>
+                          <div class="bg-[rgba(255,255,255,0.8)] border border-[#5940df] rounded-[4px] px-2 py-1 flex items-center gap-1">
+                            <div class="w-[18px] h-[18px] rounded-full bg-[#313131] flex-shrink-0"
+                                 style="border:0.563px solid #ece8ff;"></div>
+                            <span class="text-[12px] font-semibold text-[#5940df] tracking-[-0.4px] leading-[18px]">블랙</span>
+                          </div>
+                        </div>
+                        <!-- 용량 -->
+                        <div class="flex items-center justify-between">
+                          <span class="text-[13px] text-[#1c1c1e] opacity-60 tracking-[-0.8px] leading-[18px]">용량</span>
+                          <div class="bg-[rgba(255,255,255,0.8)] border border-[#5940df] rounded-[4px] px-2 py-1">
+                            <span class="text-[12px] font-semibold text-[#5940df] tracking-[-0.4px] leading-[18px]">512GB</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div><!-- /agent-content-grid -->
+
+            </div><!-- /agent-accordion -->
+
+            <!-- [5] 하단 콘텐츠 플레이스홀더 -->
+            <div class="w-full aspect-square bg-gray-200 rounded-2xl"></div>
+
+          </div><!-- /scroll -->
+
+          <!-- ── 바텀 시트 (초기 hidden) ── -->
+          <div id="s2-bottom-sheet"
+               class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px] z-50 px-5 pt-4 pb-8"
+               style="box-shadow:0 -5px 30px rgba(0,0,0,0.3); transform:translateY(100%); transition:transform 0.3s ease-in-out;">
+            <!-- T 안심보상 텍스트 -->
+            <div class="flex items-center gap-1 pb-4 px-1">
+              <img src="assets/images/scenario1/shape-t-icon.svg" class="w-4 h-4 flex-shrink-0" alt="">
+              <span class="text-sm text-[#222] tracking-[-0.98px] whitespace-nowrap">55만원의 T 안심보상가 적용이 대기 중이에요.</span>
+            </div>
+            <!-- 버튼 행 -->
+            <div class="flex items-center gap-2.5">
+              <!-- T 아이콘 원형 버튼 -->
+              <button class="flex-shrink-0 flex items-center justify-center rounded-full border border-black/10 cursor-pointer bg-white"
+                      style="width:52px; height:52px; box-shadow:0 0 20px rgba(0,0,0,0.2);">
+                <img src="assets/images/scenario1/shape-t-agent.svg" class="w-6 h-6" alt="">
+              </button>
+              <!-- CTA 버튼 -->
+              <div id="btn-start-s3" class="flex-1 bg-[#222] rounded-[20px] py-4 flex items-center justify-center cursor-pointer"
+                   style="box-shadow:0 8px 8px rgba(106,106,106,0.16);">
+                <span class="text-base font-semibold text-white tracking-[-0.64px] text-center">선택된 옵션으로 가입 시작하기</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /max-w wrapper -->
+      </div><!-- /screen-2 -->
+
+      <!-- ══ SCREEN 3: 가입 유형 선택 ══ -->
+      <div id="screen-3" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- 헤더: 뒤로가기 + 빈 타이틀 -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+            <button id="btn-back-s3" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <div style="flex:1;"></div>
+          </div>
+
+          <!-- 진행 바 (Figma 8497:10981 — CSS grid stacking) -->
+          <div style="flex-shrink:0; padding:16px 20px 4px;">
+            <div style="display:grid; width:100%;">
+              <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+              <div id="s3-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:12.5%; transition:width 0.5s ease-out;"></div>
+            </div>
+            <span style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">1/8</span>
+          </div>
+
+          <!-- 본문 영역 (스크롤 가능) -->
+          <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:140px;" class="s3-scroll">
+
+            <!-- 타이틀: 상품명 + 안내 문구 -->
+            <div style="padding:12px 20px 0; display:flex; flex-direction:column; gap:0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">갤럭시 S29 블랙 256GB 옵션 선택을 이어서 진행</p>
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">할게요.</p>
+            </div>
+
+            <!-- 서브 타이틀 -->
+            <div style="padding:12px 20px 0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">가입 유형을 선택해 주세요.</p>
+            </div>
+
+            <!-- 가입 유형 칩 -->
+            <div style="padding:20px 16px; display:flex; flex-wrap:wrap; gap:6px 4px;">
+              <button class="s3-type-chip" data-val="기기변경"
+                style="height:32px; padding:0 12px; background:white; border:1px solid #e5e5e5; border-radius:16px; font-size:13px; color:#000; letter-spacing:-0.4px; cursor:pointer; white-space:nowrap; transition:border .15s, background .15s;">
+                기기변경
+              </button>
+              <button class="s3-type-chip" data-val="번호이동"
+                style="height:32px; padding:0 12px; background:white; border:1px solid #e5e5e5; border-radius:16px; font-size:13px; color:#000; letter-spacing:-0.4px; cursor:pointer; white-space:nowrap; transition:border .15s, background .15s;">
+                번호이동
+              </button>
+              <button class="s3-type-chip" data-val="신규가입"
+                style="height:32px; padding:0 12px; background:white; border:1px solid #e5e5e5; border-radius:16px; font-size:13px; color:#000; letter-spacing:-0.4px; cursor:pointer; white-space:nowrap; transition:border .15s, background .15s;">
+                신규가입
+              </button>
+            </div>
+
+          </div>
+
+          <!-- 바텀 고정 영역 -->
+          <div style="position:absolute; bottom:0; left:0; right:0; background:#f7f8fa; padding:16px 20px 32px;">
+            <!-- 가격 행 -->
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 24px 16px;">
+              <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">휴대폰 가격</span>
+              <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">1,254,000원</span>
+            </div>
+            <!-- 버튼 행 -->
+            <div style="display:flex; align-items:center; gap:10px;">
+              <!-- T 에이전트 원형 -->
+              <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,.1); box-shadow:0 0 20px rgba(0,0,0,.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+              </div>
+              <!-- 다음으로 버튼 (선택 전: gray, 선택 후: dark) -->
+              <div id="s3-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px; text-align:center;">다음으로</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-3 -->
+
+      <!-- ══ SCREEN 4: AI 오퍼링 / 요금제 선택 ══ -->
+      <div id="screen-4" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- 헤더: 뒤로가기 -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+            <button id="btn-back-s4" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <div style="flex:1;"></div>
+          </div>
+
+          <!-- 진행 바 (Figma 8497:10981 — CSS grid stacking, 애니메이션용 초기값 12.5%) -->
+          <div style="flex-shrink:0; padding:16px 20px 4px;">
+            <div style="display:grid; width:100%;">
+              <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+              <div id="s4-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:12.5%; transition:width 0.5s ease-out;"></div>
+            </div>
+            <span id="s4-progress-text" style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">2/8</span>
+          </div>
+
+          <!-- 본문 스크롤 -->
+          <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:160px;">
+
+            <!-- 타이틀 -->
+            <div style="padding:12px 20px 0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">
+                이 정보로 이어서 기기 변경을 진행할게요.
+              </p>
+            </div>
+
+            <!-- 사용자 정보 카드 -->
+            <div style="padding:20px 16px;">
+              <div style="background:white; border:1px solid #e7e7e7; border-radius:24px; padding:20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <img src="assets/images/scenario1/icon-user-profile.svg" alt="" style="width:16px; height:16px; flex-shrink:0;">
+                    <span style="font-size:16px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">정민수</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:13px; font-weight:600; color:#404040; letter-spacing:-0.8px; line-height:18px;">010-1234-5678</span>
+                    <img src="assets/images/scenario1/icon-arrow-right.svg" alt="" style="width:16px; height:16px; flex-shrink:0;">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI 안내 텍스트 -->
+            <div style="padding:0 20px;">
+              <div style="display:flex; flex-direction:column; gap:3px;">
+                <img src="assets/images/scenario1/mingcute-ai-fill.svg" alt="" style="width:18px; height:18px;">
+                <p style="font-size:14px; font-weight:500; color:#5940df; letter-spacing:-0.42px; line-height:18px; margin:0;">
+                  이제 요금제부터 혜택까지 많은 선택을 하셔야 해요. 민수님의 평소 이용 패턴을 분석해서 가장 이득이 되는 최적의 조합을 미리 준비했어요. 민수님께 딱 맞는 옵션들로 제가 한 번에 세팅해 드릴게요.
+                </p>
+              </div>
+            </div>
+
+            <!-- AI 추천 카드 -->
+            <div style="padding:20px 16px;">
+              <div style="background:#ece8ff; border-radius:24px; padding:16px 16px 20px; display:flex; flex-direction:column; gap:16px;">
+
+                <!-- 카드 헤더 -->
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <img src="assets/images/scenario1/mingcute-ai-fill.svg" alt="" style="width:18px; height:18px;">
+                    <p style="font-size:14px; font-weight:600; line-height:1.4; letter-spacing:-0.796px; margin:0;
+                              background:linear-gradient(to right, #5940df, #0d0052);
+                              -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+                      민수님처럼 데이터를 많이 쓰는 직장인에게 가장 유리한 조합이에요.
+                    </p>
+                  </div>
+                  <!-- 태그 -->
+                  <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                    <span style="background:rgba(255,255,255,0.8); color:#5940df; font-size:11.9px; font-weight:500; padding:4px 8px; border-radius:4px; letter-spacing:-0.4px; line-height:17.9px;">VIP 장기고객 맞춤</span>
+                    <span style="background:rgba(255,255,255,0.8); color:#5940df; font-size:11.9px; font-weight:500; padding:4px 8px; border-radius:4px; letter-spacing:-0.4px; line-height:17.9px;">50대 남성</span>
+                    <span style="background:rgba(255,255,255,0.8); color:#5940df; font-size:11.9px; font-weight:500; padding:4px 8px; border-radius:4px; letter-spacing:-0.4px; line-height:17.9px;">적용 이후 변경 가능</span>
+                  </div>
+                </div>
+
+                <!-- 구분선 -->
+                <div style="height:1px; background:white; opacity:0.8;"></div>
+
+                <!-- 옵션 목록 -->
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                  <p style="font-size:13px; font-weight:600; color:#5940df; letter-spacing:-0.8px; line-height:18px; margin:0;">민수님의 패턴에 맞게 최적 옵션을 설정했어요.</p>
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+
+                    <!-- 요금제 -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                      <span style="font-size:13px; color:#1c1c1e; opacity:0.6; letter-spacing:-0.8px; line-height:18px; flex-shrink:0;">요금제</span>
+                      <div style="background:rgba(255,255,255,0.8); border:1px solid #5940df; border-radius:4px; padding:4px 8px;">
+                        <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.4px; line-height:18px;">6G 프레스티지</span>
+                      </div>
+                    </div>
+
+                    <!-- 추가 상품 -->
+                    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+                      <span style="font-size:13px; color:#1c1c1e; opacity:0.6; letter-spacing:-0.8px; line-height:26px; flex-shrink:0;">추가 상품</span>
+                      <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-end;">
+                        <!-- 넷플릭스 -->
+                        <div style="background:rgba(255,255,255,0.8); border:1px solid #5940df; border-radius:4px; padding:4px 8px; display:flex; align-items:center; gap:4px;">
+                          <img src="assets/images/scenario1/logo-netflix.png" alt="Netflix" style="width:18px; height:18px; border-radius:50%; flex-shrink:0; object-fit:cover;">
+                          <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.4px; line-height:18px; white-space:nowrap;">넷플릭스 광고형 스탠다드</span>
+                        </div>
+                        <!-- ChatGPT (배경+전경 2-layer) -->
+                        <div style="background:rgba(255,255,255,0.8); border:1px solid #5940df; border-radius:4px; padding:4px 8px; display:flex; align-items:center; gap:4px;">
+                          <div style="position:relative; width:18px; height:18px; border-radius:50%; flex-shrink:0; overflow:hidden;">
+                            <img src="assets/images/scenario1/logo-chatgpt-bg.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                            <img src="assets/images/scenario1/logo-chatgpt-fg.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                          </div>
+                          <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.4px; line-height:18px; white-space:nowrap;">ChatGPT Plus 이용권</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 할인 유형 -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                      <span style="font-size:13px; color:#1c1c1e; opacity:0.6; letter-spacing:-0.8px; line-height:18px; flex-shrink:0;">할인 유형</span>
+                      <div style="background:rgba(255,255,255,0.8); border:1px solid #5940df; border-radius:4px; padding:4px 8px;">
+                        <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.4px; line-height:18px;">선택약정 24개월</span>
+                      </div>
+                    </div>
+
+                    <!-- 할부 기간 -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                      <span style="font-size:13px; color:#1c1c1e; opacity:0.6; letter-spacing:-0.8px; line-height:18px; flex-shrink:0;">할부 기간</span>
+                      <div style="background:rgba(255,255,255,0.8); border:1px solid #5940df; border-radius:4px; padding:4px 8px;">
+                        <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.4px; line-height:18px;">24개월</span>
+                      </div>
+                    </div>
+
+                    <!-- 부가서비스 -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                      <span style="font-size:13px; color:#1c1c1e; opacity:0.6; letter-spacing:-0.8px; line-height:18px; flex-shrink:0;">부가서비스</span>
+                      <div style="background:rgba(255,255,255,0.8); border:1px solid #5940df; border-radius:4px; padding:4px 8px; display:flex; align-items:center; gap:4px;">
+                        <div style="width:18px; height:18px; border-radius:50%; background:#6f6f6f; flex-shrink:0;"></div>
+                        <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.4px; line-height:18px;">T 에이전트 프로</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- 직접 선택하기 -->
+                <p style="text-align:center; font-size:13px; color:#5940df; text-decoration:underline; opacity:0.5; letter-spacing:-0.8px; line-height:18px; cursor:pointer; margin:0;">직접 선택하기</p>
+
+              </div>
+            </div>
+
+          </div><!-- /scroll -->
+
+          <!-- 바텀 고정 영역 -->
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(247,248,250,0) 0%, rgb(247,248,250) 20%);">
+            <!-- 가격 행 -->
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+              <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">휴대폰 가격</span>
+              <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">1,254,000원</span>
+            </div>
+            <!-- 버튼 행 -->
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+              </div>
+              <div id="s4-next-btn" style="flex:1; background:#222; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 8px rgba(106,106,106,0.16);">
+                <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">다음으로</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-4 -->
+
+      <!-- ═══════════════════════════════════════════════════════
+           screen-5 | 요금제 선택 | 3/8
+      ═══════════════════════════════════════════════════════ -->
+      <div id="screen-5" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- 헤더: 뒤로가기 -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+            <button id="btn-back-s5" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <div style="flex:1;"></div>
+          </div>
+
+          <!-- 진행 바 (초기값 25%, 진입 시 37.5%로 애니메이션) -->
+          <div style="flex-shrink:0; padding:16px 20px 4px;">
+            <div style="display:grid; width:100%;">
+              <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+              <div id="s5-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:25%; transition:width 0.5s ease-out;"></div>
+            </div>
+            <span style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">3/8</span>
+          </div>
+
+          <!-- 본문 스크롤 -->
+          <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:160px;">
+
+            <!-- 요금제 선택 타이틀 -->
+            <div style="padding:12px 20px 0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">요금제를 선택해 주세요.</p>
+            </div>
+
+            <!-- 요금제 리스트 -->
+            <div style="padding:20px 16px; display:flex; flex-direction:column; gap:8px;">
+              <!-- 6G 프레스티지 (AI추천) -->
+              <div class="s5-plan-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; flex-direction:column; gap:4px; cursor:pointer;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">6G 프레스티지</span>
+                    <div style="background:#5940df; border-radius:2px; padding:0 4px; height:16px; display:flex; align-items:center; flex-shrink:0;">
+                      <span style="font-size:10px; font-weight:500; color:white; letter-spacing:-0.2px; line-height:13px;">AI 추천</span>
+                    </div>
+                  </div>
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0;">월 79,000원</span>
+                </div>
+                <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0;">6G 데이터 무제한, T 패스 AI 패키지(ChatGPT, Claude 중 택 1) 및 초고속 클라우드 2TB 기본 제공</p>
+              </div>
+              <!-- 6G 인피니티 -->
+              <div class="s5-plan-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; flex-direction:column; gap:4px; cursor:pointer;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">6G 인피니티</span>
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0;">월 69,900원</span>
+                </div>
+                <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0;">데이터 무제한, T 패스 테슬라 FSD 및 글로벌 딜리버리 패키지 혜택 무료</p>
+              </div>
+              <!-- 6GX 레귤러플러스 (사용중) -->
+              <div class="s5-plan-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; flex-direction:column; gap:4px; cursor:pointer;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">6GX 레귤러플러스</span>
+                    <div style="background:#808080; border-radius:2px; padding:0 4px; height:16px; display:flex; align-items:center; flex-shrink:0;">
+                      <span style="font-size:10px; font-weight:500; color:white; letter-spacing:-0.2px; line-height:13px;">사용중</span>
+                    </div>
+                  </div>
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0;">월 69,000원</span>
+                </div>
+                <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0;">데이터 250GB, 매월 T 포인트 5,000P 적립</p>
+              </div>
+              <!-- 전체 보기 -->
+              <div style="background:white; border:1px solid #e5e5e5; border-radius:16px; height:32px; display:flex; align-items:center; justify-content:center; padding:0 12px; cursor:pointer; align-self:flex-start;">
+                <span style="font-size:13px; color:#444; letter-spacing:-0.4px; line-height:16px;">전체 보기</span>
+              </div>
+            </div>
+
+            <!-- T 에이전트 분석 AI 카드 (node 8497:10817) -->
+            <div style="padding:0 16px 20px;">
+              <div style="background:rgba(89,64,223,0.08); border:1px solid #5940df; border-radius:16px; padding:12px 14px; display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; align-items:center; gap:2px;">
+                  <img src="assets/images/scenario1/mingcute-ai-fill.svg" alt="" style="width:18px; height:18px; flex-shrink:0;">
+                  <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.36px; line-height:1.4; white-space:nowrap;">T 에이전트 분석</span>
+                </div>
+                <p style="font-size:12px; font-weight:400; color:#5940df; letter-spacing:-0.2px; line-height:1.5; margin:0;">데이터 이용이 많은 민수님께는 6G 프레스티지가 어울려요. 넉넉한 데이터와 요금제 혜택으로 콘텐츠 구독까지 챙겨보세요.</p>
+              </div>
+            </div>
+
+          </div><!-- /scroll -->
+
+          <!-- 바텀 고정 영역 -->
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(247,248,250,0) 0%, rgb(247,248,250) 20%);">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+              <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">휴대폰 가격</span>
+              <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">1,254,000원</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+              </div>
+              <div id="s5-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">다음으로</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-5 -->
+
+      <!-- ═══════════════════════════════════════════════════════
+           screen-6 | 추가 상품 선택 | 4/8
+      ═══════════════════════════════════════════════════════ -->
+      <div id="screen-6" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- 헤더: 뒤로가기 -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+            <button id="btn-back-s6" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <div style="flex:1;"></div>
+          </div>
+
+          <!-- 진행 바 (초기값 37.5%, 진입 시 50%로 애니메이션) -->
+          <div style="flex-shrink:0; padding:16px 20px 4px;">
+            <div style="display:grid; width:100%;">
+              <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+              <div id="s6-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:37.5%; transition:width 0.5s ease-out;"></div>
+            </div>
+            <span style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">4/8</span>
+          </div>
+
+          <!-- 본문 스크롤 -->
+          <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:160px;">
+
+            <!-- 추가 상품 타이틀 -->
+            <div style="padding:12px 20px 0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">추가 상품을 선택해 주세요.</p>
+            </div>
+
+            <!-- 추가 상품 카드 리스트 -->
+            <div style="padding:20px 16px; display:flex; flex-direction:column; gap:6px;">
+
+              <!-- 넷플릭스 광고형 스탠다드 -->
+              <div class="s6-addon-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
+                  <div style="display:flex; align-items:center; gap:4px;">
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">넷플릭스 광고형 스탠다드</span>
+                    <div style="background:#5940df; border-radius:2px; padding:0 4px; height:16px; display:flex; align-items:center; flex-shrink:0;">
+                      <span style="font-size:10px; font-weight:500; color:white; letter-spacing:-0.2px; line-height:13px;">AI 추천</span>
+                    </div>
+                  </div>
+                  <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0; white-space:nowrap;">Full HD 화질, 동일가구 최대 2인 동시 접속 가능</p>
+                </div>
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#eaecf0; display:flex; align-items:center; justify-content:center;">
+                  <span style="font-size:14px; font-weight:500; color:rgba(91,91,98,0.39); letter-spacing:-0.8px; line-height:1;">ico</span>
+                </div>
+              </div>
+
+              <!-- ChatGPT Plus 이용권 -->
+              <div class="s6-addon-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
+                  <div style="display:flex; align-items:center; gap:4px;">
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">ChatGPT Plus 이용권</span>
+                    <div style="background:#5940df; border-radius:2px; padding:0 4px; height:16px; display:flex; align-items:center; flex-shrink:0;">
+                      <span style="font-size:10px; font-weight:500; color:white; letter-spacing:-0.2px; line-height:13px;">AI 추천</span>
+                    </div>
+                  </div>
+                  <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0; white-space:nowrap;">비즈니스 생산성 극대화, 프리미엄 구독권 100% 지원</p>
+                </div>
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#eaecf0; display:flex; align-items:center; justify-content:center;">
+                  <span style="font-size:14px; font-weight:500; color:rgba(91,91,98,0.39); letter-spacing:-0.8px; line-height:1;">ico</span>
+                </div>
+              </div>
+
+              <!-- T 패스 VIP 파인다이닝 & 라운지 -->
+              <div class="s6-addon-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
+                  <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">T 패스 VIP 파인다이닝 &amp; 라운지</span>
+                  <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0; white-space:nowrap;">주요 5성급 호텔 라운지 커피 2잔 무료 및 발렛 혜택</p>
+                </div>
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#eaecf0; display:flex; align-items:center; justify-content:center;">
+                  <span style="font-size:14px; font-weight:500; color:rgba(91,91,98,0.39); letter-spacing:-0.8px; line-height:1;">ico</span>
+                </div>
+              </div>
+
+              <!-- FLO 무손실 오디오 -->
+              <div class="s6-addon-card" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
+                  <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">FLO 무손실 오디오</span>
+                  <p style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; margin:0; white-space:nowrap;">차량용 인포테인먼트 연동 및 뇌파 안정화 음원</p>
+                </div>
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#eaecf0; display:flex; align-items:center; justify-content:center;">
+                  <span style="font-size:14px; font-weight:500; color:rgba(91,91,98,0.39); letter-spacing:-0.8px; line-height:1;">ico</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- AI 분석 박스 -->
+            <div style="padding:0 16px 20px;">
+              <div style="background:rgba(89,64,223,0.08); border:1px solid #5940df; border-radius:16px; padding:12px 14px; display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; align-items:center; gap:2px;">
+                  <img src="assets/images/scenario1/mingcute-ai-fill.svg" alt="" style="width:18px; height:18px;">
+                  <span style="font-size:12px; font-weight:600; color:#5940df; letter-spacing:-0.36px; line-height:1.4;">T 에이전트 분석</span>
+                </div>
+                <p style="font-size:12px; color:#5940df; letter-spacing:-0.2px; line-height:18px; margin:0;">민수님과 같은 50대 VIP 분들은 업무 효율을 극대화하는 'ChatGPT'를 가장 우선으로 선택하셨어요. 퇴근 후에는 고품격 휴식을 위해 '넷플릭스'를 결합해 통신비 부담 없이 프리미엄 라이프스타일을 완성하고 계십니다.</p>
+              </div>
+            </div>
+
+          </div><!-- /scroll -->
+
+          <!-- 바텀 고정 영역 -->
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(247,248,250,0) 0%, rgb(247,248,250) 20%);">
+            <!-- 통신요금 행 -->
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+              <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">통신요금</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">월 69,900원</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                  <path d="M4 6l4 4 4-4" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <!-- 버튼 행 -->
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+              </div>
+              <div id="s6-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">다음으로</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-6 -->
+
+      <!-- ═══════════════════════════════════════════════════════
+           screen-7 | 할인 유형 선택 | 5/8
+      ═══════════════════════════════════════════════════════ -->
+      <div id="screen-7" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- 헤더: 뒤로가기 -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+            <button id="btn-back-s7" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <div style="flex:1;"></div>
+          </div>
+
+          <!-- 진행 바 (초기값 50%, 진입 시 62.5%로 애니메이션) -->
+          <div style="flex-shrink:0; padding:16px 20px 4px;">
+            <div style="display:grid; width:100%;">
+              <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+              <div id="s7-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:50%; transition:width 0.5s ease-out;"></div>
+            </div>
+            <span style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">5/8</span>
+          </div>
+
+          <!-- 본문 스크롤 -->
+          <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:160px;">
+
+            <!-- 타이틀 -->
+            <div style="padding:12px 20px 0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">할인 유형을 선택해 주세요.</p>
+            </div>
+
+            <!-- 라디오박스 -->
+            <div style="padding:20px 16px;">
+              <div id="s7-radiobox" style="background:white; border:1px solid #e7e7e7; border-radius:24px; overflow:hidden;">
+
+                <!-- 옵션 1: 공통지원금 (상단 여백 20px) -->
+                <div class="s7-radio-item" data-val="공통지원금"
+                     style="padding:20px 20px 16px; cursor:pointer; transition:background .15s;">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">공통지원금</span>
+                    <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">- 420,000원</span>
+                  </div>
+                  <div style="margin-top:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">24개월 동안 사용하면서 휴대폰 가격 할인</span>
+                  </div>
+                </div>
+
+                <!-- 구분선 1 -->
+                <div style="height:1px; background:#ededed;"></div>
+
+                <!-- 옵션 2: 선택약정 12개월 -->
+                <div class="s7-radio-item" data-val="선택약정 12개월"
+                     style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; white-space:nowrap;">
+                    <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">선택약정 12개월</span>
+                    <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">- 267,000원</span>
+                  </div>
+                  <div style="margin-top:4px; display:flex; align-items:center; justify-content:space-between; white-space:nowrap;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">12개월 동안 통신요금의 25% 할인</span>
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">- 월 22,250원</span>
+                  </div>
+                </div>
+
+                <!-- 구분선 2 -->
+                <div style="height:1px; background:#ededed;"></div>
+
+                <!-- 옵션 3: 선택약정 24개월 (하단 여백 20px) -->
+                <div class="s7-radio-item" data-val="선택약정 24개월"
+                     style="padding:16px 20px 20px; cursor:pointer; transition:background .15s;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; white-space:nowrap;">
+                    <div style="display:flex; align-items:center; gap:4px;">
+                      <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">선택약정 24개월</span>
+                      <div style="background:#1c1c1e; border-radius:2px; padding:0 4px; height:16px; display:inline-flex; align-items:center; flex-shrink:0;">
+                        <span style="font-size:10px; font-weight:500; color:white; letter-spacing:-0.2px; line-height:13px;">최대 할인</span>
+                      </div>
+                    </div>
+                    <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">- 534,000원</span>
+                  </div>
+                  <div style="margin-top:4px; display:flex; align-items:center; justify-content:space-between; white-space:nowrap;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">24개월 동안 통신요금의 25% 할인</span>
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">- 월 22,250원</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- /scroll -->
+
+          <!-- 바텀 고정 영역 -->
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(247,248,250,0) 0%, rgb(247,248,250) 20%);">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+              <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">통신요금</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">월 69,900원</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                  <path d="M4 6l4 4 4-4" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+              </div>
+              <div id="s7-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">다음으로</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-7 -->
+
+      <!-- ═══════════════════════════════════════════════════════
+           screen-8 | 기기 할부 선택 | 6/8
+      ═══════════════════════════════════════════════════════ -->
+      <div id="screen-8" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- 헤더: 뒤로가기 -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+            <button id="btn-back-s8" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+            <div style="flex:1;"></div>
+          </div>
+
+          <!-- 진행 바 (초기값 62.5%, 진입 시 75%로 애니메이션) -->
+          <div style="flex-shrink:0; padding:16px 20px 4px;">
+            <div style="display:grid; width:100%;">
+              <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+              <div id="s8-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:62.5%; transition:width 0.5s ease-out;"></div>
+            </div>
+            <span style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">6/8</span>
+          </div>
+
+          <!-- 본문 스크롤 -->
+          <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:160px;">
+
+            <!-- 타이틀 -->
+            <div style="padding:12px 20px 0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">기기 할부는 몇 개월 동안 하고 싶으세요?</p>
+            </div>
+
+            <!-- 라디오박스 -->
+            <div style="padding:20px 16px;">
+              <div id="s8-radiobox" style="background:white; border:1px solid #e7e7e7; border-radius:24px; overflow:hidden;">
+
+                <div class="s8-radio-item" data-val="6개월" style="padding:20px 20px 16px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">6개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="12개월" style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">12개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="18개월" style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">18개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="24개월" style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">24개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="30개월" style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">30개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="36개월" style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">36개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="48개월" style="padding:16px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">48개월</span>
+                </div>
+                <div style="height:1px; background:#ededed;"></div>
+
+                <div class="s8-radio-item" data-val="일시불" style="padding:16px 20px 20px; cursor:pointer; transition:background .15s;">
+                  <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px;">일시불</span>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- /scroll -->
+
+          <!-- 바텀 고정 영역 -->
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(247,248,250,0) 0%, rgb(247,248,250) 20%);">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+              <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">통신요금</span>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">월 22,250원</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                  <path d="M4 6l4 4 4-4" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+              </div>
+              <div id="s8-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">다음으로</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-8 -->
+
+      <!-- ═══════════════════════════════════════════════════════
+           screen-9 | 부가서비스 선택 | 7/8  (바텀 시트)
+      ═══════════════════════════════════════════════════════ -->
+      <div id="screen-9" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
+        <div style="width:100%; max-width:400px; margin:0 auto; height:100%; position:relative; overflow:hidden; background:#f7f8fa;">
+
+          <!-- LAYER 1: 배경 콘텐츠 (오버레이 뒤) -->
+          <div style="position:absolute; inset:0; overflow:hidden; z-index:0;">
+            <div style="padding:20px 20px 0; display:flex; align-items:center;">
+              <div style="width:32px; height:32px;"></div><!-- 뒤로 버튼 placeholder 높이 맞춤 -->
+            </div>
+            <div style="padding:16px 20px 4px;">
+              <div style="display:grid; width:100%;">
+                <div style="grid-area:1/1; height:6px; background:#f2f2f2; border-radius:3px;"></div>
+                <div id="s9-progress-fill" style="grid-area:1/1; align-self:start; height:6px; background:#000; border-radius:3px; width:75%; transition:width 0.5s ease-out;"></div>
+              </div>
+              <span style="font-size:12px; color:#1c1c1e; letter-spacing:-1px; line-height:24px; display:block;">7/8</span>
+            </div>
+          </div>
+
+          <!-- LAYER 2: 뒤로가기 버튼 (오버레이 위, z-index:60) -->
+          <div style="position:absolute; top:20px; left:20px; z-index:60;">
+            <button id="btn-back-s9" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center;" aria-label="뒤로">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- LAYER 3: 딤드 오버레이 (z-index:40) -->
+          <div id="s9-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0); z-index:40; transition:background 0.3s ease; pointer-events:none;"></div>
+
+          <!-- LAYER 4: 바텀 시트 (z-index:50) -->
+          <div id="s9-sheet" style="position:absolute; bottom:0; left:0; right:0; z-index:50; background:white; border-radius:40px 40px 0 0; transform:translateY(100%); transition:transform 0.3s ease-in-out; max-height:88%; display:flex; flex-direction:column; overflow:hidden;">
+
+            <!-- 드래그 핸들 -->
+            <div style="display:flex; justify-content:center; padding:8px 0 0; flex-shrink:0;">
+              <div style="width:40px; height:4px; background:#d9d9d9; border-radius:99px;"></div>
+            </div>
+
+            <!-- 타이틀 -->
+            <div style="padding:12px 20px 0; flex-shrink:0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">부가서비스를 선택할 수 있어요.</p>
+            </div>
+
+            <!-- 스크롤 리스트 -->
+            <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:16px 16px 160px;">
+
+              <!-- Card 1: T 에이전트 프로 -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">프리미엄 AI 비서</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                      <div style="display:flex; align-items:center; gap:4px; flex:1; min-width:0;">
+                        <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">T 에이전트 프로</span>
+                        <div style="background:#5940df; border-radius:2px; padding:0 4px; height:16px; display:inline-flex; align-items:center; flex-shrink:0;">
+                          <span style="font-size:10px; font-weight:500; color:white; letter-spacing:-0.2px; line-height:13px;">AI 추천</span>
+                        </div>
+                      </div>
+                      <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0; margin-left:8px;">무료</span>
+                    </div>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 2: T 올케어 AI 프리미엄 -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">스마트기기 통합 케어</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                      <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">T 올케어 AI 프리미엄</span>
+                      <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0; margin-left:8px;">4,000원</span>
+                    </div>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 3: T 모빌리티 플러스 -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">VIP 라이프 & 모빌리티</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                      <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">T 모빌리티 플러스</span>
+                      <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0; margin-left:8px;">1,200원</span>
+                    </div>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 4: T 퀀텀 쉴드 -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">AI 금융 보안 & 안심</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                      <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">T 퀀텀 쉴드</span>
+                      <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0; margin-left:8px;">10,600원</span>
+                    </div>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 5: T 스마트 파손 케어 6G -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:56px; height:56px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">스마트기기 파손 보장</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                      <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap;">T 스마트 파손 케어 6G</span>
+                      <span style="font-size:13px; font-weight:500; color:#000; letter-spacing:-0.4px; line-height:16px; white-space:nowrap; flex-shrink:0; margin-left:8px;">6,500원</span>
+                    </div>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 6: 맥플러스2 배터리 팩 (A) -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:8px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:56px; height:56px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">스태틱</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">맥플러스2 배터리 팩</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 7: 맥플러스2 배터리 팩 (B) -->
+              <div class="s9-service-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:8px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:4px; min-width:0;">
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">스태틱</span>
+                  <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">맥플러스2 배터리 팩</span>
+                </div>
+                <div style="flex-shrink:0; width:32px; height:32px; background:#eaecf0; border-radius:8px;"></div>
+              </div>
+
+            </div><!-- /scroll list -->
+
+            <!-- 바텀 CTA (시트 내 고정) -->
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(255,255,255,0) 0%, white 20%);">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+                <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">납부 금액</span>
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">월 118,700원</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                    <path d="M4 6l4 4 4-4" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                  <img src="assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+                </div>
+                <div id="s9-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                  <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">다음으로</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /s9-sheet -->
+
+        </div>
+      </div><!-- /screen-9 -->
+
+    </div><!-- /ut-stage -->
+  </div><!-- /frame -->
+
+<script>
+  (function() {
+    var frame   = document.getElementById('frame');
+    var inpW    = document.getElementById('inp-w');
+    var inpH    = document.getElementById('inp-h');
+    var presets = document.querySelectorAll('.preset');
+
+    function applySize(w, h) {
+      frame.style.width  = w + 'px';
+      frame.style.height = h + 'px';
+      if (inpW) inpW.value = w;
+      if (inpH) inpH.value = h;
+      presets.forEach(function(b) {
+        b.classList.toggle('active', Number(b.dataset.w) === w && Number(b.dataset.h) === h);
+      });
+    }
+
+    presets.forEach(function(b) {
+      b.addEventListener('click', function() { applySize(Number(b.dataset.w), Number(b.dataset.h)); });
+    });
+
+    var applyBtn = document.getElementById('apply-btn');
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function() {
+        applySize(
+          Math.max(320, Math.min(768, Number(inpW.value) || 375)),
+          Math.max(480, Math.min(1200, Number(inpH.value) || 812))
+        );
+      });
+      [inpW, inpH].forEach(function(inp) {
+        inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') applyBtn.click(); });
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ── Screen navigation ── */
+  var s1 = document.getElementById('screen-1');
+  var s2 = document.getElementById('screen-2');
+  var s3 = document.getElementById('screen-3');
+  var bottomSheet = document.getElementById('s2-bottom-sheet');
+
+  function showScreen(target) {
+    [s1, s2, s3].forEach(function(el) { if (el) el.style.display = 'none'; });
+    if (target) target.style.display = 'block';
+  }
+
+  function showScreen3() { showScreen(s3); }
+
+  // Screen 2 "선택된 옵션으로 가입 시작하기" → Screen 3
+  var btnStart = document.getElementById('btn-start-s3');
+  if (btnStart) btnStart.addEventListener('click', showScreen3);
+
+  // Screen 3 뒤로가기 → Screen 2
+  var btnBackS3 = document.getElementById('btn-back-s3');
+  if (btnBackS3) btnBackS3.addEventListener('click', function() { showScreen(s2); });
+
+  /* ── Screen 3 가입유형 칩 선택 ── */
+  var s3NextBtn = document.getElementById('s3-next-btn');
+  document.querySelectorAll('.s3-type-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.s3-type-chip').forEach(function(c) {
+        c.style.border = '1px solid #e5e5e5';
+        c.style.background = 'white';
+        c.style.fontWeight = '400';
+      });
+      chip.style.border = '2px solid #000';
+      chip.style.background = '#f2f2f2';
+      chip.style.fontWeight = '600';
+      if (s3NextBtn) {
+        s3NextBtn.style.background = '#222';
+        s3NextBtn.style.cursor = 'pointer';
+      }
+    });
+  });
+
+</script>
+
+<script>
+  /* ── Screen 1 ↔ Screen 2 ── */
+  var _s1 = document.getElementById('screen-1');
+  var _s2 = document.getElementById('screen-2');
+  var _bs = document.getElementById('s2-bottom-sheet');
+
+  function showS2() {
+    _s1.style.display = 'none';
+    _s2.style.display = 'block';
+    resetS2();
+  }
+  function showS1() {
+    _s2.style.display = 'none';
+    _s1.style.display = '';
+  }
+  function resetS2() {
+    document.querySelectorAll('.s2-opt').forEach(function(c) {
+      c.style.border = '1px solid #e5e5e5';
+      c.classList.remove('s2-sel');
+    });
+    if (_bs) _bs.style.transform = 'translateY(100%)';
+  }
+
+  var chipGalaxy = document.getElementById('chip-galaxy-s29');
+  if (chipGalaxy) chipGalaxy.addEventListener('click', showS2);
+
+  var btnBack = document.getElementById('btn-back-s2');
+  if (btnBack) btnBack.addEventListener('click', showS1);
+
+  /* ── 옵션 선택 + 바텀시트 ── */
+  function checkBoth() {
+    var hasCap = !!document.querySelector('.s2-opt[data-group="cap"].s2-sel');
+    var hasDel = !!document.querySelector('.s2-opt[data-group="del"].s2-sel');
+    if (_bs) _bs.style.transform = (hasCap && hasDel) ? 'translateY(0)' : 'translateY(100%)';
+  }
+
+  ['cap', 'del'].forEach(function(grp) {
+    document.querySelectorAll('.s2-opt[data-group="' + grp + '"]').forEach(function(card) {
+      card.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.querySelectorAll('.s2-opt[data-group="' + grp + '"]').forEach(function(c) {
+          c.classList.remove('s2-sel');
+          c.style.border = '1px solid #e5e5e5';
+        });
+        card.classList.add('s2-sel');
+        card.style.border = '2px solid #000';
+        checkBoth();
+      });
+    });
+  });
+</script>
+
+
+<script>
+  /* ── Screen 3~6 네비게이션 + 진행 바 애니메이션 ── */
+  (function() {
+    var allScreenIds = ['screen-1','screen-2','screen-3','screen-4','screen-5','screen-6','screen-7','screen-8','screen-9'];
+    var s4Fill = document.getElementById('s4-progress-fill');
+    var s5Fill = document.getElementById('s5-progress-fill');
+    var s6Fill = document.getElementById('s6-progress-fill');
+    var s7Fill = document.getElementById('s7-progress-fill');
+    var s8Fill = document.getElementById('s8-progress-fill');
+    var s9Fill = document.getElementById('s9-progress-fill');
+
+    /* offsetWidth reflow로 CSS transition 확실히 발동 */
+    function animateFill(fill, from, to) {
+      if (!fill) return;
+      fill.style.transition = 'none';
+      fill.style.width = from;
+      void fill.offsetWidth;          /* force reflow */
+      fill.style.transition = 'width 0.5s ease-out';
+      fill.style.width = to;
+    }
+
+    function resetFill(fill, w) {
+      if (!fill) return;
+      fill.style.transition = 'none';
+      fill.style.width = w;
+    }
+
+    function goTo(targetId) {
+      allScreenIds.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      var t = document.getElementById(targetId);
+      if (t) t.style.display = 'block';
+    }
+
+    /* screen-3 → screen-4 */
+    var s3NextBtn = document.getElementById('s3-next-btn');
+    if (s3NextBtn) {
+      s3NextBtn.addEventListener('click', function() {
+        if (s3NextBtn.style.cursor === 'pointer') {
+          goTo('screen-4');
+          animateFill(s4Fill, '12.5%', '25%');
+        }
+      });
+    }
+
+    /* screen-4 뒤로 → screen-3 */
+    var btnBackS4 = document.getElementById('btn-back-s4');
+    if (btnBackS4) {
+      btnBackS4.addEventListener('click', function() {
+        goTo('screen-3');
+        resetFill(s4Fill, '12.5%');
+      });
+    }
+
+    /* screen-4 → screen-5 */
+    var s4NextBtn = document.getElementById('s4-next-btn');
+    if (s4NextBtn) {
+      s4NextBtn.addEventListener('click', function() {
+        goTo('screen-5');
+        animateFill(s5Fill, '25%', '37.5%');
+      });
+    }
+
+    /* screen-5 뒤로 → screen-4 */
+    var btnBackS5 = document.getElementById('btn-back-s5');
+    if (btnBackS5) {
+      btnBackS5.addEventListener('click', function() {
+        goTo('screen-4');
+        resetFill(s5Fill, '25%');
+      });
+    }
+
+    /* screen-5 → screen-6 */
+    var s5NextBtn = document.getElementById('s5-next-btn');
+    if (s5NextBtn) {
+      s5NextBtn.addEventListener('click', function() {
+        if (s5NextBtn.style.cursor === 'pointer') {
+          goTo('screen-6');
+          animateFill(s6Fill, '37.5%', '50%');
+        }
+      });
+    }
+
+    /* screen-6 뒤로 → screen-5 */
+    var btnBackS6 = document.getElementById('btn-back-s6');
+    if (btnBackS6) {
+      btnBackS6.addEventListener('click', function() {
+        goTo('screen-5');
+        resetFill(s6Fill, '37.5%');
+      });
+    }
+
+    /* screen-6 → screen-7 */
+    var s6NextBtn = document.getElementById('s6-next-btn');
+    if (s6NextBtn) {
+      s6NextBtn.addEventListener('click', function() {
+        if (s6NextBtn.style.cursor === 'pointer') {
+          goTo('screen-7');
+          animateFill(s7Fill, '50%', '62.5%');
+        }
+      });
+    }
+
+    /* screen-7 뒤로 → screen-6 */
+    var btnBackS7 = document.getElementById('btn-back-s7');
+    if (btnBackS7) {
+      btnBackS7.addEventListener('click', function() {
+        goTo('screen-6');
+        resetFill(s7Fill, '50%');
+      });
+    }
+
+    /* screen-7 → screen-8 */
+    var s7NextBtn = document.getElementById('s7-next-btn');
+    if (s7NextBtn) {
+      s7NextBtn.addEventListener('click', function() {
+        if (s7NextBtn.style.cursor === 'pointer') {
+          goTo('screen-8');
+          animateFill(s8Fill, '62.5%', '75%');
+        }
+      });
+    }
+
+    /* screen-8 뒤로 → screen-7 */
+    var btnBackS8 = document.getElementById('btn-back-s8');
+    if (btnBackS8) {
+      btnBackS8.addEventListener('click', function() {
+        goTo('screen-7');
+        resetFill(s8Fill, '62.5%');
+      });
+    }
+
+    /* screen-8 → screen-9 (바텀 시트 슬라이드 업) */
+    var s8NextBtn = document.getElementById('s8-next-btn');
+    if (s8NextBtn) {
+      s8NextBtn.addEventListener('click', function() {
+        if (s8NextBtn.style.cursor === 'pointer') {
+          var sheet   = document.getElementById('s9-sheet');
+          var overlay = document.getElementById('s9-overlay');
+
+          /* ① transition 없이 초기 위치로 세팅 (아직 display:none 상태) */
+          if (sheet)   { sheet.style.transition = 'none'; sheet.style.transform = 'translateY(100%)'; }
+          if (overlay) { overlay.style.transition = 'none'; overlay.style.background = 'rgba(0,0,0,0)'; overlay.style.pointerEvents = 'none'; }
+
+          /* ② 화면을 display:block으로 전환 → 요소가 레이아웃에 참여 */
+          goTo('screen-9');
+          animateFill(s9Fill, '75%', '87.5%');
+
+          /* ③ 보이는 상태에서 리플로우 강제 → transition 복원 → 애니메이션 */
+          requestAnimationFrame(function() {
+            if (sheet)   void sheet.offsetWidth;
+            if (overlay) void overlay.offsetWidth;
+            if (sheet) {
+              sheet.style.transition = 'transform 0.35s ease-out';
+              sheet.style.transform  = 'translateY(0)';
+            }
+            if (overlay) {
+              overlay.style.transition    = 'background 0.35s ease-out';
+              overlay.style.background    = 'rgba(0,0,0,0.5)';
+              overlay.style.pointerEvents = 'auto';
+            }
+          });
+        }
+      });
+    }
+
+    /* screen-9 뒤로 → screen-8 (바텀 시트 슬라이드 다운) */
+    var btnBackS9 = document.getElementById('btn-back-s9');
+    if (btnBackS9) {
+      btnBackS9.addEventListener('click', function() {
+        var sheet   = document.getElementById('s9-sheet');
+        var overlay = document.getElementById('s9-overlay');
+        if (sheet)   sheet.style.transform      = 'translateY(100%)';
+        if (overlay) { overlay.style.background = 'rgba(0,0,0,0)'; overlay.style.pointerEvents = 'none'; }
+        setTimeout(function() {
+          goTo('screen-8');
+          resetFill(s9Fill, '75%');
+        }, 300);
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ── screen-5 요금제 카드 선택 ── */
+  (function() {
+    var cards   = document.querySelectorAll('.s5-plan-card');
+    var nextBtn = document.getElementById('s5-next-btn');
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        cards.forEach(function(c) { c.style.border = '1px solid #e5e5e5'; });
+        card.style.border = '1px solid #000000';
+        if (nextBtn) {
+          nextBtn.style.background  = '#222';
+          nextBtn.style.cursor      = 'pointer';
+        }
+      });
+    });
+  })();
+
+  /* ── screen-6 추가 상품 체크박스 선택 ── */
+  (function() {
+    var cards   = document.querySelectorAll('.s6-addon-card');
+    var nextBtn = document.getElementById('s6-next-btn');
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        var isSelected = card.dataset.selected === 'true';
+        if (isSelected) {
+          card.dataset.selected = 'false';
+          card.style.border = '1px solid #e5e5e5';
+        } else {
+          card.dataset.selected = 'true';
+          card.style.border = '1px solid #000000';
+        }
+        /* 1개 이상 선택 시 다음으로 활성화 */
+        var anySelected = Array.prototype.some.call(cards, function(c) {
+          return c.dataset.selected === 'true';
+        });
+        if (nextBtn) {
+          nextBtn.style.background = anySelected ? '#222' : '#a7a7a7';
+          nextBtn.style.cursor     = anySelected ? 'pointer' : 'not-allowed';
+        }
+      });
+    });
+  })();
+
+  /* ── screen-7 할인 유형 라디오 선택 ── */
+  (function() {
+    var items   = document.querySelectorAll('.s7-radio-item');
+    var box     = document.getElementById('s7-radiobox');
+    var nextBtn = document.getElementById('s7-next-btn');
+
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        /* 모두 초기화 */
+        items.forEach(function(i) { i.style.background = ''; });
+        /* 선택된 항목 dim */
+        item.style.background = 'rgba(0,0,0,0.08)';
+        /* 다음으로 버튼 활성화 */
+        if (nextBtn) {
+          nextBtn.style.background = '#222';
+          nextBtn.style.cursor = 'pointer';
+        }
+      });
+    });
+  })();
+
+  /* ── screen-9 부가서비스 체크박스 (다중 선택) ── */
+  (function() {
+    var cards   = document.querySelectorAll('.s9-service-card');
+    var nextBtn = document.getElementById('s9-next-btn');
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        var isSelected = card.dataset.selected === 'true';
+        if (isSelected) {
+          card.dataset.selected = 'false';
+          card.style.border = '1px solid #e5e5e5';
+        } else {
+          card.dataset.selected = 'true';
+          card.style.border = '1px solid #000000';
+        }
+        var anySelected = Array.prototype.some.call(cards, function(c) {
+          return c.dataset.selected === 'true';
+        });
+        if (nextBtn) {
+          nextBtn.style.background = anySelected ? '#222' : '#a7a7a7';
+          nextBtn.style.cursor     = anySelected ? 'pointer' : 'not-allowed';
+        }
+      });
+    });
+  })();
+
+  /* ── screen-8 기기 할부 라디오 선택 ── */
+  (function() {
+    var items   = document.querySelectorAll('.s8-radio-item');
+    var nextBtn = document.getElementById('s8-next-btn');
+
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        items.forEach(function(i) { i.style.background = ''; });
+        item.style.background = 'rgba(0,0,0,0.08)';
+        if (nextBtn) {
+          nextBtn.style.background = '#222';
+          nextBtn.style.cursor = 'pointer';
+        }
+      });
+    });
+  })();
+
+  /* ── AI 아코디언 토글 ── */
+  (function () {
+    var wrapper = document.getElementById('agent-accordion');
+    var btn     = document.getElementById('agent-accordion-btn');
+    var grid    = document.getElementById('agent-content-grid');
+    if (!wrapper || !btn || !grid) return;
+
+    var open = false;
+
+    function doOpen() {
+      open = true;
+      /* 헤더 pill 숨기기 */
+      btn.style.maxHeight   = '0';
+      btn.style.opacity     = '0';
+      btn.style.paddingTop  = '0';
+      btn.style.paddingBottom = '0';
+      btn.style.overflow    = 'hidden';
+      /* 콘텐츠 펼치기 */
+      grid.style.gridTemplateRows = '1fr';
+      grid.style.opacity = '1';
+    }
+
+    function doClose() {
+      open = false;
+      /* 헤더 pill 복원 */
+      btn.style.maxHeight   = '80px';
+      btn.style.opacity     = '1';
+      btn.style.paddingTop  = '';
+      btn.style.paddingBottom = '';
+      btn.style.overflow    = '';
+      /* 콘텐츠 닫기 */
+      grid.style.gridTemplateRows = '0fr';
+      grid.style.opacity = '0';
+    }
+
+    /* 헤더 클릭 → 열기 */
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!open) doOpen();
+    });
+
+    /* 펼쳐진 카드 클릭 → 닫기 */
+    grid.addEventListener('click', function () {
+      if (open) doClose();
+    });
+  })();
+</script>
+
+</body>
+</html>
