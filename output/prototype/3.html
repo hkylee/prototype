@@ -1779,8 +1779,8 @@
       <div id="screen-8" style="display:none; position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#f7f8fa;">
         <div style="width:100%; max-width:400px; margin:0 auto; height:100%; display:flex; flex-direction:column; position:relative; overflow:hidden; background:#f7f8fa;">
 
-          <!-- 헤더: 뒤로가기 -->
-          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0;">
+          <!-- 헤더: 뒤로가기 (z-index:60 → 오버레이·시트 위에 항상 표시) -->
+          <div style="flex-shrink:0; display:flex; align-items:center; gap:8px; padding:20px 20px 0; position:relative; z-index:60;">
             <button id="btn-back-s8" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-left:-4px;" aria-label="뒤로">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15,18 9,12 15,6"/>
@@ -1875,15 +1875,6 @@
             </div>
           </div>
 
-          <!-- 시트 열릴 때 오버레이 위에 표시되는 뒤로가기 버튼 (z-index:60) -->
-          <div id="s8-sheet-back" style="position:absolute; top:20px; left:20px; z-index:60; display:none;">
-            <button id="btn-s8-sheet-close" style="width:32px; height:32px; background:none; border:none; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center;" aria-label="닫기">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15,18 9,12 15,6"/>
-              </svg>
-            </button>
-          </div>
-
           <!-- 딤드 오버레이 (z-index:40) -->
           <div id="s8-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0); z-index:40; pointer-events:none;"></div>
 
@@ -1895,8 +1886,8 @@
               <div style="width:40px; height:4px; background:#d9d9d9; border-radius:99px;"></div>
             </div>
 
-            <!-- 타이틀 -->
-            <div style="padding:12px 20px 0; flex-shrink:0;">
+            <!-- 타이틀 (Figma top:36px + pt:12px → 핸들 하단에서 36px 갭) -->
+            <div style="padding:36px 20px 0; flex-shrink:0;">
               <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:24px; margin:0;">부가서비스를 선택할 수 있어요.</p>
             </div>
 
@@ -2028,6 +2019,138 @@
             </div>
 
           </div><!-- /s8-sheet -->
+
+          <!-- T 기프트 시트 (8/8, z-index:51 → 부가서비스 시트 위) -->
+          <div id="s8-sheet-2" style="position:absolute; bottom:0; left:0; right:0; z-index:51; background:white; border-radius:40px 40px 0 0; transform:translateY(100%); max-height:88%; display:flex; flex-direction:column; overflow:hidden;">
+
+            <!-- 드래그 핸들 -->
+            <div style="display:flex; justify-content:center; padding:8px 0 0; flex-shrink:0;">
+              <div style="width:40px; height:4px; background:#d9d9d9; border-radius:99px;"></div>
+            </div>
+
+            <!-- 타이틀 (Figma top:36px + pt:12px) -->
+            <div style="padding:36px 20px 0; flex-shrink:0;">
+              <p style="font-size:18px; font-weight:600; color:#1c1c1e; letter-spacing:-1px; line-height:22px; margin:0;">T 기프트를 선택해 주세요.</p>
+            </div>
+
+            <!-- 서브타이틀 (Figma top:70px + pt:12px, font-size:14px) -->
+            <div style="padding:4px 20px 0; flex-shrink:0;">
+              <p style="font-size:14px; font-weight:400; color:#1c1c1e; letter-spacing:-1px; line-height:22px; margin:0;">SKT를 이용하시는 민수님을 위한 감사의 마음을 가득 담았어요.</p>
+            </div>
+
+            <!-- 스크롤 리스트 -->
+            <div style="flex:1; overflow-y:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:16px 16px 160px;">
+
+              <!-- Card 1: 갤럭시 링 3 (삼성전자) - 이미지 있음 -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; border-radius:8px; overflow:hidden;">
+                  <img src="https://www.figma.com/api/mcp/asset/af291e3e-1038-4b99-80a1-2fbaf77bb06c" style="width:100%; height:100%; object-fit:cover;" alt="갤럭시 링 3">
+                </div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">삼성전자</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">갤럭시 링 3</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 2: 골프존 -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">골프존 (Golfzon)</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">AI 스윙 분석 코칭 & 스크린 5만 포인트</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 3: 벨킨 -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">벨킨 (Belkin)</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">홀로그램 스마트홈 제어 & 4IN1 초고속 충전 스테이션</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 4: T 모빌리티 -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">T 모빌리티 (UAM)</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">도심항공교통(UAM) 공항행 택시 탑승권</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 5: 스태틱 -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">스태틱 (Static)</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">XR 글래스 호환 초경량 그래핀 배터리 팩</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 6: 템퍼 -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">템퍼 (Tempur)</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">AI 수면 스캐너 & 스마트 온도조절 매퍼</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+              </div>
+
+              <!-- Card 7: 맥플러스2 (reversed layout) -->
+              <div class="s10-gift-card" data-selected="false" style="background:white; border:1px solid #e5e5e5; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:8px; cursor:pointer; transition:border 0.15s; margin-bottom:6px;">
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px;">스태틱</span>
+                    <span style="font-size:13px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:16px;">맥플러스2 배터리 팩</span>
+                  </div>
+                  <span style="font-size:12px; color:#444; letter-spacing:-0.4px; line-height:16px; text-decoration:underline; opacity:0.8;">자세히 보기</span>
+                </div>
+                <div style="flex-shrink:0; width:60px; height:60px; background:#eaecf0; border-radius:8px;"></div>
+              </div>
+
+            </div><!-- /scroll list -->
+
+            <!-- 바텀 CTA -->
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:16px 20px 32px; background:linear-gradient(179deg, rgba(255,255,255,0) 0%, white 20%);">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px 16px;">
+                <span style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.56px;">납부 금액</span>
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <span style="font-size:15px; font-weight:600; color:#000; letter-spacing:-1px; line-height:26px;">월 118,700원</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                    <path d="M4 6l4 4 4-4" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:52px; height:52px; border-radius:999px; flex-shrink:0; background:rgba(255,255,255,0.1); box-shadow:0 0 20px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                  <img src="../../assets/images/scenario1/shape-t-agent.svg" style="width:22px; height:22px;" alt="">
+                </div>
+                <div id="s10-next-btn" style="flex:1; background:#a7a7a7; border-radius:20px; padding:16px 32px; display:flex; align-items:center; justify-content:center; cursor:not-allowed; box-shadow:0 8px 8px rgba(106,106,106,.16); transition:background .2s;">
+                  <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.64px;">선택 완료</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /s8-sheet-2 -->
 
         </div>
       </div><!-- /screen-8 -->
@@ -2469,12 +2592,18 @@
       });
     }
 
-    /* screen-8 뒤로 → screen-7 */
+    /* screen-8 뒤로: 시트2 열림→닫기, 시트1 열림→닫기, 둘 다 닫힘→screen-7 */
     var btnBackS8 = document.getElementById('btn-back-s8');
     if (btnBackS8) {
       btnBackS8.addEventListener('click', function() {
-        goTo('screen-7');
-        resetFill(s8Fill, '62.5%');
+        if (s8Sheet2Open) {
+          closeS8Sheet2();
+        } else if (s8SheetOpen) {
+          closeS8Sheet();
+        } else {
+          goTo('screen-7');
+          resetFill(s8Fill, '62.5%');
+        }
       });
     }
 
@@ -2482,11 +2611,9 @@
     var s8SheetOpen = false;
 
     function openS8Sheet() {
-      var sheet     = document.getElementById('s8-sheet');
-      var overlay   = document.getElementById('s8-overlay');
-      var sheetBack = document.getElementById('s8-sheet-back');
+      var sheet   = document.getElementById('s8-sheet');
+      var overlay = document.getElementById('s8-overlay');
 
-      /* screen-8이 이미 visible → void offsetWidth 즉시 동작 */
       if (sheet)   { sheet.style.transition = 'none'; sheet.style.transform = 'translateY(100%)'; }
       if (overlay) { overlay.style.background = 'rgba(0,0,0,0)'; overlay.style.pointerEvents = 'none'; }
       if (sheet)   void sheet.offsetWidth;
@@ -2501,7 +2628,6 @@
         overlay.style.background    = 'rgba(0,0,0,0.5)';
         overlay.style.pointerEvents = 'auto';
       }
-      if (sheetBack) sheetBack.style.display = 'block';
 
       animateFill(s8Fill, '75%', '87.5%');
       var lbl = document.getElementById('s8-step-label');
@@ -2510,9 +2636,8 @@
     }
 
     function closeS8Sheet() {
-      var sheet     = document.getElementById('s8-sheet');
-      var overlay   = document.getElementById('s8-overlay');
-      var sheetBack = document.getElementById('s8-sheet-back');
+      var sheet   = document.getElementById('s8-sheet');
+      var overlay = document.getElementById('s8-overlay');
 
       if (sheet) {
         sheet.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
@@ -2523,7 +2648,6 @@
         overlay.style.background    = 'rgba(0,0,0,0)';
         overlay.style.pointerEvents = 'none';
       }
-      if (sheetBack) sheetBack.style.display = 'none';
 
       resetFill(s8Fill, '75%');
       var lbl = document.getElementById('s8-step-label');
@@ -2538,9 +2662,44 @@
       });
     }
 
-    var btnS8SheetClose = document.getElementById('btn-s8-sheet-close');
-    if (btnS8SheetClose) btnS8SheetClose.addEventListener('click', closeS8Sheet);
+    /* T 기프트 시트 (8/8) 열기/닫기 */
+    var s8Sheet2Open = false;
+    var s10Label = null; /* 8/8 라벨은 s8-step-label 재활용 */
 
+    function openS8Sheet2() {
+      var sheet2 = document.getElementById('s8-sheet-2');
+      if (!sheet2) return;
+      sheet2.style.transition = 'none';
+      sheet2.style.transform  = 'translateY(100%)';
+      void sheet2.offsetWidth;
+      sheet2.style.transition = 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1)';
+      sheet2.style.transform  = 'translateY(0)';
+      animateFill(s8Fill, '87.5%', '100%');
+      var lbl = document.getElementById('s8-step-label');
+      if (lbl) lbl.textContent = '8/8';
+      s8Sheet2Open = true;
+    }
+
+    function closeS8Sheet2() {
+      var sheet2 = document.getElementById('s8-sheet-2');
+      if (!sheet2) return;
+      sheet2.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+      sheet2.style.transform  = 'translateY(100%)';
+      resetFill(s8Fill, '87.5%');
+      var lbl = document.getElementById('s8-step-label');
+      if (lbl) lbl.textContent = '7/8';
+      s8Sheet2Open = false;
+    }
+
+    /* 부가서비스 시트의 "다음으로" → T 기프트 시트 열기 */
+    var s8SheetNextBtn = document.getElementById('s8-sheet-next-btn');
+    if (s8SheetNextBtn) {
+      s8SheetNextBtn.addEventListener('click', function() {
+        if (s8SheetNextBtn.style.cursor === 'pointer') openS8Sheet2();
+      });
+    }
+
+    /* 뒤로가기: 시트2 열림 → 시트2 닫기 / 시트1 열림 → 시트1 닫기 / 둘 다 닫힘 → screen-7 */
     var s8Overlay = document.getElementById('s8-overlay');
     if (s8Overlay) s8Overlay.addEventListener('click', function() { if (s8SheetOpen) closeS8Sheet(); });
   })();
@@ -2633,6 +2792,27 @@
         if (nextBtn) {
           nextBtn.style.background = anySelected ? '#222' : '#a7a7a7';
           nextBtn.style.cursor     = anySelected ? 'pointer' : 'not-allowed';
+        }
+      });
+    });
+  })();
+
+  /* ── T 기프트 라디오 선택 (screen-10 / 8/8 시트) ── */
+  (function() {
+    var cards   = document.querySelectorAll('.s10-gift-card');
+    var nextBtn = document.getElementById('s10-next-btn');
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        cards.forEach(function(c) {
+          c.dataset.selected = 'false';
+          c.style.border = '1px solid #e5e5e5';
+        });
+        card.dataset.selected = 'true';
+        card.style.border = '1px solid #101010';
+        if (nextBtn) {
+          nextBtn.style.background = '#000';
+          nextBtn.style.cursor     = 'pointer';
         }
       });
     });
