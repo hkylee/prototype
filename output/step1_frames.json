@@ -1,0 +1,17 @@
+{
+  "fileKey": "NtS9R6RPV3SkPJPCfVdFsY",
+  "extractedAt": "2026-06-10T00:00:00Z",
+  "frames": [
+    {
+      "id": "8496:9932",
+      "name": "쇼핑 탭 Full",
+      "width": 375,
+      "height": 2540,
+      "screenFile": "output/screens/8496-9932.jsx"
+    }
+  ],
+  "routing": [
+    { "from": "8496:9932", "trigger": "ON_CLICK", "to": "__FALLBACK__", "elementId": null }
+  ],
+  "localAssets": []
+}
