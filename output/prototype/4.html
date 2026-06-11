@@ -226,7 +226,7 @@
   }
   #s4-gnb.visible { opacity: 1; transform: translateY(0); }
   /* 하단 그라디언트 페이드 */
-  #s4-fade {
+  .screen-fade {
     position: absolute; bottom: 0; left: 0; right: 0; height: 140px; z-index: 40;
     pointer-events: none;
     background: linear-gradient(to bottom, rgba(193,193,193,0) 0%, #c1c1c1 50%);
@@ -260,7 +260,7 @@
     top: -83px; left: 20px; width: 335px;
     display: flex; flex-direction: column; gap: 19px;
   }
-  #s5-header {
+  .chat-header {
     position: absolute; top: 0; left: 0; right: 0; height: 72px; z-index: 50;
     padding: 12px 20px; display: flex; align-items: center;
     justify-content: space-between; gap: 6px;
@@ -280,19 +280,8 @@
   #screen-6 { background: #d2d4d9; }
   #s6-chat {
     position: absolute;
-    top: -83px; left: 20px; width: 335px;
+    top: -359px; left: 20px; width: 335px;
     display: flex; flex-direction: column; gap: 19px;
-  }
-  #s6-header {
-    position: absolute; top: 0; left: 0; right: 0; height: 72px; z-index: 50;
-    padding: 12px 20px; display: flex; align-items: center;
-    justify-content: space-between; gap: 6px;
-    background: linear-gradient(to bottom, rgba(210,212,217,0.85) 0%, rgba(210,212,217,0) 100%);
-  }
-  #s6-fade {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 140px; z-index: 40;
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(193,193,193,0) 0%, #c1c1c1 50%);
   }
   #s6-gnb {
     position: absolute; bottom: 34px; left: 20px; right: 20px;
@@ -312,8 +301,39 @@
   #s6-line-track { flex: 1; height: 1px; overflow: hidden; position: relative; }
   #s6-line {
     position: absolute; left: 0; top: 0; height: 1px; width: 0;
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%, #c8c8c8 45%, rgba(255,255,255,0) 100%);
+    background: #adadad;
     transition: width 0.72s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  #s6-confirm-txt {
+    padding: 0 9.5px;
+    opacity: 0; transform: translateY(14px);
+  }
+  #s6-gift-card {
+    background: #fff; border: 1px solid #e7e7e7; border-radius: 24px;
+    padding: 20px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0;
+    opacity: 0; transform: translateY(20px);
+  }
+  #s6-gift-confirm {
+    padding: 0 9.5px;
+    opacity: 0; transform: translateY(18px);
+  }
+  /* ── Sheet 2: 이대로 선물하기를 진행할까요? ── */
+  #s6-sheet2 {
+    position: absolute; bottom: 35px; left: 50%;
+    transform: translateX(-50%) translateY(calc(100% + 40px));
+    transition: transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 335px; z-index: 65;
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 32px;
+    padding: 22px 7px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.05);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  #s6-sheet2.open { transform: translateX(-50%) translateY(0); }
+  .s6-opt {
+    width: 100%; padding: 11px 14px; border-radius: 18px; cursor: pointer;
+    background: rgba(16,16,16,0); transition: background 0.2s ease;
   }
 </style>
 </head>
@@ -874,7 +894,7 @@
   </div><!-- /s4-chat -->
 
   <!-- 하단 그라디언트 페이드 -->
-  <div id="s4-fade"></div>
+  <div class="screen-fade"></div>
 
   <!-- GNB — 하단 입력바 + 정지 버튼 (Figma 9094:15273~15281) -->
   <div id="s4-gnb">
@@ -1081,7 +1101,7 @@
   </div><!-- /s5-chat -->
 
   <!-- 헤더 (Screen 4와 동일 구조) -->
-  <div id="s5-header">
+  <div id="s5-header" class="chat-header">
     <div style="display:flex; align-items:center; gap:12px;
                 background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
                 -webkit-backdrop-filter:blur(20px); border-radius:999px;
@@ -1221,10 +1241,89 @@
       </div>
     </div>
 
+    <!-- ★ 선물 내용 확인 텍스트 (선 완료 후 등장) -->
+    <div id="s6-confirm-txt">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f, #959595);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0;">
+        선물 내용을 확인해 주세요.
+      </p>
+    </div>
+
+    <!-- ★ 선물할 대상 카드 (확인 텍스트 후 등장) -->
+    <div id="s6-gift-card">
+      <!-- 타이틀 -->
+      <div>
+        <p style="font-size:13.3px; font-weight:500; color:#101010; opacity:0.8;
+                  letter-spacing:-0.53px; line-height:1.4; margin:0;">선물할 대상</p>
+      </div>
+      <!-- 수신자 정보 -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:4px;">
+            <span style="font-size:14px; font-weight:700; color:#000; letter-spacing:-0.4px; line-height:1.29;">김현숙</span>
+            <span style="background:#f6f6f6; color:#898989; font-size:10px; font-weight:500;
+                         letter-spacing:-0.4px; padding:2px 4px; border-radius:4px;">어머니</span>
+          </div>
+          <span style="font-size:12px; font-weight:400; color:#404040; letter-spacing:-0.4px;">010-1234-5678</span>
+        </div>
+        <!-- 잔여 데이터 -->
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:14px; font-weight:400; color:#666; letter-spacing:-0.4px;">잔여 데이터</span>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            <div style="display:flex; align-items:flex-end;">
+              <span style="font-size:24px; font-weight:600; color:#ff4043; letter-spacing:-0.72px; line-height:1.25;">0.2</span>
+              <span style="font-size:12px; font-weight:600; color:#ff4043; letter-spacing:-0.36px; line-height:1.67;">GB</span>
+              <span style="font-size:12px; font-weight:400; color:#606060; letter-spacing:-0.36px; line-height:1.67;"> / 8GB</span>
+            </div>
+            <div style="position:relative; width:90px; height:6px;">
+              <div style="position:absolute; inset:0; background:#e7e7e7; border-radius:100px;"></div>
+              <div style="position:absolute; left:0; top:0; width:14px; height:6px; background:#ff4043; border-radius:100px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 구분선 -->
+      <div style="height:1px; background:#e7e7e7;"></div>
+      <!-- 선물 정보 -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:14px; font-weight:400; color:#666; letter-spacing:-0.4px;">내 현재 데이터</span>
+          <div style="display:flex; align-items:center; gap:2px;">
+            <span style="font-size:14px; font-weight:700; color:#000; letter-spacing:-0.4px;">12GB</span>
+            <span style="font-size:14px; font-weight:400; color:#606060; letter-spacing:-0.4px;">/ 15GB</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:14px; font-weight:400; color:#666; letter-spacing:-0.4px;">선물 후 내 잔여 데이터</span>
+          <div style="display:flex; align-items:center; gap:4px;">
+            <span style="background:rgba(54,23,206,0.05); color:#898989; font-size:10px; font-weight:500;
+                         letter-spacing:-0.4px; padding:2px 4px; border-radius:4px;">-2GB</span>
+            <span style="font-size:14px; font-weight:700; color:#3617ce; letter-spacing:-0.4px;">10GB</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:14px; font-weight:400; color:#666; letter-spacing:-0.4px;">이번 달 선물 가능한 횟수</span>
+          <span style="font-size:14px; font-weight:400; color:#222; letter-spacing:-0.4px;">3회</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ★ "이대로 선물하기를 진행할까요?" (giftcard 후 등장) -->
+    <div id="s6-gift-confirm">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f, #959595);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0;">
+        이대로 선물하기를 진행할까요?
+      </p>
+    </div>
+
   </div><!-- /s6-chat -->
 
   <!-- 하단 그라데이션 페이드 -->
-  <div id="s6-fade"></div>
+  <div class="screen-fade"></div>
 
   <!-- GNB (sparkle + placeholder + 정지 버튼) -->
   <div id="s6-gnb">
@@ -1241,8 +1340,8 @@
     </div>
   </div>
 
-  <!-- 헤더 (Screen 5와 동일) -->
-  <div id="s6-header">
+  <!-- 헤더 (Screen 4/5와 동일 asset) -->
+  <div id="s6-header" class="chat-header">
     <div style="display:flex; align-items:center; gap:12px;
                 background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
                 -webkit-backdrop-filter:blur(20px); border-radius:999px;
@@ -1250,7 +1349,7 @@
                 box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden;">
       <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
         <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
-          <img src="../../assets/images/scenario4/ico-back-s5.png" alt=""
+          <img src="https://www.figma.com/api/mcp/asset/93b6f537-2ff0-4028-9c92-56528564593d" alt=""
                style="position:absolute; top:-1px; left:-1px; width:calc(100% + 2px); height:calc(100% + 2px); display:block;">
         </div>
       </div>
@@ -1264,10 +1363,41 @@
             style="background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
                    -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,.05);">
       <div style="position:relative; width:24px; height:24px;">
-        <img src="../../assets/images/scenario4/ico-history-s5.png" alt=""
+        <img src="https://www.figma.com/api/mcp/asset/755b88fc-7506-4505-9e8c-5e85894bc331" alt=""
              style="position:absolute; inset:0; width:100%; height:100%; display:block;">
       </div>
     </button>
+  </div>
+
+  <!-- Sheet 2: 이대로 선물하기를 진행할까요? (Figma 9094:16309) -->
+  <div id="s6-sheet2">
+    <!-- 타이틀 + 닫기 버튼 -->
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0 14px; min-height:25px;">
+      <p style="font-size:16px; font-weight:600; color:#101010; letter-spacing:-0.65px; line-height:1.2; white-space:nowrap;">
+        이대로 선물하기를 진행할까요?
+      </p>
+      <button onclick="closeSheet2()"
+              style="width:25px; height:25px; border-radius:50%; background:rgba(255,255,255,0.8);
+                     border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;
+                     padding:0; flex-shrink:0;">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M1 1L9 9M9 1L1 9" stroke="#101010" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <!-- 선택 옵션 -->
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <div id="s6-opt1" class="s6-opt" onclick="selectGiftYes()">
+        <p style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.29px; line-height:1.3; margin:0;">
+          네, 선물할게요
+        </p>
+      </div>
+      <div class="s6-opt">
+        <p style="font-size:14px; font-weight:500; color:#101010; letter-spacing:-0.29px; line-height:1.3; margin:0;">
+          아니요, 다음에 할게요
+        </p>
+      </div>
+    </div>
   </div>
 
 </div><!-- /screen-6 -->
@@ -1423,7 +1553,10 @@ function handleSend() {
 
 /* ── Screen 3 채팅 영역 초기화 ── */
 function resetChatArea() {
-  document.getElementById('s3-chat').innerHTML = '';
+  var s3chat = document.getElementById('s3-chat');
+  s3chat.innerHTML = '';
+  s3chat.style.opacity = '';
+  s3chat.style.transition = '';
 }
 
 /* ══════════════════════════════════════
@@ -1686,68 +1819,177 @@ function closeSheet4() {
    "올라가는 느낌" — 슬라이드업 애니메이션
 ══════════════════════════════════════ */
 function goToScreen5() {
-  var s5 = document.getElementById('screen-5');
+  var s5      = document.getElementById('screen-5');
+  var chat    = document.getElementById('s5-chat');
+  var header  = document.getElementById('s5-header');
   var current = document.querySelector('.screen.active');
 
-  /* 1. s5를 화면 아래에 준비 */
+  /* 배경 즉시 전환 (같은 회색 — 시각적 변화 없음) */
+  if (current) { current.classList.remove('active'); current.style.display = 'none'; }
   s5.style.display = 'block';
-  s5.style.transform = 'translateY(100%)';
-  s5.style.transition = 'none';
+  s5.classList.add('active');
+
+  /* 채팅은 아래에서, 헤더는 투명으로 준비 */
+  chat.style.transition   = 'none';
+  chat.style.transform    = 'translateY(900px)';
+  header.style.transition = 'none';
+  header.style.opacity    = '0';
   void s5.getBoundingClientRect();
 
-  /* 2. s5 슬라이드업 */
-  s5.style.transition = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-  s5.style.transform  = 'translateY(0)';
+  /* 채팅만 슬라이드업, 헤더 동시에 페이드인 */
+  chat.style.transition   = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  chat.style.transform    = 'translateY(0)';
+  header.style.transition = 'opacity 0.4s ease';
+  header.style.opacity    = '1';
 
-  /* 3. 완료 후 정리 → 1.5s 뒤 Screen 6로 자동 이동 */
+  /* 정리 → 1.5s 뒤 Screen 6 */
   setTimeout(function() {
-    if (current) {
-      current.classList.remove('active');
-      current.style.display = 'none';
-    }
-    s5.classList.add('active');
-    s5.style.transform  = '';
-    s5.style.transition = '';
-
+    chat.style.transition   = '';
+    chat.style.transform    = '';
+    header.style.transition = '';
+    header.style.opacity    = '';
     setTimeout(goToScreen6, 1500);
-  }, 520);
+  }, 550);
 }
 
 /* ══════════════════════════════════════
    Screen 5 → Screen 6 전환 (자동)
-   "상세 내용 확인" 텍스트 등장 → 좌→우 선 등장
+   공유 콘텐츠는 제자리, chat만 살짝 올라가며 새 항목 등장
 ══════════════════════════════════════ */
 function goToScreen6() {
-  /* 애니메이션 요소 초기화 */
-  var row  = document.getElementById('s6-complete-row');
-  var line = document.getElementById('s6-line');
+  var row         = document.getElementById('s6-complete-row');
+  var line        = document.getElementById('s6-line');
+  var confirmTxt  = document.getElementById('s6-confirm-txt');
+  var giftCard    = document.getElementById('s6-gift-card');
+  var giftConfirm = document.getElementById('s6-gift-confirm');
+  var chat        = document.getElementById('s6-chat');
+
+  /* Sheet 2 초기화 */
+  var sheet2 = document.getElementById('s6-sheet2');
+  if (sheet2) sheet2.classList.remove('open');
+  var opt1 = document.getElementById('s6-opt1');
+  if (opt1) opt1.style.background = 'rgba(16,16,16,0)';
+
+  /* 초기화 */
   if (row)  { row.classList.remove('visible'); }
   if (line) { line.style.transition = 'none'; line.style.width = '0'; }
+  if (confirmTxt)  { confirmTxt.style.transition  = 'none'; confirmTxt.style.opacity  = '0'; confirmTxt.style.transform  = 'translateY(18px)'; }
+  if (giftCard)    { giftCard.style.transition    = 'none'; giftCard.style.opacity    = '0'; giftCard.style.transform    = 'translateY(22px)'; }
+  if (giftConfirm) { giftConfirm.style.transition = 'none'; giftConfirm.style.opacity = '0'; giftConfirm.style.transform = 'translateY(18px)'; }
+  if (chat)        { chat.style.transition = 'none'; chat.style.transform = 'translateY(0)'; }
 
-  /* 빠른 crossfade (같은 배경색 → 사실상 content swap) */
-  crossfadeTo('screen-6', 180);
+  /* Screen 5 → 6 즉시 교체 — 공유 콘텐츠 위치 동일하므로 점프 없음 */
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+    s.style.display    = 'none';
+    s.style.opacity    = '';
+    s.style.transition = '';
+  });
+  var s6 = document.getElementById('screen-6');
+  s6.style.display = 'block';
+  s6.classList.add('active');
 
-  /* 1. 텍스트 등장 (200ms 후) */
-  setTimeout(function() {
-    if (row) row.classList.add('visible');
-
-    /* 2. 선 좌→우 (텍스트 등장 중 450ms 후) */
-    setTimeout(function() {
-      if (line) {
-        void line.getBoundingClientRect();
-        line.style.transition = 'width 0.72s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        var track = document.getElementById('s6-line-track');
-        line.style.width = track ? (track.offsetWidth + 'px') : '100%';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      /* chat 살짝 위로 스크롤 */
+      if (chat) {
+        chat.style.transition = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        chat.style.transform  = 'translateY(-24px)';
       }
-    }, 450);
-  }, 200);
+
+      /* 1. "상세 내용 확인" 행 등장 */
+      setTimeout(function() {
+        if (row) row.classList.add('visible');
+
+        /* 2. 선 좌→우 */
+        setTimeout(function() {
+          if (line) {
+            void line.getBoundingClientRect();
+            line.style.transition = 'width 0.72s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            var trackW = (document.getElementById('s6-line-track') || {}).offsetWidth || 0;
+            line.style.width = trackW + 'px';
+          }
+
+          /* 3. "선물 내용을 확인해 주세요." — 여유있게 */
+          setTimeout(function() {
+            if (confirmTxt) {
+              confirmTxt.style.transition = 'opacity 0.6s cubic-bezier(0,0,0.35,1), transform 0.6s cubic-bezier(0,0,0.35,1)';
+              confirmTxt.style.opacity    = '1';
+              confirmTxt.style.transform  = 'translateY(0)';
+            }
+            /* 4. 선물할 대상 카드 — 800ms 간격 (둥둥) */
+            setTimeout(function() {
+              if (giftCard) {
+                giftCard.style.transition = 'opacity 0.6s cubic-bezier(0,0,0.35,1), transform 0.6s cubic-bezier(0,0,0.35,1)';
+                giftCard.style.opacity    = '1';
+                giftCard.style.transform  = 'translateY(0)';
+              }
+              /* 5. "이대로 선물하기를 진행할까요?" — 800ms 간격 */
+              setTimeout(function() {
+                if (giftConfirm) {
+                  giftConfirm.style.transition = 'opacity 0.6s cubic-bezier(0,0,0.35,1), transform 0.6s cubic-bezier(0,0,0.35,1)';
+                  giftConfirm.style.opacity    = '1';
+                  giftConfirm.style.transform  = 'translateY(0)';
+                }
+                /* Sheet 2 슬라이드업 (giftConfirm 등장 후 700ms) */
+                setTimeout(showSheet2, 700);
+              }, 800);
+            }, 800);
+          }, 920);
+        }, 450);
+      }, 100);
+    });
+  });
+}
+
+/* ══════════════════════════════════════
+   Screen 6: Sheet 2 ("이대로 선물하기를 진행할까요?")
+══════════════════════════════════════ */
+function showSheet2() {
+  /* AI 채팅 버블 페이드아웃 */
+  var gc = document.getElementById('s6-gift-confirm');
+  if (gc) {
+    gc.style.transition = 'opacity 0.32s cubic-bezier(0,0,0.35,1)';
+    gc.style.opacity    = '0';
+  }
+  /* Sheet 2 슬라이드업 (페이드아웃과 살짝 겹치게) */
+  setTimeout(function() {
+    var s = document.getElementById('s6-sheet2');
+    if (s) s.classList.add('open');
+  }, 160);
+}
+
+function closeSheet2() {
+  var s = document.getElementById('s6-sheet2');
+  if (s) s.classList.remove('open');
+}
+
+function selectGiftYes() {
+  var opt = document.getElementById('s6-opt1');
+  if (opt) opt.style.background = 'rgba(16,16,16,0.08)';
+
+  setTimeout(function() {
+    closeSheet2();
+    setTimeout(function() {
+      var chat = document.getElementById('s6-chat');
+      if (!chat) return;
+      var msg = document.createElement('div');
+      msg.style.cssText = 'display:flex;justify-content:flex-end;padding:0 9.5px;opacity:0;transform:translateY(14px);transition:opacity 0.46s ease,transform 0.46s ease;';
+      msg.innerHTML = '<p style="font-size:16px;font-weight:500;color:#222;letter-spacing:-0.64px;line-height:1.5;margin:0;">네, 선물할게요.</p>';
+      chat.appendChild(msg);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          msg.style.opacity   = '1';
+          msg.style.transform = 'translateY(0)';
+        });
+      });
+    }, 420);
+  }, 280);
 }
 
 /* ══════════════════════════════════════
    뒤로가기 → Screen 1 (hard cut)
 ══════════════════════════════════════ */
-function goBack6() { goBack(); }
-
 function goBack() {
   resetChatArea();
   resetTyping();
