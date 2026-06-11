@@ -355,12 +355,12 @@
     transition: opacity 0.6s cubic-bezier(0,0,0.35,1), transform 0.6s cubic-bezier(0,0,0.35,1);
   }
   #s8-card {
-    opacity: 0; transform: translateY(22px);
+    overflow: hidden; opacity: 0; transform: translateY(22px);
     transition: opacity 0.6s cubic-bezier(0,0,0.35,1), transform 0.6s cubic-bezier(0,0,0.35,1);
   }
   @keyframes s8-spin { to { transform: rotate(360deg); } }
   .s8-spinner {
-    width: 34px; height: 34px; flex-shrink: 0;
+    width: 34.164px; height: 34.164px;
     border: 2.5px solid rgba(16,16,16,0.12);
     border-top-color: rgba(16,16,16,0.6);
     border-radius: 50%;
@@ -1638,29 +1638,69 @@
       </p>
     </div>
 
-    <!-- ★ 데이터 전송중 카드 -->
-    <div id="s8-card" style="background:#fff; border-radius:23px; padding:23px;
-                             display:flex; flex-direction:column; gap:19px; flex-shrink:0;">
-      <!-- 스피너 + 텍스트 -->
-      <div style="display:flex; align-items:center; gap:16px;">
-        <div class="s8-spinner"></div>
-        <div style="display:flex; flex-direction:column; gap:4px; min-width:0;">
-          <p style="font-size:17px; font-weight:600; color:#101010; opacity:0.9;
-                    letter-spacing:-0.68px; line-height:1.3; margin:0;">데이터 전송중</p>
-          <p style="font-size:13.3px; font-weight:500; color:#101010; opacity:0.8;
-                    letter-spacing:-0.53px; line-height:1.4; margin:0;">
+    <!-- ★ 데이터 전송중/완료 카드 (Figma 9094:16821 → 9094:17093) -->
+    <div id="s8-card" style="background:#fff; border-radius:22.776px;
+                             padding:22.776px 22.776px 0 22.776px;
+                             display:flex; flex-direction:column; align-items:flex-end;
+                             flex-shrink:0; width:335px;">
+      <!-- txt_title: 고정 높이 39.858px -->
+      <div style="position:relative; height:39.858px; width:100%; flex-shrink:0;">
+        <!-- 전송중 텍스트 -->
+        <div id="s8-txt-loading" style="position:absolute; left:0; top:0; width:240.099px;
+                                         height:39.858px; display:flex; flex-direction:column;">
+          <p style="font-size:17.082px; font-weight:600; color:#101010; opacity:0.9;
+                    letter-spacing:-1.0249px; line-height:1.2; margin:0; white-space:nowrap;">
+            데이터 전송중
+          </p>
+          <p style="font-size:13.286px; font-weight:500; color:#101010; opacity:0.8;
+                    letter-spacing:-0.5314px; line-height:1.4; margin:0; white-space:nowrap;">
             어머니께 데이터 2GB를 선물하고 있어요.
           </p>
         </div>
+        <!-- 전송 완료 텍스트 (초기 hidden) -->
+        <div id="s8-txt-done" style="position:absolute; left:0; top:0; width:240.099px;
+                                      height:39.858px; display:flex; flex-direction:column; opacity:0;">
+          <p style="font-size:17.082px; font-weight:600; color:#101010; opacity:0.9;
+                    letter-spacing:-1.0249px; line-height:1.2; margin:0; white-space:nowrap;">
+            데이터 전송 완료
+          </p>
+          <p style="font-size:13.286px; font-weight:500; color:#101010; opacity:0.8;
+                    letter-spacing:-0.5314px; line-height:1.4; margin:0; white-space:nowrap;">
+            어머니께 데이터 2GB 선물이 완료됐어요.
+          </p>
+        </div>
+        <!-- 스피너 (absolute, Figma left:255.28px, top:2.85px) -->
+        <div id="s8-spinner-el" class="s8-spinner"
+             style="position:absolute; left:255.28px; top:2.85px;"></div>
+        <!-- 체크마크 (초기 hidden) -->
+        <div id="s8-check-el"
+             style="position:absolute; left:255.28px; top:2.85px;
+                    width:34.164px; height:34.164px; border-radius:50%;
+                    background:#222; display:flex; align-items:center; justify-content:center;
+                    opacity:0;">
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+            <path d="M1.5 5.5L5.5 8.5L12.5 1.5"
+                  stroke="white" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
       </div>
-      <!-- 중단하기 버튼 -->
-      <div style="display:flex; justify-content:center;">
-        <button style="background:#222; border:none; border-radius:999px;
-                       padding:11px 17px; cursor:pointer;">
-          <span style="font-size:13.3px; font-weight:600; color:#fff; opacity:0.9;
-                       letter-spacing:-0.53px;">중단하기</span>
-        </button>
+      <!-- 접히는 영역: gap(18.98px) + 중단하기 버튼 + bottom padding(22.776px) -->
+      <div id="s8-card-bottom" style="overflow:hidden; width:100%; max-height:90px;">
+        <div style="height:18.98px;"></div>
+        <div style="display:flex; justify-content:flex-end;">
+          <div style="background:#222; border-radius:948.059px; padding:11.388px 17.082px; flex-shrink:0;">
+            <p style="font-size:13.286px; font-weight:600; color:#fff; opacity:0.9;
+                      letter-spacing:-0.5314px; line-height:1.4; margin:0; white-space:nowrap;">
+              중단하기
+            </p>
+          </div>
+        </div>
+        <div style="height:22.776px;"></div>
       </div>
+      <!-- 완료 시 bottom padding (평소에는 height:0) -->
+      <div id="s8-card-bp" style="height:0; width:100%; overflow:hidden;
+                                   transition:height 0.45s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
     </div>
 
   </div><!-- /s8-chat -->
@@ -1753,17 +1793,19 @@ function crossfadeTo(targetId, duration) {
 ══════════════════════════════════════ */
 function showKeyboard() {
   document.getElementById('s1-dim').classList.add('open');
-  var kb    = document.getElementById('s1-keyboard');
-  var cards = document.getElementById('s1-cards');
+  var kb     = document.getElementById('s1-keyboard');
+  var cards  = document.getElementById('s1-cards');
+  var screen = document.getElementById('screen-1');
   kb.classList.add('open');
   cards.classList.add('keyboard-open');
 
-  /* 키보드 실제 높이로 카드 위치 계산 — chat 위 10px gap */
-  var kbH      = kb.offsetHeight;          // keyboard 실측 높이
-  var cardsH   = cards.offsetHeight;       // card 실측 높이
-  var kbTop    = 812 - kbH;               // keyboard top (screen 기준)
-  var targetTop = kbTop - 10 - cardsH;    // card top = keyboard - 10px - card높이
-  var ty        = targetTop - 202;         // 기준 top:202px 에서 delta
+  /* 실제 screen 높이 기준으로 계산 (모바일 100dvh ≠ 812px) */
+  var kbH       = kb.offsetHeight;
+  var cardsH    = cards.offsetHeight;
+  var screenH   = screen.offsetHeight;
+  var kbTop     = screenH - kbH;
+  var targetTop = kbTop - 10 - cardsH;
+  var ty        = targetTop - 202;
   cards.style.transform = 'translateY(' + ty + 'px)';
 }
 
@@ -2295,6 +2337,20 @@ function goToScreen8() {
   if (line)        { line.style.transition='none'; line.style.width='0'; }
   if (aiText)      { aiText.style.transition='none'; aiText.style.opacity='0'; aiText.style.transform='translateY(18px)'; }
   if (card)        { card.style.transition='none'; card.style.opacity='0'; card.style.transform='translateY(22px)'; }
+
+  // Reset 전송 완료 상태
+  var txtL = document.getElementById('s8-txt-loading');
+  var txtD = document.getElementById('s8-txt-done');
+  var spinEl = document.getElementById('s8-spinner-el');
+  var chkEl = document.getElementById('s8-check-el');
+  var cBottom = document.getElementById('s8-card-bottom');
+  var cBp    = document.getElementById('s8-card-bp');
+  if (txtL)   { txtL.style.transition='none'; txtL.style.opacity='1'; }
+  if (txtD)   { txtD.style.transition='none'; txtD.style.opacity='0'; }
+  if (spinEl) { spinEl.style.transition='none'; spinEl.style.opacity='1'; spinEl.style.animation='s8-spin 1s linear infinite'; }
+  if (chkEl)  { chkEl.style.transition='none'; chkEl.style.opacity='0'; }
+  if (cBottom){ cBottom.style.transition='none'; cBottom.style.maxHeight='90px'; cBottom.style.opacity='1'; }
+  if (cBp)    { cBp.style.transition='none'; cBp.style.height='0'; }
   // Figma chat top:-703px = prototype top:-83px + translateY(-620px)
   if (chat)        { chat.style.transition='none'; chat.style.transform='translateY(-620px)'; }
 
@@ -2320,13 +2376,58 @@ function goToScreen8() {
           setTimeout(function() {
             if (aiText) { aiText.style.transition='opacity 0.6s cubic-bezier(0,0,0.35,1),transform 0.6s cubic-bezier(0,0,0.35,1)'; aiText.style.opacity='1'; aiText.style.transform='translateY(0)'; }
             setTimeout(function() {
-              if (card) { card.style.transition='opacity 0.6s cubic-bezier(0,0,0.35,1),transform 0.6s cubic-bezier(0,0,0.35,1)'; card.style.opacity='1'; card.style.transform='translateY(0)'; }
+              if (card) {
+                card.style.transition='opacity 0.6s cubic-bezier(0,0,0.35,1),transform 0.6s cubic-bezier(0,0,0.35,1)';
+                card.style.opacity='1'; card.style.transform='translateY(0)';
+                setTimeout(goToScreen9, 3500);
+              }
             }, 800);
           }, 920);
         }, 450);
       }, 100);
     });
   });
+}
+
+/* ══════════════════════════════════════
+   Screen 9: 데이터 전송 완료
+══════════════════════════════════════ */
+function goToScreen9() {
+  var txtL   = document.getElementById('s8-txt-loading');
+  var txtD   = document.getElementById('s8-txt-done');
+  var spinEl = document.getElementById('s8-spinner-el');
+  var chkEl  = document.getElementById('s8-check-el');
+  var cBottom= document.getElementById('s8-card-bottom');
+  var cBp    = document.getElementById('s8-card-bp');
+
+  // 아이콘 crossfade: 스피너 fade-out + 체크 fade-in
+  if (spinEl) {
+    spinEl.style.animation = 'none';
+    spinEl.style.transition = 'opacity 0.35s ease';
+    spinEl.style.opacity = '0';
+  }
+  if (chkEl) {
+    chkEl.style.transition = 'opacity 0.35s ease';
+    chkEl.style.opacity = '1';
+  }
+
+  // 텍스트 crossfade
+  if (txtL) { txtL.style.transition = 'opacity 0.35s ease'; txtL.style.opacity = '0'; }
+  if (txtD) { txtD.style.transition = 'opacity 0.35s ease'; txtD.style.opacity = '1'; }
+
+  // 중단하기 버튼 collapse (max-height 0 → 카드 높이 85.411px로 축소)
+  setTimeout(function() {
+    if (cBottom) {
+      cBottom.style.transition = 'max-height 0.45s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.25s ease';
+      cBottom.style.maxHeight = '0';
+      cBottom.style.opacity = '0';
+    }
+    // bottom padding 복원 (카드 bottom padding 역할)
+    if (cBp) {
+      cBp.style.transition = 'height 0.45s cubic-bezier(0.25,0.46,0.45,0.94)';
+      cBp.style.height = '22.776px';
+    }
+  }, 200);
 }
 
 /* ══════════════════════════════════════
