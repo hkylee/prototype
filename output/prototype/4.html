@@ -1268,35 +1268,34 @@ function scrollToBottom() {
 ══════════════════════════════════════ */
 async function startChatAnimation() {
 
-  /* Step 1: AI 심볼 펄스 (Figma 9094:14864 — 29px 원, 스파클 아이콘)
-     scale 등장 — translateY fly-up 대신 제자리에서 나타나는 느낌 */
-  const loadingEl = await addBubble(`
+  /* 심볼 + 텍스트를 하나의 버블로 — 심볼은 바로 등장(펄스), 텍스트는 1.1초 후 fade-in */
+  await addBubble(`
     <div style="padding-left:10px;">
-      <div class="ai-icon-pulse"
-           style="width:29px; height:29px; border-radius:999px;
+      <div id="s3-ai-icon" class="ai-icon-pulse"
+           style="width:29px; height:29px; border-radius:999px; margin-bottom:19px;
                   background:linear-gradient(to bottom, #ffffff, rgba(101,101,101,0));
                   display:flex; align-items:center; justify-content:center; position:relative;">
         <img src="../../assets/images/scenario4/ico-gnb-sparkle.svg" alt=""
              style="position:absolute; left:6.5px; top:6.5px; width:16px; height:16px; display:block;">
       </div>
+      <p class="s3-ai-text" id="s3-ai-main-text"
+         style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f 0%, #959595 100%);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; width:318px;
+                opacity:0; transition:opacity 0.52s cubic-bezier(0,0,0.35,1);">
+        어머니께 데이터 선물이 가능한지 확인해볼게요.
+      </p>
     </div>
   `, 0, 'chat-bubble-scale');
 
-  /* Step 2: 1.1초 후 → 로딩 아이콘 fade-out, AI 텍스트 등장 */
+  /* 1.1초 후 → 텍스트 fade-in + 심볼 펄스 중단 */
   setTimeout(() => {
-    if (loadingEl) loadingEl.remove();
+    var text = document.getElementById('s3-ai-main-text');
+    if (text) text.style.opacity = '1';
 
-    addBubble(`
-      <div style="padding-left:10px;">
-        <p class="s3-ai-text" id="s3-ai-main-text"
-           style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
-                  background:linear-gradient(to right, #2f2f2f 0%, #959595 100%);
-                  -webkit-background-clip:text; background-clip:text;
-                  -webkit-text-fill-color:transparent; width:318px;">
-          어머니께 데이터 선물이 가능한지 확인해볼게요.
-        </p>
-      </div>
-    `, 0, 'chat-bubble-scale');
+    var icon = document.getElementById('s3-ai-icon');
+    if (icon) icon.classList.remove('ai-icon-pulse');
 
     /* Screen 3→4 전환: AI 텍스트가 화면에 안착한 후(1.6s) 실행 */
     setTimeout(transitionToScreen4, 1600);
