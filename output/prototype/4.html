@@ -246,7 +246,7 @@
     box-shadow: 0 0 18px rgba(0,0,0,0.05);
     overflow: hidden;
     display: flex; flex-direction: column; gap: 12px;
-    transform: translateX(-50%) translateY(calc(100% + 24px));
+    transform: translateX(-50%) translateY(calc(100% + 80px));
     transition: transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   #s4-sheet.open { transform: translateX(-50%) translateY(0); }
@@ -1284,11 +1284,7 @@ async function startChatAnimation() {
 
   /* Step 2: 1.1초 후 → 로딩 아이콘 fade-out, AI 텍스트 등장 */
   setTimeout(() => {
-    if (loadingEl) {
-      loadingEl.style.transition = 'opacity 0.32s ease-out';
-      loadingEl.style.opacity = '0';
-      setTimeout(() => loadingEl.remove(), 320);
-    }
+    if (loadingEl) loadingEl.remove();
 
     addBubble(`
       <div style="padding-left:10px;">
