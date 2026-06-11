@@ -237,13 +237,15 @@
     left: 50%;
     bottom: 35px;
     width: 335px;
+    height: 223px;
     background: rgba(255,255,255,0.4);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-radius: 32px;
-    padding: 22px 7px 20px;
+    padding: 22px 7px;
     z-index: 65;
     box-shadow: 0 0 18px rgba(0,0,0,0.05);
     overflow: hidden;
+    display: flex; flex-direction: column; gap: 12px;
     transform: translateX(-50%) translateY(calc(100% + 24px));
     transition: transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
@@ -825,58 +827,32 @@
     </div>
   </div>
 
-  <!-- Sheet1: 얼마나 선물할까요? (Figma 9094:15383) -->
+  <!-- Sheet1: 얼마나 선물할까요? (Figma 9094:15383 — 335×223px) -->
   <div id="s4-sheet">
 
-    <!-- 제목 + 닫기 (9094:15385) -->
+    <!-- 제목 + 닫기 (9094:15385 — h:25.147px, px:14.37px) -->
     <div style="display:flex; align-items:center; justify-content:space-between;
-                padding:0 14px; margin-bottom:20px;">
-      <span style="font-size:16px; font-weight:700; color:#101010; letter-spacing:-0.65px; line-height:1.2;">
+                padding:0 14px; flex-shrink:0;">
+      <span style="font-size:16px; font-weight:600; color:#101010;
+                   letter-spacing:-0.65px; line-height:1.2; white-space:nowrap;">
         얼마나 선물할까요?
       </span>
+      <!-- 닫기 버튼 (9094:15387 — size:25px, bg rgba(255,255,255,0.8)) -->
       <button onclick="closeSheet4()"
               style="width:25px; height:25px; border-radius:999px; border:none;
-                     background:rgba(255,255,255,0.8); cursor:pointer;
-                     display:flex; align-items:center; justify-content:center;
-                     font-size:14px; color:#555; line-height:1; flex-shrink:0;">
-        &#xd7;
+                     background:rgba(255,255,255,0.8); cursor:pointer; flex-shrink:0;
+                     display:flex; align-items:center; justify-content:center; padding:0;">
+        <!-- X 아이콘 (9094:15388 imgVector27811) -->
+        <img src="https://www.figma.com/api/mcp/asset/9a8adf0b-0ded-4d16-998d-69a9ecb39153" alt=""
+             style="width:11px; height:11px; display:block;">
       </button>
     </div>
 
-    <!-- 슬라이더 (Figma: track w=266px h=8px black, thumb circle 22px) -->
-    <div style="padding:0 14px; margin-bottom:4px;">
-      <div id="s4-slider-wrap"
-           style="position:relative; height:22px; cursor:pointer; touch-action:none;"
-           onmousedown="sheetSliderDown(event)"
-           ontouchstart="sheetSliderDown(event)">
-        <!-- 트랙 배경 -->
-        <div style="position:absolute; left:11px; right:11px; top:50%; transform:translateY(-50%);
-                    height:8px; border-radius:100px; background:rgba(0,0,0,0.12);"></div>
-        <!-- 트랙 fill -->
-        <div id="s4-track-fill"
-             style="position:absolute; left:11px; top:50%; transform:translateY(-50%);
-                    height:8px; border-radius:100px; background:#222;
-                    transition:width 0.18s ease; width:calc(100% - 22px);"></div>
-        <!-- 썸 -->
-        <div id="s4-thumb"
-             style="position:absolute; top:50%; transform:translate(-50%,-50%);
-                    width:22px; height:22px; border-radius:50%;
-                    background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.25);
-                    transition:left 0.18s ease; left:calc(100% - 11px); pointer-events:none;"></div>
-      </div>
-      <!-- 레이블 -->
-      <div style="display:flex; justify-content:space-between; padding:0 6px; margin-top:6px;">
-        <span style="font-size:11px; color:rgba(0,0,0,0.3); letter-spacing:-0.2px;">0GB</span>
-        <span style="font-size:11px; color:rgba(0,0,0,0.3); letter-spacing:-0.2px;">1GB</span>
-        <span style="font-size:11px; color:rgba(0,0,0,0.3); letter-spacing:-0.2px;">2GB</span>
-      </div>
-    </div>
-
-    <!-- GB 표시 + 설명 -->
-    <div style="text-align:center; padding:8px 14px 0;">
+    <!-- GB 표시 + 설명 (9094:15392–15396 — text-center) -->
+    <div style="text-align:center; padding:8px 14px; flex-shrink:0;">
       <div id="s4-gb-label"
-           style="font-size:20px; font-weight:500; color:#000; letter-spacing:-0.4px;
-                  margin-bottom:6px; line-height:1.3;">2GB</div>
+           style="font-size:20px; font-weight:500; color:#000;
+                  letter-spacing:-0.4px; line-height:1.3; margin-bottom:6px;">2GB</div>
       <div id="s4-gb-desc"
            style="font-size:14px; font-weight:500; color:rgba(0,0,0,0.8);
                   letter-spacing:-0.28px; line-height:1.3;">
@@ -884,11 +860,34 @@
       </div>
     </div>
 
-    <!-- 선물하기 버튼 -->
-    <div style="display:flex; justify-content:center; margin-top:18px;">
+    <!-- 슬라이더 (9094:15389–15391 — track 266×8px black, thumb 22px white circle) -->
+    <div style="padding:0 24px; flex-shrink:0;">
+      <div id="s4-slider-wrap"
+           style="position:relative; height:22px; cursor:pointer; touch-action:none;"
+           onmousedown="sheetSliderDown(event)"
+           ontouchstart="sheetSliderDown(event)">
+        <!-- 트랙 배경 -->
+        <div style="position:absolute; left:11px; right:11px; top:50%; transform:translateY(-50%);
+                    height:8px; border-radius:100px; background:rgba(0,0,0,0.12);"></div>
+        <!-- 트랙 fill (black) -->
+        <div id="s4-track-fill"
+             style="position:absolute; left:11px; top:50%; transform:translateY(-50%);
+                    height:8px; border-radius:100px; background:#000;
+                    transition:width 0.18s ease;"></div>
+        <!-- 썸 (Figma: white circle, 22px, shadow) -->
+        <div id="s4-thumb"
+             style="position:absolute; top:50%; transform:translate(-50%,-50%);
+                    width:22px; height:22px; border-radius:50%;
+                    background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.25);
+                    transition:left 0.18s ease; pointer-events:none;"></div>
+      </div>
+    </div>
+
+    <!-- 선물하기 버튼 (9094:15397 — absolute left:122 top:170 → flex center) -->
+    <div style="display:flex; justify-content:center; flex-shrink:0; margin-top:auto;">
       <button style="background:#222; color:#fff; font-size:14px; font-weight:600;
                      letter-spacing:-0.56px; line-height:1.3; padding:8px 22px;
-                     border-radius:20px; border:none; cursor:pointer;
+                     border-radius:20px; border:none; cursor:pointer; font-family:inherit;
                      box-shadow:0 8px 8px rgba(106,106,106,0.16);">
         선물하기
       </button>
