@@ -357,20 +357,17 @@
         </button>
       </div>
       <!-- iPhone 이미지 (Figma 9094:10613)
-           Figma: container left=240 top=26 w=75 h=154, mask-no-clip → 마스크가 35px 왼쪽으로 확장
-           → container를 205px에서 시작해 mask fade 영역 포함 (width 130px)
-           mask-mode:alpha 필수 — SVG mask의 기본 luminance 모드는 #D9D9D9=85% → 이미지 흐려짐 -->
-      <div style="position:absolute; left:205px; top:26px; width:130px; height:154px;
+           container: left=240 top=26 w=75 h=154 (Figma 원본 치수)
+           mask: CSS linear-gradient 직접 사용 (SVG base64 우회)
+                 Figma gradient: (67,74)→(109,157.9) in 148×148 → 방향각 ~155deg
+                 CSS gradient는 match-source 기본값에서 알파 채널 직접 사용 — mask-mode 불필요
+           img: w=650.28%×75=488px / left=-255.91%×75=-192px / top=-38.68%×154=-60px -->
+      <div style="position:absolute; left:240px; top:26px; width:75px; height:154px;
                   overflow:hidden; pointer-events:none;
-                  -webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTQ4IDE0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI2NyIgeTE9Ijc0IiB4Mj0iMTA5LjM3MSIgeTI9IjE1Ny44OTgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRDlEOUQ5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNzM3MzczIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTQ4IiBoZWlnaHQ9IjE0OCIgZmlsbD0idXJsKCNnKSIvPjwvc3ZnPg==');
-                  mask-image:url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTQ4IDE0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI2NyIgeTE9Ijc0IiB4Mj0iMTA5LjM3MSIgeTI9IjE1Ny44OTgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRDlEOUQ5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNzM3MzczIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTQ4IiBoZWlnaHQ9IjE0OCIgZmlsbD0idXJsKCNnKSIvPjwvc3ZnPg==');
-                  -webkit-mask-size:148px 148px; mask-size:148px 148px;
-                  -webkit-mask-position:0px -26px; mask-position:0px -26px;
-                  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
-                  -webkit-mask-mode:alpha; mask-mode:alpha;">
-        <!-- 컨테이너가 35px 왼쪽으로 이동했으므로 이미지도 -35px 보정: -192 - 35 = -227px -->
+                  -webkit-mask-image:linear-gradient(155deg, black 45%, transparent 88%);
+                  mask-image:linear-gradient(155deg, black 45%, transparent 88%);">
         <img src="../../assets/images/scenario4/iphone-card-bg.png" alt=""
-             style="position:absolute; max-width:none; width:488px; height:auto; left:-227px; top:-60px;">
+             style="position:absolute; max-width:none; width:488px; height:auto; left:-192px; top:-60px;">
       </div>
     </div>
 
@@ -606,12 +603,13 @@
                 height:48px; padding:0 16px; flex:1; max-width:277px;
                 box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden; cursor:pointer;"
          onclick="goBack()">
-      <!-- 뒤로 아이콘 (Figma: 8461:21301) -->
-      <svg width="18" height="16" viewBox="0 0 18 16" fill="none" flex-shrink="0" style="flex-shrink:0;">
-        <path d="M7.5 1L1 8L7.5 15" stroke="#101010" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="1" y1="8" x2="17" y2="8" stroke="#101010" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <!-- 뒤로 아이콘 (Figma: 8461:21301 ico/header/back) -->
+      <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
+        <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
+          <img src="https://www.figma.com/api/mcp/asset/93b6f537-2ff0-4028-9c92-56528564593d" alt=""
+               style="position:absolute; top:-1px; left:-1px; width:calc(100% + 2px); height:calc(100% + 2px); display:block;">
+        </div>
+      </div>
       <!-- 질문 텍스트 (Figma: opacity 0.5, 14px, tracking -0.56px) -->
       <span id="s3-query-txt"
             style="font-size:14px; font-weight:500; color:rgba(16,16,16,0.5);
@@ -620,16 +618,14 @@
         엄마에게 데이터를 선물하고 싶어
       </span>
     </div>
-    <!-- 오른쪽: 히스토리 버튼 (Figma 9094:14848) -->
+    <!-- 오른쪽: 히스토리 버튼 (Figma 9094:14848 ico_history) -->
     <button class="hbtn" aria-label="대화 기록"
             style="background:rgba(255,255,255,0.4); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
                    box-shadow:0 0 20px rgba(0,0,0,.05);">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="8.5" stroke="#101010" stroke-width="1.5"/>
-        <polyline points="12,7 12,12 15,14" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3.5 8C4.8 5.4 7.2 3.5 10 3.1" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M3.5 8L2 5.5M3.5 8L6 6.5" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="https://www.figma.com/api/mcp/asset/755b88fc-7506-4505-9e8c-5e85894bc331" alt=""
+             style="position:absolute; inset:0; width:100%; height:100%; display:block;">
+      </div>
     </button>
   </div>
 
@@ -648,33 +644,35 @@
 ══════════════════════════════════════════ -->
 <div class="screen" id="screen-4">
 
-  <!-- 헤더 (Screen 3과 동일) -->
-  <div id="s3-header" style="position:absolute;top:0;left:0;right:0;height:72px;z-index:50;
+  <!-- 헤더 (Screen 3과 동일 구조) -->
+  <div id="s4-header" style="position:absolute;top:0;left:0;right:0;height:72px;z-index:50;
                               padding:12px 20px;display:flex;align-items:center;
                               justify-content:space-between;gap:6px;">
     <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.4);
                 backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:999px;
                 height:48px;padding:0 16px;flex:1;max-width:277px;box-shadow:0 0 20px rgba(0,0,0,.05);
                 overflow:hidden;cursor:pointer;" onclick="goBack()">
-      <svg width="18" height="16" viewBox="0 0 18 16" fill="none" style="flex-shrink:0;">
-        <path d="M7.5 1L1 8L7.5 15" stroke="#101010" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="1" y1="8" x2="17" y2="8" stroke="#101010" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <!-- 뒤로 아이콘 (Figma: 8461:21301 ico/header/back) -->
+      <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
+        <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
+          <img src="https://www.figma.com/api/mcp/asset/93b6f537-2ff0-4028-9c92-56528564593d" alt=""
+               style="position:absolute; top:-1px; left:-1px; width:calc(100% + 2px); height:calc(100% + 2px); display:block;">
+        </div>
+      </div>
       <span style="font-size:14px;font-weight:500;color:rgba(16,16,16,.5);
                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
                    letter-spacing:-0.56px;flex:1;min-width:0;">
         엄마에게 데이터를 선물하고 싶어
       </span>
     </div>
+    <!-- 히스토리 버튼 (Figma 9094:14848 ico_history) -->
     <button class="hbtn" aria-label="대화 기록"
             style="background:rgba(255,255,255,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
                    box-shadow:0 0 20px rgba(0,0,0,.05);">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="8.5" stroke="#101010" stroke-width="1.5"/>
-        <polyline points="12,7 12,12 15,14" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3.5 8C4.8 5.4 7.2 3.5 10 3.1" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M3.5 8L2 5.5M3.5 8L6 6.5" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="https://www.figma.com/api/mcp/asset/755b88fc-7506-4505-9e8c-5e85894bc331" alt=""
+             style="position:absolute; inset:0; width:100%; height:100%; display:block;">
+      </div>
     </button>
   </div>
 
