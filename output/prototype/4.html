@@ -125,13 +125,15 @@
          Status Bar (Figma: h=54, pt=25, px=24)
          Rule 2: flex justify-between (좌표 배치 금지)
          Rule 3: px-6 패딩, Figma 색상/폰트 그대로
+         ※ 아이콘: viewBox 18×22 → img 18×22 1:1, scaleY(-1)은 Figma 원본과 동일
     ─────────────────────────────────────────── -->
     <div class="flex-shrink-0 flex items-start justify-between px-6 h-[54px] pt-[25px]">
       <span class="text-[15px] font-bold text-[#1c1c1e] leading-none">9:41</span>
       <div class="flex items-center gap-[5px]">
-        <img src="../../assets/images/scenario4/ico-signal.svg"  alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
-        <img src="../../assets/images/scenario4/ico-wifi.svg"    alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
-        <img src="../../assets/images/scenario4/ico-battery.svg" alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
+        <!-- Figma: -scale-y-100 적용 (SVG bars 방향 보정) -->
+        <img src="../../assets/images/scenario4/ico-signal.svg"  alt="" style="width:18px; height:22px; display:block; transform:scaleY(-1);">
+        <img src="../../assets/images/scenario4/ico-wifi.svg"    alt="" style="width:18px; height:22px; display:block; transform:scaleY(-1);">
+        <img src="../../assets/images/scenario4/ico-battery.svg" alt="" style="width:18px; height:22px; display:block; transform:scaleY(-1);">
       </div>
     </div>
 
@@ -231,22 +233,29 @@
           </div>
 
           <!-- ▷ 제안 칩: 가족 결합 현황
-               Rule 2: flex items-center (좌표 금지)
-               Rule 3: rounded-full, bg rgba(255,255,255,0.4), h=44px Figma 스펙
-                       padding: 12px 20px 12px 18px (Figma 그대로) -->
+               Figma: 외부 컨테이너 20×20, 내부 이미지 w=15 h=11.5 at left=2.5 top=4
+               Rule 3: padding:12px 20px 12px 18px, 14px Medium -->
           <div class="flex items-center gap-[4px] rounded-full cursor-pointer"
                style="background:rgba(255,255,255,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:12px 20px 12px 18px;">
-            <img src="../../assets/images/scenario4/ico-family.svg" alt="" class="w-5 h-5 object-contain flex-shrink-0">
+            <!-- 아이콘 컨테이너 20×20, 내부 이미지 정확한 오프셋 배치 -->
+            <div class="relative flex-shrink-0" style="width:20px; height:20px;">
+              <img src="../../assets/images/scenario4/ico-family.svg" alt=""
+                   style="position:absolute; width:15px; height:11.5px; left:2.5px; top:4px; display:block;">
+            </div>
             <span class="text-[14px] font-medium text-[#101010] leading-[1.2] whitespace-nowrap"
                   style="letter-spacing:-0.42px;">
               가족 결합 현황 확인해줘
             </span>
           </div>
 
-          <!-- ▷ 제안 칩: 이번달 요금 -->
+          <!-- ▷ 제안 칩: 이번달 요금
+               Figma: 외부 컨테이너 20×20, 내부 이미지 w=16 h=11.5 at left=2 top=4.75 -->
           <div class="flex items-center gap-[4px] rounded-full cursor-pointer"
                style="background:rgba(255,255,255,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:12px 20px 12px 18px;">
-            <img src="../../assets/images/scenario4/ico-money.svg" alt="" class="w-5 h-5 object-contain flex-shrink-0">
+            <div class="relative flex-shrink-0" style="width:20px; height:20px;">
+              <img src="../../assets/images/scenario4/ico-money.svg" alt=""
+                   style="position:absolute; width:16px; height:11.5px; left:2px; top:4.75px; display:block;">
+            </div>
             <span class="text-[14px] font-medium text-[#101010] leading-[1.2] whitespace-nowrap"
                   style="letter-spacing:-0.42px;">
               이번달 요금이 많이 나온 이유 알려줘
@@ -313,24 +322,27 @@
         <!-- 검색 아이콘 + 플레이스홀더 (Figma: left=20, top=15, w=221, h=22) -->
         <div class="absolute flex items-center gap-2 h-[22px] overflow-hidden"
              style="left:20px; top:15px; width:221px;">
-          <img src="../../assets/images/scenario4/ico-gnb-search.svg" alt="" class="w-4 h-4 object-contain flex-shrink-0">
+          <!-- GNB 검색 아이콘: viewBox 16×16 → 16×16 표시 -->
+          <img src="../../assets/images/scenario4/ico-gnb-search.svg" alt=""
+               style="width:16px; height:16px; display:block; flex-shrink:0;">
           <span class="text-[16px] font-medium text-[#121212] leading-[1.4] whitespace-nowrap overflow-hidden text-ellipsis flex-1"
                 style="letter-spacing:-0.64px;">
             T에 대해 무엇이든 물어보세요
           </span>
         </div>
-        <!-- 마이크 버튼 (Figma: left=249, top=10, w=32, h=32) -->
-        <div class="absolute flex items-center justify-center w-8 h-8 rounded-full"
-             style="left:249px; top:10px;">
+        <!-- 마이크 버튼 (Figma: left=249, top=10, 외부 24×24 컨테이너, 내부 mic 14×14 at left=5 top=5) -->
+        <div class="absolute rounded-full" style="left:249px; top:10px; width:32px; height:32px;">
           <img src="../../assets/images/scenario4/ico-gnb-mic.svg" alt=""
-               style="width:14px; height:14px; object-fit:contain;">
+               style="position:absolute; width:14px; height:14px; left:5px; top:5px; display:block;">
         </div>
       </div>
 
-      <!-- 활성 탭 혜택 (Figma: left=312, w=52, h=52, rounded-full) -->
-      <div class="absolute top-0 w-[52px] h-[52px] rounded-full flex items-center justify-center overflow-hidden"
-           style="left:312px; background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,0.05);">
-        <img src="../../assets/images/scenario4/ico-gnb-active.svg" alt="" class="w-6 h-6 object-contain">
+      <!-- 활성 탭 혜택 (Figma: left=312, w=52, h=52, rounded-full, 아이콘 24×24 center) -->
+      <div class="absolute top-0 rounded-full overflow-hidden flex items-center justify-center"
+           style="left:312px; width:52px; height:52px; background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,0.05);">
+        <!-- GNB active icon: viewBox 24×24 → 24×24 표시 -->
+        <img src="../../assets/images/scenario4/ico-gnb-active.svg" alt=""
+             style="width:24px; height:24px; display:block;">
       </div>
 
     </div><!-- /GNB -->
