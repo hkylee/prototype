@@ -273,6 +273,48 @@
     display: flex; flex-direction: column; gap: 19px;
     flex-shrink: 0;
   }
+
+  /* ════════════════════════════════════════
+     Screen 6: 상세 내용 확인 (Figma 9094-15502)
+  ════════════════════════════════════════ */
+  #screen-6 { background: #d2d4d9; }
+  #s6-chat {
+    position: absolute;
+    top: -83px; left: 20px; width: 335px;
+    display: flex; flex-direction: column; gap: 19px;
+  }
+  #s6-header {
+    position: absolute; top: 0; left: 0; right: 0; height: 72px; z-index: 50;
+    padding: 12px 20px; display: flex; align-items: center;
+    justify-content: space-between; gap: 6px;
+    background: linear-gradient(to bottom, rgba(210,212,217,0.85) 0%, rgba(210,212,217,0) 100%);
+  }
+  #s6-fade {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 140px; z-index: 40;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(193,193,193,0) 0%, #c1c1c1 50%);
+  }
+  #s6-gnb {
+    position: absolute; bottom: 34px; left: 20px; right: 20px;
+    height: 52px; border-radius: 26px; z-index: 50;
+    background: rgba(255,255,255,.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 20px rgba(0,0,0,.05);
+    display: flex; align-items: center; padding: 0 20px; gap: 8px;
+  }
+  #s6-complete-row {
+    display: flex; gap: 16px; align-items: center;
+    padding: 12px 10px;
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 0.42s cubic-bezier(0,0,0.35,1),
+                transform 0.42s cubic-bezier(0,0,0.35,1);
+  }
+  #s6-complete-row.visible { opacity: 1; transform: translateY(0); }
+  #s6-line-track { flex: 1; height: 1px; overflow: hidden; position: relative; }
+  #s6-line {
+    position: absolute; left: 0; top: 0; height: 1px; width: 0;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, #c8c8c8 45%, rgba(255,255,255,0) 100%);
+    transition: width 0.72s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
 </style>
 </head>
 <body>
@@ -1072,6 +1114,165 @@
 </div><!-- /screen-5 -->
 
 
+<!-- ══════════════════════════════════════════
+     Screen 6: 상세 내용 확인 (Figma 9094-15502)
+     애니메이션: 1) "상세 내용 확인" 텍스트 등장
+                2) 좌→우 선 등장
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-6">
+
+  <!-- 채팅 영역 (Screen 5와 동일 content + 상세 내용 확인 행 추가) -->
+  <div id="s6-chat">
+
+    <!-- 이전 AI 텍스트 (opacity:0.2) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.4; margin:0;">
+        어머니께 데이터 선물이 가능한지 확인해볼게요.
+      </p>
+    </div>
+
+    <!-- AI gradient 텍스트 -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f 0%, #959595 100%);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0;">
+        현재 결합된 가족 중<br>'엄마'로 등록된 번호가 1개 있어요.
+      </p>
+    </div>
+
+    <!-- 가족 카드 -->
+    <div style="background:#fff; border-radius:23px; padding:23px;
+                display:flex; flex-direction:column; gap:19px; flex-shrink:0;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:15px;">
+        <div style="display:flex; flex-direction:column; gap:0; min-width:0; flex:1;">
+          <p style="font-size:13.3px; font-weight:500; color:#101010; opacity:0.8;
+                    letter-spacing:-0.53px; line-height:1.4; margin:0; white-space:nowrap;">나의 가족</p>
+          <div style="position:relative; display:inline-flex; align-items:flex-start;">
+            <p style="font-size:20.9px; font-weight:600; color:#101010; opacity:0.9;
+                      letter-spacing:-1.25px; line-height:1.2; margin:0; white-space:nowrap;">김현숙</p>
+            <span style="position:absolute; left:57px; top:3px;
+                         background:#f6f6f6; color:#898989;
+                         font-size:10px; font-weight:500; letter-spacing:-0.4px; line-height:1.3;
+                         padding:2px 4px; border-radius:4px; white-space:nowrap;">어머니</span>
+          </div>
+        </div>
+        <p style="font-size:13.3px; font-weight:400; color:#101010; opacity:0.6;
+                  letter-spacing:-0.27px; line-height:1.3; margin:0; white-space:nowrap; flex-shrink:0;">
+          010-1234-5678
+        </p>
+      </div>
+      <div style="height:1px; background:linear-gradient(to right, #fff 0%, #ececec 50%, #fff 100%);
+                  flex-shrink:0; margin:-4px 0;"></div>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <p style="font-size:14px; font-weight:400; color:#666;
+                  letter-spacing:-0.4px; line-height:1.29; margin:0; white-space:nowrap;">잔여 데이터</p>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <div style="display:flex; align-items:flex-end; gap:0;">
+            <span style="font-size:24px; font-weight:600; color:#ff4043; letter-spacing:-0.72px; line-height:1.25;">0.2</span>
+            <span style="font-size:12px; font-weight:600; color:#ff4043; letter-spacing:-0.36px; line-height:1.67;">GB</span>
+            <span style="font-size:12px; font-weight:400; color:#606060; letter-spacing:-0.36px; line-height:1.67;"> / 8GB</span>
+          </div>
+          <div style="position:relative; width:90px; height:6px;">
+            <div style="position:absolute; inset:0; background:#e7e7e7; border-radius:100px;"></div>
+            <div style="position:absolute; left:0; top:0; width:14px; height:6px;
+                        background:#ff4043; border-radius:100px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 이전 AI 텍스트 (opacity:0.2) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.4; margin:0;">
+        어머니께 최대 2GB 선물이 가능해요.
+      </p>
+    </div>
+
+    <!-- 이전 AI 설명 (opacity:0.2) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.5; margin:0;">
+        현재 지훈님의 데이터 사용량을 고려했을 때,<br>
+        최대 용량을 선물해도 이번 달은 부족함 없이<br>
+        이용하실 수 있어요.<br>
+        어머니께 2GB를 선물할까요?
+      </p>
+    </div>
+
+    <!-- 사용자 메시지: "2GB 선물" -->
+    <div style="display:flex; justify-content:flex-end; padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222;
+                letter-spacing:-0.64px; line-height:1.5; margin:0;">
+        2GB 선물
+      </p>
+    </div>
+
+    <!-- ★ 상세 내용 확인 행 (순차 애니메이션) -->
+    <div id="s6-complete-row">
+      <p style="font-size:14px; font-weight:500; color:#222;
+                letter-spacing:-0.56px; line-height:1.4; margin:0; white-space:nowrap; flex-shrink:0;">
+        상세 내용 확인
+      </p>
+      <div id="s6-line-track">
+        <div id="s6-line"></div>
+      </div>
+    </div>
+
+  </div><!-- /s6-chat -->
+
+  <!-- 하단 그라데이션 페이드 -->
+  <div id="s6-fade"></div>
+
+  <!-- GNB (sparkle + placeholder + 정지 버튼) -->
+  <div id="s6-gnb">
+    <img src="../../assets/images/scenario4/ico-gnb-sparkle.svg" alt=""
+         style="width:16px; height:16px; flex-shrink:0; display:block;">
+    <span style="flex:1; font-size:16px; font-weight:500; color:#121212;
+                 letter-spacing:-0.64px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+      T에 대해 무엇이든 물어보세요
+    </span>
+    <!-- 정지 버튼 (Figma 9094:15592 — 14×14 rounded dark square) -->
+    <div style="width:32px; height:32px; border-radius:999px;
+                display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      <div style="width:14px; height:14px; border-radius:4px; background:rgba(34,34,34,0.6);"></div>
+    </div>
+  </div>
+
+  <!-- 헤더 (Screen 5와 동일) -->
+  <div id="s6-header">
+    <div style="display:flex; align-items:center; gap:12px;
+                background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
+                -webkit-backdrop-filter:blur(20px); border-radius:999px;
+                height:48px; padding:0 16px; flex:1; max-width:277px;
+                box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden;">
+      <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
+        <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
+          <img src="../../assets/images/scenario4/ico-back-s5.png" alt=""
+               style="position:absolute; top:-1px; left:-1px; width:calc(100% + 2px); height:calc(100% + 2px); display:block;">
+        </div>
+      </div>
+      <span style="font-size:14px; font-weight:500; color:rgba(16,16,16,.5);
+                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                   letter-spacing:-0.56px; flex:1; min-width:0;">
+        엄마에게 데이터 선물해줘
+      </span>
+    </div>
+    <button class="hbtn" aria-label="대화 기록"
+            style="background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
+                   -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,.05);">
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="../../assets/images/scenario4/ico-history-s5.png" alt=""
+             style="position:absolute; inset:0; width:100%; height:100%; display:block;">
+      </div>
+    </button>
+  </div>
+
+</div><!-- /screen-6 -->
+
+
 </div><!-- /ut-stage -->
 </div><!-- /frame -->
 
@@ -1481,14 +1682,71 @@ function closeSheet4() {
 
 /* ══════════════════════════════════════
    Screen 4 → Screen 5 전환 (선물하기 버튼)
+   "올라가는 느낌" — 슬라이드업 애니메이션
 ══════════════════════════════════════ */
 function goToScreen5() {
-  crossfadeTo('screen-5', 460);
+  var s5 = document.getElementById('screen-5');
+  var current = document.querySelector('.screen.active');
+
+  /* 1. s5를 화면 아래에 준비 */
+  s5.style.display = 'block';
+  s5.style.transform = 'translateY(100%)';
+  s5.style.transition = 'none';
+  void s5.getBoundingClientRect();
+
+  /* 2. s5 슬라이드업 */
+  s5.style.transition = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  s5.style.transform  = 'translateY(0)';
+
+  /* 3. 완료 후 정리 → 1.5s 뒤 Screen 6로 자동 이동 */
+  setTimeout(function() {
+    if (current) {
+      current.classList.remove('active');
+      current.style.display = 'none';
+    }
+    s5.classList.add('active');
+    s5.style.transform  = '';
+    s5.style.transition = '';
+
+    setTimeout(goToScreen6, 1500);
+  }, 520);
+}
+
+/* ══════════════════════════════════════
+   Screen 5 → Screen 6 전환 (자동)
+   "상세 내용 확인" 텍스트 등장 → 좌→우 선 등장
+══════════════════════════════════════ */
+function goToScreen6() {
+  /* 애니메이션 요소 초기화 */
+  var row  = document.getElementById('s6-complete-row');
+  var line = document.getElementById('s6-line');
+  if (row)  { row.classList.remove('visible'); }
+  if (line) { line.style.transition = 'none'; line.style.width = '0'; }
+
+  /* 빠른 crossfade (같은 배경색 → 사실상 content swap) */
+  crossfadeTo('screen-6', 180);
+
+  /* 1. 텍스트 등장 (200ms 후) */
+  setTimeout(function() {
+    if (row) row.classList.add('visible');
+
+    /* 2. 선 좌→우 (텍스트 등장 중 450ms 후) */
+    setTimeout(function() {
+      if (line) {
+        void line.getBoundingClientRect();
+        line.style.transition = 'width 0.72s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        var track = document.getElementById('s6-line-track');
+        line.style.width = track ? (track.offsetWidth + 'px') : '100%';
+      }
+    }, 450);
+  }, 200);
 }
 
 /* ══════════════════════════════════════
    뒤로가기 → Screen 1 (hard cut)
 ══════════════════════════════════════ */
+function goBack6() { goBack(); }
+
 function goBack() {
   resetChatArea();
   resetTyping();
