@@ -250,6 +250,29 @@
     transition: transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   #s4-sheet.open { transform: translateX(-50%) translateY(0); }
+
+  /* ════════════════════════════════════════
+     Screen 5: 가족 데이터 선물 확인 (Figma 9094-15401)
+  ════════════════════════════════════════ */
+  #screen-5 { background: #d2d4d9; }
+  #s5-chat {
+    position: absolute;
+    top: -83px; left: 20px; width: 335px;
+    display: flex; flex-direction: column; gap: 19px;
+  }
+  #s5-header {
+    position: absolute; top: 0; left: 0; right: 0; height: 72px; z-index: 50;
+    padding: 12px 20px; display: flex; align-items: center;
+    justify-content: space-between; gap: 6px;
+    background: linear-gradient(to bottom, rgba(210,212,217,0.85) 0%, rgba(210,212,217,0) 100%);
+  }
+  #s5-card {
+    background: #fff;
+    border-radius: 23px;
+    padding: 23px;
+    display: flex; flex-direction: column; gap: 19px;
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -885,7 +908,8 @@
 
     <!-- 선물하기 버튼 (9094:15397 — absolute left:122 top:170 → flex center) -->
     <div style="display:flex; justify-content:center; flex-shrink:0; margin-top:auto;">
-      <button style="background:#222; color:#fff; font-size:14px; font-weight:600;
+      <button onclick="goToScreen5()"
+              style="background:#222; color:#fff; font-size:14px; font-weight:600;
                      letter-spacing:-0.56px; line-height:1.3; padding:8px 22px;
                      border-radius:20px; border:none; cursor:pointer; font-family:inherit;
                      box-shadow:0 8px 8px rgba(106,106,106,0.16);">
@@ -896,6 +920,155 @@
   </div><!-- /s4-sheet -->
 
 </div><!-- /screen-4 -->
+
+<!-- ══════════════════════════════════════════
+     Screen 5 : 가족 데이터 선물 확인 (Figma 9094-15401)
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-5">
+
+  <!-- 채팅 영역 (Figma: top=-83px, left=20px, w=335px) -->
+  <div id="s5-chat">
+
+    <!-- 이전 AI 텍스트 (opacity:0.2 — dimmed) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.4; margin:0;">
+        어머니께 데이터 선물이 가능한지 확인해볼게요.
+      </p>
+    </div>
+
+    <!-- 새 AI gradient 텍스트 (visible) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f 0%, #959595 100%);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0;">
+        현재 결합된 가족 중<br>'엄마'로 등록된 번호가 1개 있어요.
+      </p>
+    </div>
+
+    <!-- 가족 카드: 나의 가족 / 김현숙 / 어머니 / 잔여 데이터 -->
+    <div id="s5-card">
+
+      <!-- 상단: 이름 + 전화번호 -->
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:15px;">
+        <!-- 왼쪽: 나의 가족 + 이름 + 배지 -->
+        <div style="display:flex; flex-direction:column; gap:0; min-width:0; flex:1;">
+          <p style="font-size:13.3px; font-weight:500; color:#101010; opacity:0.8;
+                    letter-spacing:-0.53px; line-height:1.4; margin:0; white-space:nowrap;">
+            나의 가족
+          </p>
+          <!-- 이름 + 배지 (겹침 레이아웃) -->
+          <div style="position:relative; display:inline-flex; align-items:flex-start;">
+            <p style="font-size:20.9px; font-weight:600; color:#101010; opacity:0.9;
+                      letter-spacing:-1.25px; line-height:1.2; margin:0; white-space:nowrap;">
+              김현숙
+            </p>
+            <!-- 어머니 배지 -->
+            <span style="position:absolute; left:57px; top:3px;
+                         background:#f6f6f6; color:#898989;
+                         font-size:10px; font-weight:500; letter-spacing:-0.4px; line-height:1.3;
+                         padding:2px 4px; border-radius:4px; white-space:nowrap;">
+              어머니
+            </span>
+          </div>
+        </div>
+        <!-- 오른쪽: 전화번호 -->
+        <p style="font-size:13.3px; font-weight:400; color:#101010; opacity:0.6;
+                  letter-spacing:-0.27px; line-height:1.3; margin:0; white-space:nowrap; flex-shrink:0;">
+          010-1234-5678
+        </p>
+      </div>
+
+      <!-- 구분선 (gradient) -->
+      <div style="height:1px; background:linear-gradient(to right, #fff 0%, #ececec 50%, #fff 100%);
+                  flex-shrink:0; margin:-4px 0;"></div>
+
+      <!-- 하단: 잔여 데이터 -->
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <p style="font-size:14px; font-weight:400; color:#666;
+                  letter-spacing:-0.4px; line-height:1.29; margin:0; white-space:nowrap;">
+          잔여 데이터
+        </p>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <!-- 숫자 -->
+          <div style="display:flex; align-items:flex-end; gap:0;">
+            <span style="font-size:24px; font-weight:600; color:#ff4043; letter-spacing:-0.72px; line-height:1.25;">0.2</span>
+            <span style="font-size:12px; font-weight:600; color:#ff4043; letter-spacing:-0.36px; line-height:1.67;">GB</span>
+            <span style="font-size:12px; font-weight:400; color:#606060; letter-spacing:-0.36px; line-height:1.67;"> / 8GB</span>
+          </div>
+          <!-- 프로그레스 바 (90px 트랙, 14px 빨간 fill) -->
+          <div style="position:relative; width:90px; height:6px;">
+            <div style="position:absolute; inset:0; background:#e7e7e7; border-radius:100px;"></div>
+            <div style="position:absolute; left:0; top:0; width:14px; height:6px;
+                        background:#ff4043; border-radius:100px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /s5-card -->
+
+    <!-- 이전 AI 텍스트 (opacity:0.2 — dimmed) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.4; margin:0;">
+        어머니께 최대 2GB 선물이 가능해요.
+      </p>
+    </div>
+
+    <!-- 이전 AI 설명 텍스트 (opacity:0.2 — dimmed) -->
+    <div style="padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.5; margin:0;">
+        현재 지훈님의 데이터 사용량을 고려했을 때,<br>
+        최대 용량을 선물해도 이번 달은 부족함 없이<br>
+        이용하실 수 있어요.<br>
+        어머니께 2GB를 선물할까요?
+      </p>
+    </div>
+
+    <!-- 사용자 메시지: "2GB 선물" (오른쪽 정렬) -->
+    <div style="display:flex; justify-content:flex-end; padding:0 9.5px;">
+      <p style="font-size:16px; font-weight:500; color:#222;
+                letter-spacing:-0.64px; line-height:1.5; margin:0;">
+        2GB 선물
+      </p>
+    </div>
+
+  </div><!-- /s5-chat -->
+
+  <!-- 헤더 (Screen 4와 동일 구조) -->
+  <div id="s5-header">
+    <div style="display:flex; align-items:center; gap:12px;
+                background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
+                -webkit-backdrop-filter:blur(20px); border-radius:999px;
+                height:48px; padding:0 16px; flex:1; max-width:277px;
+                box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden;">
+      <!-- 뒤로 아이콘 -->
+      <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
+        <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
+          <img src="https://www.figma.com/api/mcp/asset/93b6f537-2ff0-4028-9c92-56528564593d" alt=""
+               style="position:absolute; top:-1px; left:-1px; width:calc(100% + 2px); height:calc(100% + 2px); display:block;">
+        </div>
+      </div>
+      <span style="font-size:14px; font-weight:500; color:rgba(16,16,16,.5);
+                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                   letter-spacing:-0.56px; flex:1; min-width:0;">
+        엄마에게 데이터 선물해줘
+      </span>
+    </div>
+    <!-- 히스토리 버튼 -->
+    <button class="hbtn" aria-label="대화 기록"
+            style="background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
+                   -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,.05);">
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="https://www.figma.com/api/mcp/asset/755b88fc-7506-4505-9e8c-5e85894bc331" alt=""
+             style="position:absolute; inset:0; width:100%; height:100%; display:block;">
+      </div>
+    </button>
+  </div>
+
+</div><!-- /screen-5 -->
 
 
 </div><!-- /ut-stage -->
@@ -1316,6 +1489,13 @@ function sheetSliderCalc(e) {
 function closeSheet4() {
   var s = document.getElementById('s4-sheet');
   if (s) s.classList.remove('open');
+}
+
+/* ══════════════════════════════════════
+   Screen 4 → Screen 5 전환 (선물하기 버튼)
+══════════════════════════════════════ */
+function goToScreen5() {
+  crossfadeTo('screen-5', 460);
 }
 
 /* ══════════════════════════════════════
