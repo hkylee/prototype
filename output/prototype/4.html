@@ -152,12 +152,22 @@
 
   /* 메시지 공통: 초기 opacity-0 + translateY(16px) → 진입 시 visible */
   .chat-bubble {
-    opacity: 0; transform: translateY(12px);
-    transition: opacity 0.48s cubic-bezier(0,0,0.35,1),
-                transform 0.48s cubic-bezier(0,0,0.35,1);
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.52s cubic-bezier(0,0,0.35,1),
+                transform 0.52s cubic-bezier(0,0,0.35,1);
     will-change: opacity, transform;
   }
   .chat-bubble.visible { opacity: 1; transform: translateY(0); }
+
+  /* 스파클 로딩 아이콘 전용: scale 등장 (translateY 대신 — 제자리에서 나타나는 느낌) */
+  .chat-bubble-scale {
+    opacity: 0; transform: scale(0.72);
+    transition: opacity 0.42s cubic-bezier(0,0,0.35,1),
+                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: opacity, transform;
+    transform-origin: left center;
+  }
+  .chat-bubble-scale.visible { opacity: 1; transform: scale(1); }
 
   /* AI 스파클 아이콘 펄스 애니메이션 */
   @keyframes ai-pulse {
@@ -199,6 +209,7 @@
     position: absolute; top: 125px; left: 20px; right: 20px; bottom: 90px;
     overflow-y: auto; overflow-x: hidden;
     display: flex; flex-direction: column; gap: 0;
+    padding-bottom: 24px;
     -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
   }
   #s4-chat::-webkit-scrollbar { display: none; }
@@ -721,7 +732,7 @@
     </div>
 
     <!-- 가족 카드 (Figma 9094:15243 — white, rounded-22.776px, p-22.776px) -->
-    <div id="s4-card" class="chat-bubble" style="padding:0 0; margin-bottom:19px;">
+    <div id="s4-card" class="chat-bubble" style="padding:0 0; margin-bottom:150px;">
       <div style="background:#fff; border-radius:23px; padding:23px;
                   box-shadow:0 2px 20px rgba(0,0,0,.06);">
 
@@ -1013,27 +1024,27 @@ function handleSend() {
   // Step 1: 키보드 + 딤 슬라이드다운 시작
   hideKeyboard();
 
-  // Step 2: 200ms 후 crossfade — 키보드가 내려가는 동안(460ms 중 절반 지점)
-  // 화면이 동시에 전환되어 단절 없는 연속 동작처럼 느껴짐
+  // Step 2: 400ms 후 crossfade — 키보드가 거의 다 내려간 후(0.46s 중 87%) 시작해
+  // 키보드 잔상 없이 깔끔하게 채팅 화면으로 전환됨
   setTimeout(function() {
     resetChatArea();
 
     var hdr = document.getElementById('s3-header');
     if (hdr) { hdr.style.transition = 'none'; hdr.style.opacity = '0'; }
 
-    crossfadeTo('screen-3', 420);
+    crossfadeTo('screen-3', 300); // 짧은 크로스페이드 — 같은 배경색이라 빠르게 전환해도 자연스러움
 
-    // 헤더: crossfade와 동일한 easing/duration으로 함께 등장
+    // 헤더: crossfade와 함께 등장
     setTimeout(function() {
       if (hdr) {
-        hdr.style.transition = 'opacity 0.42s cubic-bezier(0,0,0.35,1)';
+        hdr.style.transition = 'opacity 0.3s cubic-bezier(0,0,0.35,1)';
         hdr.style.opacity    = '1';
       }
-    }, 40);
+    }, 20);
 
-    // 채팅: crossfade 80% 지점(340ms)에서 시작 → 화면이 안착하며 콘텐츠가 깨어남
-    setTimeout(startChatAnimation, 340);
-  }, 200);
+    // 채팅: crossfade 시작 직후(80ms)에 스파클 등장 — 화면이 나타나는 동안 함께 깨어남
+    setTimeout(startChatAnimation, 80);
+  }, 400);
 }
 
 /* ── Screen 3 채팅 영역 초기화 ── */
@@ -1045,12 +1056,12 @@ function resetChatArea() {
    Rule 2 + 3 + 4: 채팅 순차 등장 애니메이션
    Helper: addBubble(html, delay)
 ══════════════════════════════════════ */
-function addBubble(html, delay) {
+function addBubble(html, delay, bubbleClass) {
   return new Promise(resolve => {
     setTimeout(() => {
       const chat = document.getElementById('s3-chat');
       const wrapper = document.createElement('div');
-      wrapper.className = 'chat-bubble';
+      wrapper.className = bubbleClass || 'chat-bubble';
       wrapper.innerHTML = html;
       chat.appendChild(wrapper);
 
@@ -1084,7 +1095,8 @@ function scrollToBottom() {
 ══════════════════════════════════════ */
 async function startChatAnimation() {
 
-  /* Step 1: AI 심볼 펄스 (Figma 9094:14864 — 29px 원, 스파클 아이콘) */
+  /* Step 1: AI 심볼 펄스 (Figma 9094:14864 — 29px 원, 스파클 아이콘)
+     scale 등장 — translateY fly-up 대신 제자리에서 나타나는 느낌 */
   const loadingEl = await addBubble(`
     <div style="padding-left:10px;">
       <div class="ai-icon-pulse"
@@ -1095,7 +1107,7 @@ async function startChatAnimation() {
              style="position:absolute; left:6.5px; top:6.5px; width:16px; height:16px; display:block;">
       </div>
     </div>
-  `, 0);
+  `, 0, 'chat-bubble-scale');
 
   /* Step 2: 1.1초 후 → 로딩 아이콘 fade-out, AI 텍스트 등장 */
   setTimeout(() => {
@@ -1122,7 +1134,7 @@ async function startChatAnimation() {
           어머니께 데이터 선물이 가능한지 확인해볼게요.
         </p>
       </div>
-    `, 0);
+    `, 0, 'chat-bubble-scale');
 
     /* Screen 3→4 전환: AI 텍스트가 화면에 안착한 후(1.6s) 실행 */
     setTimeout(transitionToScreen4, 1600);
@@ -1193,15 +1205,27 @@ function startScreen4Animation() {
 
   show('s4-ai-text',  500);
   show('s4-card',    1100);
-  show('s4-msg1',    2000);
-  show('s4-msg2',    3200);
 
-  /* 스크롤 후 sheet 오픈 */
+  // msg1: 카드(150px 아래) 에서 위로 올라오며 등장 → 즉시 scrollToBottom으로 뷰 진입
   setTimeout(function() {
+    var el = document.getElementById('s4-msg1');
+    if (el) el.classList.add('visible');
     var chat = document.getElementById('s4-chat');
     if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-  }, 3500);
+  }, 2000);
 
+  // msg2: msg1 이후 하단에서 올라오며 등장
+  setTimeout(function() {
+    var el = document.getElementById('s4-msg2');
+    if (el) el.classList.add('visible');
+    var chat = document.getElementById('s4-chat');
+    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+  }, 3200);
+
+  // GNB: 마지막 텍스트 정착 후 입력창 안착
+  show('s4-gnb', 3600);
+
+  // sheet 오픈
   setTimeout(function() {
     var s = document.getElementById('s4-sheet');
     if (s) s.classList.add('open');
