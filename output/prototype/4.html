@@ -122,21 +122,21 @@
   <div class="w-full h-full max-w-[400px] mx-auto relative flex flex-col overflow-hidden bg-[#d2d4d9]">
 
     <!-- ────────────────────────────────────────
-         Status Bar
+         Status Bar (Figma: h=54, pt=25, px=24)
          Rule 2: flex justify-between (좌표 배치 금지)
          Rule 3: px-6 패딩, Figma 색상/폰트 그대로
     ─────────────────────────────────────────── -->
     <div class="flex-shrink-0 flex items-start justify-between px-6 h-[54px] pt-[25px]">
       <span class="text-[15px] font-bold text-[#1c1c1e] leading-none">9:41</span>
       <div class="flex items-center gap-[5px]">
-        <img src="../../assets/images/scenario4/ico-signal.png"  alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
-        <img src="../../assets/images/scenario4/ico-wifi.png"    alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
-        <img src="../../assets/images/scenario4/ico-battery.png" alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
+        <img src="../../assets/images/scenario4/ico-signal.svg"  alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
+        <img src="../../assets/images/scenario4/ico-wifi.svg"    alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
+        <img src="../../assets/images/scenario4/ico-battery.svg" alt="" class="w-[18px] h-[22px] object-contain" style="transform:scaleY(-1)">
       </div>
     </div>
 
     <!-- ────────────────────────────────────────
-         Header
+         Header (Figma: h=72, top=58 → mt-1 = 4px gap)
          Rule 2: flex justify-between
          Rule 3: px-5, rgba(255,255,255,0.4) 버튼
     ─────────────────────────────────────────── -->
@@ -176,12 +176,17 @@
     <!-- ────────────────────────────────────────
          Main Content
          Rule 2: flex-1 flex-col justify-between (좌표 금지)
-         Rule 4: pb-[140px] — GNB/그라데이션 하단 여백
+         Rule 4: pb-[71px] — Figma 스펙 정확 계산
+           총 가용: 812-54-76=682px
+           pb=71 → 실질 682-71=611px
+           상단(40+66+20+256)=382 + gap=128 + 배너=101 = 611 ✓
     ─────────────────────────────────────────── -->
-    <div class="flex-1 flex flex-col justify-between min-h-0 pb-[140px]">
+    <div class="flex-1 flex flex-col justify-between min-h-0 pb-[71px]">
 
-      <!-- ▷ 상단: 인사말 + 카드 그룹 (Rule 3: px-5) -->
-      <div class="px-5 flex flex-col gap-5 pt-[10px]">
+      <!-- ▷ 상단: 인사말 + 카드 그룹
+           Rule 3: px-5(=20px Figma 좌우여백)
+           pt-[40px]: Figma top=170, header bottom=130 → 40px gap -->
+      <div class="px-5 flex flex-col gap-5 pt-[40px]">
 
         <!-- 인사말 (Figma: 26px Regular #222 tracking-[-1.56px] lh-1.25) -->
         <p class="text-[26px] font-normal text-[#222222] leading-[1.25]"
@@ -227,10 +232,11 @@
 
           <!-- ▷ 제안 칩: 가족 결합 현황
                Rule 2: flex items-center (좌표 금지)
-               Rule 3: rounded-full, bg rgba(255,255,255,0.4), 14px Medium -->
+               Rule 3: rounded-full, bg rgba(255,255,255,0.4), h=44px Figma 스펙
+                       padding: 12px 20px 12px 18px (Figma 그대로) -->
           <div class="flex items-center gap-[4px] rounded-full cursor-pointer"
                style="background:rgba(255,255,255,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:12px 20px 12px 18px;">
-            <img src="../../assets/images/scenario4/ico-family.png" alt="" class="w-5 h-5 object-contain flex-shrink-0">
+            <img src="../../assets/images/scenario4/ico-family.svg" alt="" class="w-5 h-5 object-contain flex-shrink-0">
             <span class="text-[14px] font-medium text-[#101010] leading-[1.2] whitespace-nowrap"
                   style="letter-spacing:-0.42px;">
               가족 결합 현황 확인해줘
@@ -240,7 +246,7 @@
           <!-- ▷ 제안 칩: 이번달 요금 -->
           <div class="flex items-center gap-[4px] rounded-full cursor-pointer"
                style="background:rgba(255,255,255,0.4); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:12px 20px 12px 18px;">
-            <img src="../../assets/images/scenario4/ico-money.png" alt="" class="w-5 h-5 object-contain flex-shrink-0">
+            <img src="../../assets/images/scenario4/ico-money.svg" alt="" class="w-5 h-5 object-contain flex-shrink-0">
             <span class="text-[14px] font-medium text-[#101010] leading-[1.2] whitespace-nowrap"
                   style="letter-spacing:-0.42px;">
               이번달 요금이 많이 나온 이유 알려줘
@@ -250,11 +256,14 @@
         </div><!-- /카드 그룹 -->
       </div><!-- /상단 -->
 
-      <!-- ▷ 하단: RIMOWA 배너 (Rule 2: justify-between으로 자연스럽게 하단 배치) -->
+      <!-- ▷ 하단: RIMOWA 배너
+           Rule 2: justify-between으로 자연스럽게 하단 배치
+           Rule 3: Figma 스펙 — left=20, h=101, rounded-28px, bg rgba(255,255,255,0.2)
+                   텍스트 left=28, top=24 | 닷 left=28, top=73 | 이미지 right=268(배너내) -->
       <div class="mx-5 relative rounded-[28px] overflow-hidden h-[101px]"
            style="background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
-        <!-- 배너 텍스트 (Rule 2: flex-col, Rule 3: Figma 폰트 그대로) -->
-        <div class="flex flex-col gap-1 absolute left-7 top-6">
+        <!-- 배너 텍스트 (Figma: left=28, top=24) -->
+        <div class="flex flex-col gap-1 absolute" style="left:28px; top:24px;">
           <p class="text-[16px] font-medium text-[#101010] leading-[1.2]" style="letter-spacing:-0.48px;">
             어떤 여행에도 어울리는 아이콘
           </p>
@@ -262,17 +271,17 @@
             RIMOWA 수트케이스
           </p>
         </div>
-        <!-- 인디케이터 닷 -->
-        <div class="flex items-center gap-1 absolute left-7 bottom-[14px]">
-          <img src="../../assets/images/scenario4/dot-active.png"   alt="" class="w-1 h-1 block">
-          <img src="../../assets/images/scenario4/dot-inactive.png" alt="" class="w-1 h-1 block">
-          <img src="../../assets/images/scenario4/dot-inactive.png" alt="" class="w-1 h-1 block">
-          <img src="../../assets/images/scenario4/dot-inactive.png" alt="" class="w-1 h-1 block">
+        <!-- 인디케이터 닷 (Figma: left=28, top=73, w=4px, gap=4px) -->
+        <div class="flex items-center absolute" style="left:28px; top:73px; gap:4px;">
+          <img src="../../assets/images/scenario4/dot-active.svg"   alt="" style="width:4px; height:4px; display:block;">
+          <img src="../../assets/images/scenario4/dot-inactive.svg" alt="" style="width:4px; height:4px; display:block;">
+          <img src="../../assets/images/scenario4/dot-inactive.svg" alt="" style="width:4px; height:4px; display:block;">
+          <img src="../../assets/images/scenario4/dot-inactive.svg" alt="" style="width:4px; height:4px; display:block;">
         </div>
-        <!-- 수트케이스 이미지 (우측 클리핑) -->
-        <div class="absolute right-0 top-0 w-[110px] h-[101px] overflow-hidden">
+        <!-- 수트케이스 이미지 (Figma: x=268, y=23, w=47.4, h=61.9 / 배너 내 우측) -->
+        <div class="absolute overflow-hidden" style="right:0; top:0; width:110px; height:101px;">
           <img src="../../assets/images/scenario4/banner-rimowa.png" alt=""
-               class="absolute h-full w-auto object-contain" style="right:6px; top:0;">
+               class="absolute h-full w-auto object-contain" style="right:8px; top:0;">
         </div>
       </div>
 
@@ -294,31 +303,34 @@
     ─────────────────────────────────────────── -->
     <div class="absolute bottom-[34px] left-0 right-0 h-[52px] z-10">
 
-      <!-- 검색바 배경 -->
+      <!-- 검색바 배경 (Figma: left=11, w=293, h=52, rounded-26) -->
       <div class="absolute left-[11px] top-0 w-[293px] h-[52px] rounded-[26px]"
            style="background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,0.05);">
       </div>
 
       <!-- 검색바 입력 오버레이 -->
       <div class="absolute left-[11px] top-0 w-[293px] h-[52px] overflow-hidden rounded-full">
-        <!-- 검색 아이콘 + 플레이스홀더 텍스트 -->
-        <div class="absolute left-5 top-[15px] flex items-center gap-2 h-[22px] overflow-hidden" style="width:221px;">
-          <img src="../../assets/images/scenario4/ico-gnb-search.png" alt="" class="w-4 h-4 object-contain flex-shrink-0">
+        <!-- 검색 아이콘 + 플레이스홀더 (Figma: left=20, top=15, w=221, h=22) -->
+        <div class="absolute flex items-center gap-2 h-[22px] overflow-hidden"
+             style="left:20px; top:15px; width:221px;">
+          <img src="../../assets/images/scenario4/ico-gnb-search.svg" alt="" class="w-4 h-4 object-contain flex-shrink-0">
           <span class="text-[16px] font-medium text-[#121212] leading-[1.4] whitespace-nowrap overflow-hidden text-ellipsis flex-1"
                 style="letter-spacing:-0.64px;">
             T에 대해 무엇이든 물어보세요
           </span>
         </div>
-        <!-- 마이크 버튼 -->
-        <div class="absolute top-[10px] flex items-center justify-center w-8 h-8 rounded-full" style="left:249px;">
-          <img src="../../assets/images/scenario4/ico-gnb-mic.png" alt="" class="w-[14px] h-[14px] object-contain">
+        <!-- 마이크 버튼 (Figma: left=249, top=10, w=32, h=32) -->
+        <div class="absolute flex items-center justify-center w-8 h-8 rounded-full"
+             style="left:249px; top:10px;">
+          <img src="../../assets/images/scenario4/ico-gnb-mic.svg" alt=""
+               style="width:14px; height:14px; object-fit:contain;">
         </div>
       </div>
 
-      <!-- 활성 탭 (혜택) -->
+      <!-- 활성 탭 혜택 (Figma: left=312, w=52, h=52, rounded-full) -->
       <div class="absolute top-0 w-[52px] h-[52px] rounded-full flex items-center justify-center overflow-hidden"
            style="left:312px; background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,0.05);">
-        <img src="../../assets/images/scenario4/ico-gnb-active.png" alt="" class="w-6 h-6 object-contain">
+        <img src="../../assets/images/scenario4/ico-gnb-active.svg" alt="" class="w-6 h-6 object-contain">
       </div>
 
     </div><!-- /GNB -->
