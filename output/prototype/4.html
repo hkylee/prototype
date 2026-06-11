@@ -152,8 +152,9 @@
 
   /* 메시지 공통: 초기 opacity-0 + translateY(16px) → 진입 시 visible */
   .chat-bubble {
-    opacity: 0; transform: translateY(16px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.48s cubic-bezier(0,0,0.35,1),
+                transform 0.48s cubic-bezier(0,0,0.35,1);
     will-change: opacity, transform;
   }
   .chat-bubble.visible { opacity: 1; transform: translateY(0); }
@@ -219,6 +220,23 @@
     pointer-events: none;
     background: linear-gradient(to bottom, rgba(193,193,193,0) 0%, #c1c1c1 50%);
   }
+  /* ── Sheet1: 얼마나 선물할까요? (Figma 9094:15383) ── */
+  #s4-sheet {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    width: 335px;
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 32px;
+    padding: 22px 7px 20px;
+    z-index: 65;
+    box-shadow: 0 0 18px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transform: translateX(-50%) translateY(calc(100% + 24px));
+    transition: transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  #s4-sheet.open { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -796,6 +814,77 @@
     </div>
   </div>
 
+  <!-- Sheet1: 얼마나 선물할까요? (Figma 9094:15383) -->
+  <div id="s4-sheet">
+
+    <!-- 제목 + 닫기 (9094:15385) -->
+    <div style="display:flex; align-items:center; justify-content:space-between;
+                padding:0 14px; margin-bottom:20px;">
+      <span style="font-size:16px; font-weight:700; color:#101010; letter-spacing:-0.65px; line-height:1.2;">
+        얼마나 선물할까요?
+      </span>
+      <button onclick="closeSheet4()"
+              style="width:25px; height:25px; border-radius:999px; border:none;
+                     background:rgba(255,255,255,0.8); cursor:pointer;
+                     display:flex; align-items:center; justify-content:center;
+                     font-size:14px; color:#555; line-height:1; flex-shrink:0;">
+        &#xd7;
+      </button>
+    </div>
+
+    <!-- 슬라이더 (Figma: track w=266px h=8px black, thumb circle 22px) -->
+    <div style="padding:0 14px; margin-bottom:4px;">
+      <div id="s4-slider-wrap"
+           style="position:relative; height:22px; cursor:pointer; touch-action:none;"
+           onmousedown="sheetSliderDown(event)"
+           ontouchstart="sheetSliderDown(event)">
+        <!-- 트랙 배경 -->
+        <div style="position:absolute; left:11px; right:11px; top:50%; transform:translateY(-50%);
+                    height:8px; border-radius:100px; background:rgba(0,0,0,0.12);"></div>
+        <!-- 트랙 fill -->
+        <div id="s4-track-fill"
+             style="position:absolute; left:11px; top:50%; transform:translateY(-50%);
+                    height:8px; border-radius:100px; background:#222;
+                    transition:width 0.18s ease; width:calc(100% - 22px);"></div>
+        <!-- 썸 -->
+        <div id="s4-thumb"
+             style="position:absolute; top:50%; transform:translate(-50%,-50%);
+                    width:22px; height:22px; border-radius:50%;
+                    background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.25);
+                    transition:left 0.18s ease; left:calc(100% - 11px); pointer-events:none;"></div>
+      </div>
+      <!-- 레이블 -->
+      <div style="display:flex; justify-content:space-between; padding:0 6px; margin-top:6px;">
+        <span style="font-size:11px; color:rgba(0,0,0,0.3); letter-spacing:-0.2px;">0GB</span>
+        <span style="font-size:11px; color:rgba(0,0,0,0.3); letter-spacing:-0.2px;">1GB</span>
+        <span style="font-size:11px; color:rgba(0,0,0,0.3); letter-spacing:-0.2px;">2GB</span>
+      </div>
+    </div>
+
+    <!-- GB 표시 + 설명 -->
+    <div style="text-align:center; padding:8px 14px 0;">
+      <div id="s4-gb-label"
+           style="font-size:20px; font-weight:500; color:#000; letter-spacing:-0.4px;
+                  margin-bottom:6px; line-height:1.3;">2GB</div>
+      <div id="s4-gb-desc"
+           style="font-size:14px; font-weight:500; color:rgba(0,0,0,0.8);
+                  letter-spacing:-0.28px; line-height:1.3;">
+        선물 후에도 평소처럼 이용하실 수 있어요
+      </div>
+    </div>
+
+    <!-- 선물하기 버튼 -->
+    <div style="display:flex; justify-content:center; margin-top:18px;">
+      <button style="background:#222; color:#fff; font-size:14px; font-weight:600;
+                     letter-spacing:-0.56px; line-height:1.3; padding:8px 22px;
+                     border-radius:20px; border:none; cursor:pointer;
+                     box-shadow:0 8px 8px rgba(106,106,106,0.16);">
+        선물하기
+      </button>
+    </div>
+
+  </div><!-- /s4-sheet -->
+
 </div><!-- /screen-4 -->
 
 
@@ -854,11 +943,11 @@ function crossfadeTo(targetId, duration) {
   target.style.transition   = 'none';
   void target.getBoundingClientRect(); // reflow
 
-  target.style.transition = 'opacity ' + duration + 'ms ease';
+  target.style.transition = 'opacity ' + duration + 'ms cubic-bezier(0,0,0.35,1)';
   target.style.opacity    = '1';
 
   if (current) {
-    current.style.transition = 'opacity ' + duration + 'ms ease';
+    current.style.transition = 'opacity ' + duration + 'ms cubic-bezier(0,0,0.35,1)';
     current.style.opacity    = '0';
   }
 
@@ -921,27 +1010,30 @@ function resetTyping() {
 function handleSend() {
   if (!isTyping) return;
 
-  // Step 1: 키보드 + 딤 슬라이드다운 (0.46s)
+  // Step 1: 키보드 + 딤 슬라이드다운 시작
   hideKeyboard();
 
-  // Step 2: 키보드 완료 후 Screen 3으로 crossfade
+  // Step 2: 200ms 후 crossfade — 키보드가 내려가는 동안(460ms 중 절반 지점)
+  // 화면이 동시에 전환되어 단절 없는 연속 동작처럼 느껴짐
   setTimeout(function() {
     resetChatArea();
 
-    // 헤더 opacity 초기화 (재진입 대비)
     var hdr = document.getElementById('s3-header');
     if (hdr) { hdr.style.transition = 'none'; hdr.style.opacity = '0'; }
 
-    crossfadeTo('screen-3', 320);
+    crossfadeTo('screen-3', 420);
 
-    // 헤더 페이드인
+    // 헤더: crossfade와 동일한 easing/duration으로 함께 등장
     setTimeout(function() {
-      if (hdr) { hdr.style.transition = 'opacity 0.4s ease'; hdr.style.opacity = '1'; }
-    }, 60);
+      if (hdr) {
+        hdr.style.transition = 'opacity 0.42s cubic-bezier(0,0,0.35,1)';
+        hdr.style.opacity    = '1';
+      }
+    }, 40);
 
-    // 채팅 시퀀스 시작
-    setTimeout(startChatAnimation, 120);
-  }, 460);
+    // 채팅: crossfade 80% 지점(340ms)에서 시작 → 화면이 안착하며 콘텐츠가 깨어남
+    setTimeout(startChatAnimation, 340);
+  }, 200);
 }
 
 /* ── Screen 3 채팅 영역 초기화 ── */
@@ -1005,12 +1097,12 @@ async function startChatAnimation() {
     </div>
   `, 0);
 
-  /* Step 2: 1.4초 후 → AI 텍스트 등장 (Figma 9094:14868 — 22px gradient) */
+  /* Step 2: 1.1초 후 → 로딩 아이콘 fade-out, AI 텍스트 등장 */
   setTimeout(() => {
     if (loadingEl) {
-      loadingEl.style.transition = 'opacity 0.3s ease';
+      loadingEl.style.transition = 'opacity 0.32s ease-out';
       loadingEl.style.opacity = '0';
-      setTimeout(() => loadingEl.remove(), 300);
+      setTimeout(() => loadingEl.remove(), 320);
     }
 
     addBubble(`
@@ -1032,9 +1124,9 @@ async function startChatAnimation() {
       </div>
     `, 0);
 
-    /* Screen 3→4 전환: AI 텍스트 등장 1.5초 후 자동 실행 */
-    setTimeout(transitionToScreen4, 1500);
-  }, 1400);
+    /* Screen 3→4 전환: AI 텍스트가 화면에 안착한 후(1.6s) 실행 */
+    setTimeout(transitionToScreen4, 1600);
+  }, 1100);
 }
 
 /* ══════════════════════════════════════
@@ -1045,47 +1137,52 @@ function transitionToScreen4() {
   var aiText = document.getElementById('s3-ai-main-text');
   if (aiText) aiText.classList.add('shrink');
 
-  /* Step 2: 200ms 후 crossfade 시작 — 텍스트가 줄어드는 도중에 전환되어
-             Screen 4의 회색 소자 텍스트가 자연스럽게 이어진 것처럼 보임 */
+  // 텍스트 shrink가 60% 진행된 300ms 시점에 crossfade 시작
+  // → 두 화면이 겹치는 구간에서 텍스트가 "변형되는" 모습이 보여 하나의 연속 동작처럼 느껴짐
   setTimeout(function() {
-    // Screen 4 요소 초기 상태로 리셋
     ['s4-ai-text', 's4-card', 's4-msg1', 's4-msg2'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.classList.remove('visible');
     });
     var gnb = document.getElementById('s4-gnb');
     if (gnb) gnb.classList.remove('visible');
+    var sheet = document.getElementById('s4-sheet');
+    if (sheet) sheet.classList.remove('open');
 
     var s4hdr = document.getElementById('s4-header');
     if (s4hdr) { s4hdr.style.transition = 'none'; s4hdr.style.opacity = '0'; }
 
-    // crossfade (0.4s)
-    crossfadeTo('screen-4', 400);
+    crossfadeTo('screen-4', 460);
 
-    // Screen 4 헤더 페이드인
+    // 헤더: 화면과 함께 등장
     setTimeout(function() {
-      if (s4hdr) { s4hdr.style.transition = 'opacity 0.4s ease'; s4hdr.style.opacity = '1'; }
-    }, 60);
+      if (s4hdr) {
+        s4hdr.style.transition = 'opacity 0.46s cubic-bezier(0,0,0.35,1)';
+        s4hdr.style.opacity    = '1';
+      }
+    }, 40);
 
-    // 순차 등장
     startScreen4Animation();
-  }, 200);
+  }, 300);
 }
 
 /* ══════════════════════════════════════
-   Screen 4 순차 등장 (Figma 9094-15203)
-   100ms  → AI 텍스트 (gradient 22px)
-   350ms  → 가족 카드
-   900ms  → "어머니께 최대 2GB 선물이 가능해요."
-   1600ms → "현재 지훈님의 데이터 사용량..."
-   1700ms → GNB (마지막 텍스트 직후)
+   Screen 4 순차 등장 (Figma 9094-15297)
+   500ms  → AI 텍스트 (gradient 22px)
+   1100ms → 가족 카드   (+600ms)
+   2000ms → msg1: "어머니께 최대 2GB"  (+900ms)
+   3200ms → msg2: "현재 지훈님의..."   (+1200ms)
+   3500ms → 채팅 스크롤 업
+   3900ms → Sheet1 슬라이드업          (+700ms)
 ══════════════════════════════════════ */
 function startScreen4Animation() {
-  /* 먼저 모든 요소 초기화 */
   ['s4-ai-text','s4-card','s4-msg1','s4-msg2','s4-gnb'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('visible');
   });
+  var sheet = document.getElementById('s4-sheet');
+  if (sheet) sheet.classList.remove('open');
+  initSlider4();
 
   function show(id, delay) {
     setTimeout(function() {
@@ -1094,17 +1191,81 @@ function startScreen4Animation() {
     }, delay);
   }
 
-  show('s4-ai-text', 100);
-  show('s4-card',    350);
-  show('s4-msg1',    900);
-  show('s4-msg2',   1600);
-  show('s4-gnb',    1700);
+  show('s4-ai-text',  500);
+  show('s4-card',    1100);
+  show('s4-msg1',    2000);
+  show('s4-msg2',    3200);
 
-  /* 마지막 메시지 등장 시 스크롤 */
+  /* 스크롤 후 sheet 오픈 */
   setTimeout(function() {
     var chat = document.getElementById('s4-chat');
     if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-  }, 1650);
+  }, 3500);
+
+  setTimeout(function() {
+    var s = document.getElementById('s4-sheet');
+    if (s) s.classList.add('open');
+  }, 3900);
+}
+
+/* ══════════════════════════════════════
+   Sheet1 슬라이더 (0GB / 1GB / 2GB)
+══════════════════════════════════════ */
+var _sheetDragging = false;
+
+function initSlider4() {
+  setSlider4GB(2);
+}
+
+function setSlider4GB(gb) {
+  var wrap  = document.getElementById('s4-slider-wrap');
+  var fill  = document.getElementById('s4-track-fill');
+  var thumb = document.getElementById('s4-thumb');
+  var label = document.getElementById('s4-gb-label');
+  var desc  = document.getElementById('s4-gb-desc');
+  if (!wrap) return;
+
+  var pct = gb / 2;                          // 0 → 0%, 1 → 50%, 2 → 100%
+  var trackW = wrap.offsetWidth - 22;        // usable width (subtract half-thumb × 2)
+  var thumbPx = 11 + pct * trackW;          // left from wrap left
+
+  thumb.style.left = thumbPx + 'px';
+  fill.style.width = (pct * trackW) + 'px';
+  label.textContent = gb + 'GB';
+  desc.textContent  = gb === 0
+    ? '선물을 취소할게요'
+    : '선물 후에도 평소처럼 이용하실 수 있어요';
+}
+
+function sheetSliderDown(e) {
+  _sheetDragging = true;
+  sheetSliderCalc(e);
+  e.preventDefault();
+
+  function onMove(ev) { if (_sheetDragging) { sheetSliderCalc(ev); ev.preventDefault(); } }
+  function onUp()  { _sheetDragging = false; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); document.removeEventListener('touchmove', onMove); document.removeEventListener('touchend', onUp); }
+
+  document.addEventListener('mousemove', onMove, { passive: false });
+  document.addEventListener('mouseup',   onUp);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend',  onUp);
+}
+
+function sheetSliderCalc(e) {
+  var wrap = document.getElementById('s4-slider-wrap');
+  if (!wrap) return;
+  var rect   = wrap.getBoundingClientRect();
+  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  var trackW  = wrap.offsetWidth - 22;
+  var x = clientX - rect.left - 11;
+  var pct = Math.max(0, Math.min(1, x / trackW));
+  var gb = pct < 0.25 ? 0 : pct < 0.75 ? 1 : 2;
+  setSlider4GB(gb);
+}
+
+function closeSheet4() {
+  var s = document.getElementById('s4-sheet');
+  if (s) s.classList.remove('open');
 }
 
 /* ══════════════════════════════════════
@@ -1121,6 +1282,8 @@ function goBack() {
   if (s4h) { s4h.style.opacity = ''; s4h.style.transition = ''; }
   var gnb = document.getElementById('s4-gnb');
   if (gnb) gnb.classList.remove('visible');
+  var sheet = document.getElementById('s4-sheet');
+  if (sheet) sheet.classList.remove('open');
 
   goTo('screen-1');
 }
