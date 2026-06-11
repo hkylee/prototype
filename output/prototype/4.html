@@ -203,7 +203,8 @@
 
   /* Screen 4 채팅 영역 (Figma: top=125px) */
   #s4-chat {
-    position: absolute; top: 125px; left: 20px; right: 20px; bottom: 90px;
+    position: absolute; top: 125px; left: 20px; right: 20px;
+    bottom: calc(90px + env(safe-area-inset-bottom, 0px));
     overflow-y: auto; overflow-x: hidden;
     display: flex; flex-direction: column; gap: 0;
     padding-bottom: 24px;
@@ -213,7 +214,9 @@
 
   /* Screen 4 GNB (Figma: top=726px, h=52px) */
   #s4-gnb {
-    position: absolute; bottom: 34px; left: 20px; right: 20px;
+    position: absolute;
+    bottom: calc(34px + env(safe-area-inset-bottom, 0px));
+    left: 20px; right: 20px;
     height: 52px; border-radius: 26px; z-index: 50;
     background: rgba(255,255,255,.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 0 20px rgba(0,0,0,.05);
@@ -231,22 +234,20 @@
   /* ── Sheet1: 얼마나 선물할까요? (Figma 9094:15383) ── */
   #s4-sheet {
     position: absolute;
-    left: 50%;
-    bottom: 35px;
-    width: 335px;
-    height: 223px;
+    left: 20px; right: 20px;
+    bottom: calc(35px + env(safe-area-inset-bottom, 0px));
+    min-height: 223px;
     background: rgba(255,255,255,0.4);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-radius: 32px;
-    padding: 22px 7px;
+    padding: 22px 14px;
     z-index: 65;
     box-shadow: 0 0 18px rgba(0,0,0,0.05);
-    overflow: hidden;
     display: flex; flex-direction: column; gap: 12px;
-    transform: translateX(-50%) translateY(calc(100% + 80px));
+    transform: translateY(calc(100% + 80px));
     transition: transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
-  #s4-sheet.open { transform: translateX(-50%) translateY(0); }
+  #s4-sheet.open { transform: translateY(0); }
 
   /* ════════════════════════════════════════
      Screen 5: 가족 데이터 선물 확인 (Figma 9094-15401)
@@ -1440,6 +1441,38 @@
 ══════════════════════════════════════════ -->
 <div class="screen" id="screen-8">
 
+  <!-- GNB: Screen 10/11 상태에서 fade-in (처음엔 hidden) -->
+  <div id="s8-gnb" style="position:absolute; left:0; top:0; width:100%; height:72px;
+                           padding:12px 20px; box-sizing:border-box;
+                           display:flex; align-items:center; z-index:50;
+                           opacity:0; pointer-events:none; transition:opacity 0.45s ease;">
+    <div style="display:flex; align-items:center; gap:12px; height:48px; padding:0 12px;
+                background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
+                -webkit-backdrop-filter:blur(20px); border-radius:999px;
+                box-shadow:0 0 20px rgba(0,0,0,.05); width:277px; flex-shrink:0; overflow:hidden;">
+      <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
+        <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
+          <img src="https://www.figma.com/api/mcp/asset/b8a18197-38f0-4324-ae2b-8a22c25cb365" alt=""
+               style="width:100%; height:100%; display:block;">
+        </div>
+      </div>
+      <span style="font-size:14px; font-weight:500; color:rgba(16,16,16,.5);
+                   letter-spacing:-0.56px; line-height:1.3; flex:1;
+                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        엄마에게 데이터 선물해줘
+      </span>
+    </div>
+    <button class="hbtn" aria-label="대화 기록"
+            style="position:absolute; right:20px; top:12px;
+                   background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
+                   -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,.05);">
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="https://www.figma.com/api/mcp/asset/9c088343-f41a-4b77-8d9b-42d8142a1ee7" alt=""
+             style="position:absolute; inset:0; width:100%; height:100%; display:block;">
+      </div>
+    </button>
+  </div>
+
   <div id="s8-chat">
 
     <!-- 이전 AI 텍스트 (dimmed) -->
@@ -1703,7 +1736,55 @@
                                    transition:height 0.45s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
     </div>
 
+    <!-- ★ AI 텍스트: "어머니께 2GB 선물을 안전하게..." (Screen 10 state) -->
+    <div id="s8-ai-bubble2" style="padding:0 12px; opacity:0; transform:translateY(24px);">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f, #959595);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0; width:291px;">
+        어머니께 2GB 선물을 안전하게 보냈어요. 기분 좋은 선물 소식을 문자로도 보내드렸어요.
+      </p>
+    </div>
+
+    <!-- ★ AI 텍스트: "추가로 도움이 필요한 업무가 있으신가요?" (Screen 11 — 두둥뜨기) -->
+    <div id="s8-ai-bubble3" style="padding:0 12px; opacity:0; transform:translateY(50px);">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f, #959595);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0; width:291px;">
+        추가로 도움이 필요한 업무가 있으신가요?
+      </p>
+    </div>
+
   </div><!-- /s8-chat -->
+
+  <!-- ★ 하단 입력바 (Screen 11 state, 처음엔 hidden) -->
+  <div id="s8-bottom-bar" style="position:absolute; bottom:0; left:0; width:100%;
+                                  opacity:0; transform:translateY(30px); pointer-events:none;">
+    <!-- gradient 오버레이 -->
+    <div style="position:absolute; bottom:0; left:0; width:375px; height:140px;
+                background:linear-gradient(to bottom, rgba(193,193,193,0), #c1c1c1 50%);"></div>
+    <!-- input pill -->
+    <div style="position:absolute; bottom:86px; left:20px; width:335px; height:52px;
+                background:rgba(255,255,255,0.5); border-radius:26px;
+                box-shadow:0 0 20px rgba(0,0,0,0.05);"></div>
+    <!-- spark 아이콘 + placeholder 텍스트 -->
+    <div style="position:absolute; bottom:101px; left:40px;
+                display:flex; align-items:center; gap:8px; width:221px; height:22px; overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/8255fac1-b3f8-4605-8576-dcc11ffef751" alt=""
+           style="width:16px; height:16px; flex-shrink:0; display:block;">
+      <p style="font-size:16px; font-weight:500; color:#121212; letter-spacing:-0.64px;
+                line-height:1.4; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        T에 대해 무엇이든 물어보세요
+      </p>
+    </div>
+    <!-- 마이크 버튼 -->
+    <div style="position:absolute; bottom:96px; right:32px; width:32px; height:32px;
+                display:flex; align-items:center; justify-content:center;">
+      <img src="https://www.figma.com/api/mcp/asset/26b7c974-7608-4e61-80eb-6561922e4416" alt=""
+           style="width:14px; height:14px; display:block;">
+    </div>
+  </div>
 
 </div><!-- /screen-8 -->
 
@@ -2041,10 +2122,20 @@ function startScreen4Animation() {
   }, 1100);
 
   show('s4-msg1', 2000);
+  // msg1 등장 후 스크롤 — 짧은 화면에서도 msg1 보이도록
+  setTimeout(function() {
+    var chat = document.getElementById('s4-chat');
+    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+  }, 2200);
+
   show('s4-msg2', 3200);
+  // msg2 등장 후 스크롤 — 마지막 메시지 보이도록
+  setTimeout(function() {
+    var chat = document.getElementById('s4-chat');
+    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+  }, 3400);
 
   // sheet 오픈 + GNB fade-down + 채팅 위로 이동
-  // smooth scroll 제거 → 즉시 scroll 후 transform 적용해 충돌 방지
   setTimeout(function() {
     var chat = document.getElementById('s4-chat');
 
@@ -2061,13 +2152,16 @@ function startScreen4Animation() {
         g.style.transform  = 'translateY(40px)';
       }
 
-      // 채팅 영역: 165px 위로 올라가 시트 위 콘텐츠 보이게
-      if (chat) {
+      // 채팅 영역: sheet 높이 기반으로 동적 계산해서 올라가기
+      var s = document.getElementById('s4-sheet');
+      if (chat && s) {
+        var sheetH  = s.offsetHeight;
+        var sheetBtm = parseInt(getComputedStyle(s).bottom) || 35;
+        var chatTY  = -(sheetH + sheetBtm - 90 + 10);
         chat.style.transition = 'transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94)';
-        chat.style.transform  = 'translateY(-165px)';
+        chat.style.transform  = 'translateY(' + chatTY + 'px)';
       }
 
-      var s = document.getElementById('s4-sheet');
       if (s) s.classList.add('open');
     });
   }, 3900);
@@ -2351,8 +2445,20 @@ function goToScreen8() {
   if (chkEl)  { chkEl.style.transition='none'; chkEl.style.opacity='0'; }
   if (cBottom){ cBottom.style.transition='none'; cBottom.style.maxHeight='90px'; cBottom.style.opacity='1'; }
   if (cBp)    { cBp.style.transition='none'; cBp.style.height='0'; }
-  // Figma chat top:-703px = prototype top:-83px + translateY(-620px)
-  if (chat)        { chat.style.transition='none'; chat.style.transform='translateY(-620px)'; }
+
+  // Screen 10/11 요소 리셋
+  var gnb     = document.getElementById('s8-gnb');
+  var b2      = document.getElementById('s8-ai-bubble2');
+  var b3      = document.getElementById('s8-ai-bubble3');
+  var btmBar  = document.getElementById('s8-bottom-bar');
+  if (gnb)    { gnb.style.transition='none'; gnb.style.opacity='0'; gnb.style.pointerEvents='none'; }
+  if (b2)     { b2.style.transition='none'; b2.style.opacity='0'; b2.style.transform='translateY(24px)'; }
+  if (b3)     { b3.style.transition='none'; b3.style.opacity='0'; b3.style.transform='translateY(50px)'; }
+  if (btmBar) { btmBar.style.transition='none'; btmBar.style.opacity='0'; btmBar.style.transform='translateY(30px)'; btmBar.style.pointerEvents='none'; }
+
+  /* Screen 7 끝 시각 위치: s6-chat top:-359 + translateY(-101) = -460px
+     s8-chat CSS top:-83px → translateY(-377px) = 동일 시각 (Screen 6 패턴) */
+  if (chat) { chat.style.transition='none'; chat.style.transform='translateY(-377px)'; }
 
   // Instant swap
   document.querySelectorAll('.screen').forEach(function(s) {
@@ -2363,9 +2469,18 @@ function goToScreen8() {
 
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
+      /* Screen 6 패턴: screen 7 시각(-377px)에서 Figma 최종(-620px)으로 슬라이드업 */
+      if (chat) {
+        chat.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        chat.style.transform  = 'translateY(-620px)';
+      }
       setTimeout(function() {
-        // progressRow: inline transition:none 제거 후 CSS transition으로 애니메이션
-        if (progressRow) { progressRow.style.transition = ''; progressRow.classList.add('visible'); }
+        /* 인라인 스타일로 통일 — classList.visible은 인라인 opacity/transform에 가려짐 */
+        if (progressRow) {
+          progressRow.style.transition = 'opacity 0.42s cubic-bezier(0,0,0.35,1), transform 0.42s cubic-bezier(0,0,0.35,1)';
+          progressRow.style.opacity = '1';
+          progressRow.style.transform = 'translateY(0)';
+        }
         setTimeout(function() {
           if (line) {
             void line.getBoundingClientRect();
@@ -2428,6 +2543,89 @@ function goToScreen9() {
       cBp.style.height = '22.776px';
     }
   }, 200);
+
+  // collapse 완료 후 → Screen 10 (AI 완료 텍스트) 등장
+  setTimeout(goToScreen10, 900);
+}
+
+/* ══════════════════════════════════════
+   Screen 10: "어머니께 2GB 선물을 안전하게..."
+   Figma 9094-17113 — chat top:-715px → translateY(-632px)
+══════════════════════════════════════ */
+function goToScreen10() {
+  var chat   = document.getElementById('s8-chat');
+  var gnb    = document.getElementById('s8-gnb');
+  var bubble = document.getElementById('s8-ai-bubble2');
+
+  // GNB fade-in
+  if (gnb) {
+    void gnb.getBoundingClientRect();
+    gnb.style.transition = 'opacity 0.5s ease';
+    gnb.style.opacity = '1';
+    gnb.style.pointerEvents = 'auto';
+  }
+
+  // chat: -620px → -632px (12px 더 위로)
+  if (chat) {
+    chat.style.transition = 'transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94)';
+    chat.style.transform  = 'translateY(-632px)';
+  }
+
+  // AI 버블 fade-in from below
+  setTimeout(function() {
+    if (bubble) {
+      void bubble.getBoundingClientRect();
+      bubble.style.transition = 'opacity 0.6s cubic-bezier(0,0,0.35,1), transform 0.6s cubic-bezier(0,0,0.35,1)';
+      bubble.style.opacity    = '1';
+      bubble.style.transform  = 'translateY(0)';
+    }
+    // Screen 11 스케줄
+    setTimeout(goToScreen11, 1800);
+  }, 300);
+}
+
+/* ══════════════════════════════════════
+   Screen 11: "추가로 도움이 필요한 업무가 있으신가요?" + 하단 입력바
+   Figma 9094-17309 — chat top:-753px → translateY(-670px)
+   두둥뜨기: spring cubic-bezier로 아래서 위로 팡!
+══════════════════════════════════════ */
+function goToScreen11() {
+  var chat   = document.getElementById('s8-chat');
+  var prev   = document.getElementById('s8-ai-bubble2');
+  var bubble = document.getElementById('s8-ai-bubble3');
+  var btmBar = document.getElementById('s8-bottom-bar');
+
+  // 이전 AI 텍스트 → dim (과거 메시지)
+  if (prev) {
+    prev.style.transition = 'opacity 0.5s ease';
+    prev.style.opacity    = '0.2';
+  }
+
+  // chat: -632px → -670px (38px 더 위로)
+  if (chat) {
+    chat.style.transition = 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)';
+    chat.style.transform  = 'translateY(-670px)';
+  }
+
+  // 두둥뜨기: 아래서 위로 spring 페이드인
+  setTimeout(function() {
+    if (bubble) {
+      void bubble.getBoundingClientRect();
+      bubble.style.transition = 'opacity 0.5s cubic-bezier(0,0,0.35,1), transform 0.75s cubic-bezier(0.34,1.56,0.64,1)';
+      bubble.style.opacity    = '1';
+      bubble.style.transform  = 'translateY(0)';
+    }
+    // 하단 입력바: 살짝 뒤이어 slide-up spring
+    setTimeout(function() {
+      if (btmBar) {
+        void btmBar.getBoundingClientRect();
+        btmBar.style.transition = 'opacity 0.5s cubic-bezier(0,0,0.35,1), transform 0.7s cubic-bezier(0.34,1.56,0.64,1)';
+        btmBar.style.opacity    = '1';
+        btmBar.style.transform  = 'translateY(0)';
+        btmBar.style.pointerEvents = 'auto';
+      }
+    }, 120);
+  }, 350);
 }
 
 /* ══════════════════════════════════════
