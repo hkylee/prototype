@@ -1188,13 +1188,23 @@ function transitionToScreen4() {
    3900ms → Sheet1 슬라이드업          (+700ms)
 ══════════════════════════════════════ */
 function startScreen4Animation() {
-  ['s4-ai-text','s4-card','s4-msg1','s4-msg2','s4-gnb'].forEach(function(id) {
+  ['s4-ai-text','s4-card','s4-msg1','s4-msg2'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('visible');
   });
+
+  // GNB: 인라인 스타일까지 초기화 (이전 실행에서 slide-down 스타일이 남을 수 있음)
+  var gnb = document.getElementById('s4-gnb');
+  if (gnb) {
+    gnb.classList.remove('visible');
+    gnb.style.transition = 'none';
+    gnb.style.opacity    = '';
+    gnb.style.transform  = '';
+  }
+
   var sheet = document.getElementById('s4-sheet');
   if (sheet) sheet.classList.remove('open');
-  // 채팅 위치 초기화 (top:125px 상태, translateY 없음)
+
   var chatEl = document.getElementById('s4-chat');
   if (chatEl) { chatEl.style.transition = 'none'; chatEl.style.transform = 'translateY(0)'; }
   initSlider4();
@@ -1209,22 +1219,41 @@ function startScreen4Animation() {
   show('s4-ai-text',  500);
   show('s4-card',    1100);
 
-  // msg1: 카드 150px 아래에서 위로 올라오며 등장
-  show('s4-msg1', 2000);
+  // GNB: 카드와 함께 등장 — 대화 중 AI 입력창이 fixed로 보이는 상태
+  setTimeout(function() {
+    var g = document.getElementById('s4-gnb');
+    if (g) {
+      g.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      g.classList.add('visible');
+    }
+  }, 1100);
 
-  // msg2: msg1 이후 등장
+  show('s4-msg1', 2000);
   show('s4-msg2', 3200);
 
-  // GNB: 마지막 텍스트 정착 후 입력창 안착
-  show('s4-gnb', 3600);
-
-  // sheet 오픈 + 채팅 165px 위로 이동 (Figma: top 127px → -40px)
+  // 채팅 스크롤 → msg2 끝이 보이도록
   setTimeout(function() {
+    var chat = document.getElementById('s4-chat');
+    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+  }, 3500);
+
+  // sheet 오픈 + GNB fade-down + 채팅 위로 이동
+  setTimeout(function() {
+    // GNB: 아래로 슬라이드하며 fade-out
+    var g = document.getElementById('s4-gnb');
+    if (g) {
+      g.style.transition = 'opacity 0.36s ease, transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+      g.style.opacity    = '0';
+      g.style.transform  = 'translateY(40px)';
+    }
+
+    // 채팅 영역: 165px 위로 올라가 시트 위 콘텐츠 보이게
     var chat = document.getElementById('s4-chat');
     if (chat) {
       chat.style.transition = 'transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94)';
-      chat.style.transform = 'translateY(-165px)';
+      chat.style.transform  = 'translateY(-165px)';
     }
+
     var s = document.getElementById('s4-sheet');
     if (s) s.classList.add('open');
   }, 3900);
