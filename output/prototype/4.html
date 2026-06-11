@@ -1504,12 +1504,14 @@ async function startChatAnimation() {
    Rule 2: Screen 3 → 4 전환 (텍스트 모핑 + crossfade)
 ══════════════════════════════════════ */
 function transitionToScreen4() {
-  /* Step 1: 텍스트 축소 시작 (0.5s CSS transition) */
-  var aiText = document.getElementById('s3-ai-main-text');
-  if (aiText) aiText.classList.add('shrink');
+  /* 채팅 영역 부드럽게 페이드아웃 → 끊김 없이 Screen 4로 crossfade
+     (font-size shrink 방식은 gradient clip text에서 뚝 끊기는 현상 발생) */
+  var s3chat = document.getElementById('s3-chat');
+  if (s3chat) {
+    s3chat.style.transition = 'opacity 0.28s cubic-bezier(0,0,0.35,1)';
+    s3chat.style.opacity    = '0';
+  }
 
-  // 텍스트 shrink가 60% 진행된 300ms 시점에 crossfade 시작
-  // → 두 화면이 겹치는 구간에서 텍스트가 "변형되는" 모습이 보여 하나의 연속 동작처럼 느껴짐
   setTimeout(function() {
     ['s4-ai-text', 's4-card', 's4-msg1', 's4-msg2'].forEach(function(id) {
       var el = document.getElementById(id);
@@ -1525,7 +1527,6 @@ function transitionToScreen4() {
 
     crossfadeTo('screen-4', 460);
 
-    // 헤더: 화면과 함께 등장
     setTimeout(function() {
       if (s4hdr) {
         s4hdr.style.transition = 'opacity 0.46s cubic-bezier(0,0,0.35,1)';
@@ -1534,7 +1535,7 @@ function transitionToScreen4() {
     }, 40);
 
     startScreen4Animation();
-  }, 300);
+  }, 280);
 }
 
 /* ══════════════════════════════════════
