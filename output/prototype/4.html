@@ -235,7 +235,7 @@
   #s4-sheet {
     position: absolute;
     left: 50%;
-    bottom: 8px;
+    bottom: 35px;
     width: 335px;
     background: rgba(255,255,255,0.4);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -732,7 +732,7 @@
     </div>
 
     <!-- 가족 카드 (Figma 9094:15243 — white, rounded-22.776px, p-22.776px) -->
-    <div id="s4-card" class="chat-bubble" style="padding:0 0; margin-bottom:150px;">
+    <div id="s4-card" class="chat-bubble" style="padding:0 0; margin-bottom:19px;">
       <div style="background:#fff; border-radius:23px; padding:23px;
                   box-shadow:0 2px 20px rgba(0,0,0,.06);">
 
@@ -798,7 +798,7 @@
     </div>
 
     <!-- 4번째 AI 텍스트 (Figma 9094:15294 — 16px Medium #222, 지훈님 본문) -->
-    <div id="s4-msg2" class="chat-bubble" style="padding:0 10px; margin-bottom:24px;">
+    <div id="s4-msg2" class="chat-bubble" style="padding:0 10px; margin-bottom:150px;">
       <p style="font-size:16px; font-weight:500; color:#222;
                 letter-spacing:-0.64px; line-height:1.5;">현재 지훈님의 데이터 사용량을 고려했을 때,<br>최대 용량을 선물해도 이번 달은 부족함 없이<br>이용하실 수 있어요.<br>어머니께 2GB를 선물할까요?</p>
     </div>
@@ -1194,6 +1194,9 @@ function startScreen4Animation() {
   });
   var sheet = document.getElementById('s4-sheet');
   if (sheet) sheet.classList.remove('open');
+  // 채팅 위치 초기화 (top:125px 상태, translateY 없음)
+  var chatEl = document.getElementById('s4-chat');
+  if (chatEl) { chatEl.style.transition = 'none'; chatEl.style.transform = 'translateY(0)'; }
   initSlider4();
 
   function show(id, delay) {
@@ -1206,27 +1209,22 @@ function startScreen4Animation() {
   show('s4-ai-text',  500);
   show('s4-card',    1100);
 
-  // msg1: 카드(150px 아래) 에서 위로 올라오며 등장 → 즉시 scrollToBottom으로 뷰 진입
-  setTimeout(function() {
-    var el = document.getElementById('s4-msg1');
-    if (el) el.classList.add('visible');
-    var chat = document.getElementById('s4-chat');
-    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-  }, 2000);
+  // msg1: 카드 150px 아래에서 위로 올라오며 등장
+  show('s4-msg1', 2000);
 
-  // msg2: msg1 이후 하단에서 올라오며 등장
-  setTimeout(function() {
-    var el = document.getElementById('s4-msg2');
-    if (el) el.classList.add('visible');
-    var chat = document.getElementById('s4-chat');
-    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-  }, 3200);
+  // msg2: msg1 이후 등장
+  show('s4-msg2', 3200);
 
   // GNB: 마지막 텍스트 정착 후 입력창 안착
   show('s4-gnb', 3600);
 
-  // sheet 오픈
+  // sheet 오픈 + 채팅 165px 위로 이동 (Figma: top 127px → -40px)
   setTimeout(function() {
+    var chat = document.getElementById('s4-chat');
+    if (chat) {
+      chat.style.transition = 'transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94)';
+      chat.style.transform = 'translateY(-165px)';
+    }
     var s = document.getElementById('s4-sheet');
     if (s) s.classList.add('open');
   }, 3900);
@@ -1308,6 +1306,8 @@ function goBack() {
   if (gnb) gnb.classList.remove('visible');
   var sheet = document.getElementById('s4-sheet');
   if (sheet) sheet.classList.remove('open');
+  var chat = document.getElementById('s4-chat');
+  if (chat) { chat.style.transition = 'none'; chat.style.transform = ''; }
 
   goTo('screen-1');
 }
