@@ -173,8 +173,49 @@
     justify-content: space-between; gap: 6px;
   }
 
-  /* Screen 3 배경 페이드인 */
+  /* Screen 3 배경 */
   #screen-3 { background: #d2d4d9; }
+
+  /* ════════════════════════════════════════
+     Screen 4: 가족 결합 결과 (Figma 9094-14990)
+  ════════════════════════════════════════ */
+  #screen-4 { background: #d2d4d9; }
+
+  /* 이전 AI 텍스트 축소-페이드 전환 */
+  .s3-ai-text {
+    transition: font-size 0.5s ease, opacity 0.5s ease, color 0.5s ease,
+                -webkit-text-fill-color 0.5s ease;
+  }
+  .s3-ai-text.shrink {
+    font-size: 16px !important;
+    opacity: 0.2 !important;
+    -webkit-text-fill-color: #222 !important;
+    background: none !important;
+  }
+
+  /* Screen 4 채팅 영역 (Figma: top=125px) */
+  #s4-chat {
+    position: absolute; top: 125px; left: 20px; right: 20px; bottom: 90px;
+    overflow-y: auto; overflow-x: hidden;
+    display: flex; flex-direction: column; gap: 0;
+    -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+  }
+  #s4-chat::-webkit-scrollbar { display: none; }
+
+  /* Screen 4 GNB (Figma: top=726px, h=52px) */
+  #s4-gnb {
+    position: absolute; bottom: 34px; left: 20px; right: 20px;
+    height: 52px; border-radius: 26px; z-index: 50;
+    background: rgba(255,255,255,.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 20px rgba(0,0,0,.05);
+    display: flex; align-items: center; padding: 0 16px;
+  }
+  /* 하단 그라디언트 페이드 */
+  #s4-fade {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 140px; z-index: 40;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(193,193,193,0) 0%, #c1c1c1 50%);
+  }
 </style>
 </head>
 <body>
@@ -316,18 +357,20 @@
         </button>
       </div>
       <!-- iPhone 이미지 (Figma 9094:10613)
-           container: left=240 top=26 w=75 h=154
-           inner img: w=650.28%→488px / left=-255.91%→-192px / top=-38.68%→-60px
-           mask: base64 data URI (외부 SVG url(#frag) 참조는 브라우저 mask 컨텍스트에서 실패) -->
-      <div style="position:absolute; left:240px; top:26px; width:95px; height:154px;
+           Figma: container left=240 top=26 w=75 h=154, mask-no-clip → 마스크가 35px 왼쪽으로 확장
+           → container를 205px에서 시작해 mask fade 영역 포함 (width 130px)
+           mask-mode:alpha 필수 — SVG mask의 기본 luminance 모드는 #D9D9D9=85% → 이미지 흐려짐 -->
+      <div style="position:absolute; left:205px; top:26px; width:130px; height:154px;
                   overflow:hidden; pointer-events:none;
                   -webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTQ4IDE0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI2NyIgeTE9Ijc0IiB4Mj0iMTA5LjM3MSIgeTI9IjE1Ny44OTgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRDlEOUQ5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNzM3MzczIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTQ4IiBoZWlnaHQ9IjE0OCIgZmlsbD0idXJsKCNnKSIvPjwvc3ZnPg==');
                   mask-image:url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTQ4IDE0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI2NyIgeTE9Ijc0IiB4Mj0iMTA5LjM3MSIgeTI9IjE1Ny44OTgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjRDlEOUQ5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNzM3MzczIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTQ4IiBoZWlnaHQ9IjE0OCIgZmlsbD0idXJsKCNnKSIvPjwvc3ZnPg==');
                   -webkit-mask-size:148px 148px; mask-size:148px 148px;
-                  -webkit-mask-position:-35px -26px; mask-position:-35px -26px;
-                  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;">
+                  -webkit-mask-position:0px -26px; mask-position:0px -26px;
+                  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+                  -webkit-mask-mode:alpha; mask-mode:alpha;">
+        <!-- 컨테이너가 35px 왼쪽으로 이동했으므로 이미지도 -35px 보정: -192 - 35 = -227px -->
         <img src="../../assets/images/scenario4/iphone-card-bg.png" alt=""
-             style="position:absolute; max-width:none; width:488px; height:auto; left:-192px; top:-60px;">
+             style="position:absolute; max-width:none; width:488px; height:auto; left:-227px; top:-60px;">
       </div>
     </div>
 
@@ -598,6 +641,151 @@
 </div><!-- /screen-3 -->
 
 
+<!-- ══════════════════════════════════════════
+     Screen 4: 가족 결합 결과 (Figma 9094-14990)
+     이전 AI 텍스트 → 축소·페이드 후
+     새 AI 텍스트 + 가족 카드 순차 등장
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-4">
+
+  <!-- 헤더 (Screen 3과 동일) -->
+  <div id="s3-header" style="position:absolute;top:0;left:0;right:0;height:72px;z-index:50;
+                              padding:12px 20px;display:flex;align-items:center;
+                              justify-content:space-between;gap:6px;">
+    <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.4);
+                backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:999px;
+                height:48px;padding:0 16px;flex:1;max-width:277px;box-shadow:0 0 20px rgba(0,0,0,.05);
+                overflow:hidden;cursor:pointer;" onclick="goBack()">
+      <svg width="18" height="16" viewBox="0 0 18 16" fill="none" style="flex-shrink:0;">
+        <path d="M7.5 1L1 8L7.5 15" stroke="#101010" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="1" y1="8" x2="17" y2="8" stroke="#101010" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span style="font-size:14px;font-weight:500;color:rgba(16,16,16,.5);
+                   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                   letter-spacing:-0.56px;flex:1;min-width:0;">
+        엄마에게 데이터를 선물하고 싶어
+      </span>
+    </div>
+    <button class="hbtn" aria-label="대화 기록"
+            style="background:rgba(255,255,255,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+                   box-shadow:0 0 20px rgba(0,0,0,.05);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="8.5" stroke="#101010" stroke-width="1.5"/>
+        <polyline points="12,7 12,12 15,14" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3.5 8C4.8 5.4 7.2 3.5 10 3.1" stroke="#101010" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M3.5 8L2 5.5M3.5 8L6 6.5" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- 채팅 영역 (Figma: top=125px, left=20px, w=335px) -->
+  <div id="s4-chat">
+
+    <!-- 이전 AI 텍스트 (opacity:0.2, 16px — Figma 9094:15073) -->
+    <!-- padding: 9.49px 기준 -->
+    <div style="padding:0 10px; margin-bottom:19px;">
+      <p style="font-size:16px; font-weight:500; color:#222; opacity:0.2;
+                letter-spacing:-0.64px; line-height:1.4;">
+        어머니께 데이터 선물이 가능한지 확인해볼게요.
+      </p>
+    </div>
+
+    <!-- 새 AI 텍스트 (22px gradient — Figma 9094:15074) -->
+    <!-- 초기 opacity-0, JS로 visible 추가 -->
+    <div id="s4-ai-text" class="chat-bubble" style="padding:0 10px; margin-bottom:19px;">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f 0%, #959595 100%);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent;">
+        현재 결합된 가족 중<br>'엄마'로 등록된 번호가 1개 있어요.
+      </p>
+    </div>
+
+    <!-- 가족 카드 (Figma 9094:15075 — white, rounded-22.776px, p-22.776px) -->
+    <div id="s4-card" class="chat-bubble" style="padding:0 0;">
+      <div style="background:#fff; border-radius:23px; padding:23px;
+                  box-shadow:0 2px 20px rgba(0,0,0,.06);">
+
+        <!-- 제목 + 이름 + 전화번호 -->
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:19px;">
+          <div>
+            <!-- 나의 가족 (Figma: 13.286px Medium, opacity 0.8) -->
+            <p style="font-size:13px; font-weight:500; color:rgba(16,16,16,.8);
+                      letter-spacing:-0.53px; margin-bottom:3px;">나의 가족</p>
+            <!-- 이름 + 뱃지 -->
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:21px; font-weight:700; color:rgba(16,16,16,.9);
+                           letter-spacing:-1.25px; line-height:1.2;">김현숙</span>
+              <!-- 어머니 뱃지 (Figma: #f6f6f6, rounded-4, #898989, 10px) -->
+              <span style="background:#f6f6f6; border-radius:4px; padding:2px 4px;
+                           font-size:10px; font-weight:500; color:#898989;
+                           letter-spacing:-0.4px; line-height:1.3;">어머니</span>
+            </div>
+          </div>
+          <!-- 전화번호 (Figma: 13.286px Regular, opacity 0.6) -->
+          <span style="font-size:13px; font-weight:400; color:rgba(16,16,16,.6);
+                       letter-spacing:-0.27px; line-height:1.3; padding-bottom:2px;">
+            010-1234-5678
+          </span>
+        </div>
+
+        <!-- 구분선 (Figma: linear-gradient via #ececec) -->
+        <div style="height:1px; background:linear-gradient(to right, #fff, #ececec, #fff);
+                    margin-bottom:19px;"></div>
+
+        <!-- 잔여 데이터 -->
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:14px; font-weight:400; color:#666; letter-spacing:-0.4px;">
+            잔여 데이터
+          </span>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            <!-- 숫자 (Figma: 0.2 SemiBold 24px #ff4043, GB SemiBold 12px, / 8GB Regular 12px #606060) -->
+            <div style="display:flex; align-items:baseline; gap:1px;">
+              <span style="font-size:24px; font-weight:700; color:#ff4043;
+                           letter-spacing:-0.72px; line-height:30px;">0.2</span>
+              <span style="font-size:12px; font-weight:700; color:#ff4043;
+                           letter-spacing:-0.36px; line-height:20px;">GB</span>
+              <span style="font-size:12px; font-weight:400; color:#606060;
+                           letter-spacing:-0.36px; line-height:20px;"> / 8GB</span>
+            </div>
+            <!-- 프로그레스 바 (Figma: 90px wide, 6px tall, bg #e7e7e7, filled 14px #ff4043) -->
+            <div style="width:90px; height:6px; background:#e7e7e7; border-radius:100px; overflow:hidden;">
+              <div style="width:14px; height:6px; background:#ff4043;
+                          border-radius:10px 10px 0 0; transform:none;"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /s4-chat -->
+
+  <!-- 하단 그라디언트 페이드 -->
+  <div id="s4-fade"></div>
+
+  <!-- GNB — 하단 입력바 + 정지 버튼 (Figma 9094:15105~15110) -->
+  <div id="s4-gnb">
+    <!-- 스파클 아이콘 -->
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+      <path d="M8 0.5L9.8 6H15.5L11 9.2L12.8 14.7L8 11.5L3.2 14.7L5 9.2L0.5 6H6.2L8 0.5Z"
+            fill="#121212"/>
+    </svg>
+    <!-- 플레이스홀더 텍스트 -->
+    <span style="font-size:16px;font-weight:500;color:#121212;letter-spacing:-0.64px;
+                 flex:1;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+      T에 대해 무엇이든 물어보세요
+    </span>
+    <!-- 정지 버튼 (Figma: bg rgba(34,34,34,0.6), rounded-4, size-14) -->
+    <div style="width:32px;height:32px;border-radius:999px;display:flex;align-items:center;
+                justify-content:center;flex-shrink:0;">
+      <div style="width:14px;height:14px;border-radius:4px;background:rgba(34,34,34,.6);"></div>
+    </div>
+  </div>
+
+</div><!-- /screen-4 -->
+
+
 </div><!-- /ut-stage -->
 </div><!-- /frame -->
 
@@ -773,7 +961,8 @@ async function startChatAnimation() {
           </svg>
         </div>
         <!-- Figma 9094:14868: 22px, Regular, tracking -1.54px, gradient #2f2f2f→#959595 -->
-        <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+        <p class="s3-ai-text" id="s3-ai-main-text"
+           style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
                   background:linear-gradient(to right, #2f2f2f 0%, #959595 100%);
                   -webkit-background-clip:text; background-clip:text;
                   -webkit-text-fill-color:transparent; width:318px;">
@@ -781,7 +970,47 @@ async function startChatAnimation() {
         </p>
       </div>
     `, 0);
+
+    /* Screen 3→4 전환: AI 텍스트 등장 2초 후 자동 실행 */
+    setTimeout(transitionToScreen4, 2000);
   }, 1400);
+}
+
+/* ══════════════════════════════════════
+   Screen 3 → 4 전환
+   1) AI 텍스트 축소·페이드 (22px→16px, opacity→0.2)
+   2) Screen 4로 이동
+   3) 새 AI 텍스트 + 카드 순차 등장
+══════════════════════════════════════ */
+function transitionToScreen4() {
+  /* Step 1: Screen 3 AI 텍스트 shrink 클래스 적용 */
+  const aiText = document.getElementById('s3-ai-main-text');
+  if (aiText) aiText.classList.add('shrink');
+
+  /* Step 2: 0.5초(transition 완료) 후 Screen 4로 전환 */
+  setTimeout(() => {
+    goTo('screen-4');
+    startScreen4Animation();
+  }, 550);
+}
+
+/* ══════════════════════════════════════
+   Screen 4 순차 등장 (Figma 9094-14990)
+   100ms  → 새 AI 텍스트 (gradient 22px)
+   700ms  → 가족 카드
+══════════════════════════════════════ */
+function startScreen4Animation() {
+  /* 새 AI 텍스트 */
+  setTimeout(() => {
+    const aiEl = document.getElementById('s4-ai-text');
+    if (aiEl) aiEl.classList.add('visible');
+  }, 100);
+
+  /* 가족 카드 */
+  setTimeout(() => {
+    const cardEl = document.getElementById('s4-card');
+    if (cardEl) cardEl.classList.add('visible');
+  }, 700);
 }
 
 /* ══════════════════════════════════════
