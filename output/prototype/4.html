@@ -105,11 +105,8 @@
     transition: transform 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     transform-origin: top center;
   }
-  /* Screen 2: Figma 0.954 scale — keyboard-open 시 y=226 (card bottom 447, chat top 457, gap=10px) */
-  #s1-cards.keyboard-open {
-    transform: translateY(24px) scale(0.954);
-    transform-origin: top center;
-  }
+  /* keyboard-open: transform은 JS에서 동적으로 계산 (chat 실제 높이 기준 10px gap) */
+  #s1-cards.keyboard-open { /* transform set by showKeyboard() */ }
 
   #s1-keyboard {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -479,7 +476,7 @@
 
   <!-- 카드 그룹 (z-50, 키보드 열릴 때 -30px 상승) -->
   <div id="s1-cards"
-       style="position:absolute; z-index:50; top:202px; left:19px; width:337px;
+       style="position:absolute; z-index:50; top:202px; left:19px; right:19px;
               display:flex; flex-direction:column; gap:10px;">
 
     <!-- iPhone 배송 카드 (Figma 9094:10610)
@@ -1602,6 +1599,16 @@
       </div>
     </div>
 
+    <!-- "이대로 선물하기를 진행할까요?" — S6에서 opacity:0으로 fade된 상태 유지 (레이아웃 연속성) -->
+    <div style="padding:0 9.5px; opacity:0;">
+      <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
+                background:linear-gradient(to right, #2f2f2f, #959595);
+                -webkit-background-clip:text; background-clip:text;
+                -webkit-text-fill-color:transparent; margin:0;">
+        이대로 선물하기를 진행할까요?
+      </p>
+    </div>
+
     <!-- 사용자 메시지: "네, 선물할게요." -->
     <div style="display:flex; justify-content:flex-end; padding:0 9.5px;">
       <p style="font-size:16px; font-weight:500; color:#222;
@@ -1657,38 +1664,6 @@
     </div>
 
   </div><!-- /s8-chat -->
-
-  <!-- 하단 그라데이션 페이드 -->
-  <div class="screen-fade"></div>
-
-  <!-- 헤더 (Screen 6과 동일 구조) -->
-  <div id="s8-header" class="chat-header">
-    <div style="display:flex; align-items:center; gap:12px;
-                background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
-                -webkit-backdrop-filter:blur(20px); border-radius:999px;
-                height:48px; padding:0 16px; flex:1; max-width:277px;
-                box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden;">
-      <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
-        <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
-          <img src="https://www.figma.com/api/mcp/asset/93b6f537-2ff0-4028-9c92-56528564593d" alt=""
-               style="position:absolute; top:-1px; left:-1px; width:calc(100% + 2px); height:calc(100% + 2px); display:block;">
-        </div>
-      </div>
-      <span style="font-size:14px; font-weight:500; color:rgba(16,16,16,.5);
-                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-                   letter-spacing:-0.56px; flex:1; min-width:0;">
-        엄마에게 데이터 선물해줘
-      </span>
-    </div>
-    <button class="hbtn" aria-label="대화 기록"
-            style="background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
-                   -webkit-backdrop-filter:blur(20px); box-shadow:0 0 20px rgba(0,0,0,.05);">
-      <div style="position:relative; width:24px; height:24px;">
-        <img src="https://www.figma.com/api/mcp/asset/755b88fc-7506-4505-9e8c-5e85894bc331" alt=""
-             style="position:absolute; inset:0; width:100%; height:100%; display:block;">
-      </div>
-    </button>
-  </div>
 
 </div><!-- /screen-8 -->
 
@@ -1778,14 +1753,26 @@ function crossfadeTo(targetId, duration) {
 ══════════════════════════════════════ */
 function showKeyboard() {
   document.getElementById('s1-dim').classList.add('open');
-  document.getElementById('s1-keyboard').classList.add('open');
-  document.getElementById('s1-cards').classList.add('keyboard-open');
+  var kb    = document.getElementById('s1-keyboard');
+  var cards = document.getElementById('s1-cards');
+  kb.classList.add('open');
+  cards.classList.add('keyboard-open');
+
+  /* 키보드 실제 높이로 카드 위치 계산 — chat 위 10px gap */
+  var kbH      = kb.offsetHeight;          // keyboard 실측 높이
+  var cardsH   = cards.offsetHeight;       // card 실측 높이
+  var kbTop    = 812 - kbH;               // keyboard top (screen 기준)
+  var targetTop = kbTop - 10 - cardsH;    // card top = keyboard - 10px - card높이
+  var ty        = targetTop - 202;         // 기준 top:202px 에서 delta
+  cards.style.transform = 'translateY(' + ty + 'px)';
 }
 
 function hideKeyboard() {
   document.getElementById('s1-dim').classList.remove('open');
   document.getElementById('s1-keyboard').classList.remove('open');
-  document.getElementById('s1-cards').classList.remove('keyboard-open');
+  var cards = document.getElementById('s1-cards');
+  cards.classList.remove('keyboard-open');
+  cards.style.transform = '';
   resetTyping();
 }
 
@@ -2114,22 +2101,21 @@ function goToScreen5() {
   var header  = document.getElementById('s5-header');
   var current = document.querySelector('.screen.active');
 
-  /* 배경 즉시 전환 (같은 회색 — 시각적 변화 없음) */
+  /* 배경 crossfade — 같은 회색이므로 content swap처럼 보임 */
   if (current) { current.classList.remove('active'); current.style.display = 'none'; }
   s5.style.display = 'block';
   s5.classList.add('active');
 
-  /* 채팅은 아래에서, 헤더는 투명으로 준비 */
+  /* 채팅은 바로 아래(60px)에서 자연스럽게 stacking — Screen 4 chat이 이어지는 느낌 */
   chat.style.transition   = 'none';
-  chat.style.transform    = 'translateY(900px)';
+  chat.style.transform    = 'translateY(60px)';
   header.style.transition = 'none';
   header.style.opacity    = '0';
   void s5.getBoundingClientRect();
 
-  /* 채팅만 슬라이드업, 헤더 동시에 페이드인 */
-  chat.style.transition   = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  chat.style.transition   = 'transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
   chat.style.transform    = 'translateY(0)';
-  header.style.transition = 'opacity 0.4s ease';
+  header.style.transition = 'opacity 0.45s ease';
   header.style.opacity    = '1';
 
   /* 정리 → 1.5s 뒤 Screen 6 */
