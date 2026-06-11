@@ -1294,9 +1294,6 @@ async function startChatAnimation() {
     var text = document.getElementById('s3-ai-main-text');
     if (text) text.style.opacity = '1';
 
-    var icon = document.getElementById('s3-ai-icon');
-    if (icon) icon.classList.remove('ai-icon-pulse');
-
     /* Screen 3→4 전환: AI 텍스트가 화면에 안착한 후(1.6s) 실행 */
     setTimeout(transitionToScreen4, 1600);
   }, 1100);
