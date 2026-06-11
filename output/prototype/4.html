@@ -1400,31 +1400,33 @@ function startScreen4Animation() {
   show('s4-msg1', 2000);
   show('s4-msg2', 3200);
 
-  // 채팅 스크롤 → msg2 끝이 보이도록
-  setTimeout(function() {
-    var chat = document.getElementById('s4-chat');
-    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
-  }, 3500);
-
   // sheet 오픈 + GNB fade-down + 채팅 위로 이동
+  // smooth scroll 제거 → 즉시 scroll 후 transform 적용해 충돌 방지
   setTimeout(function() {
-    // GNB: 아래로 슬라이드하며 fade-out
-    var g = document.getElementById('s4-gnb');
-    if (g) {
-      g.style.transition = 'opacity 0.36s ease, transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
-      g.style.opacity    = '0';
-      g.style.transform  = 'translateY(40px)';
-    }
-
-    // 채팅 영역: 165px 위로 올라가 시트 위 콘텐츠 보이게
     var chat = document.getElementById('s4-chat');
-    if (chat) {
-      chat.style.transition = 'transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94)';
-      chat.style.transform  = 'translateY(-165px)';
-    }
 
-    var s = document.getElementById('s4-sheet');
-    if (s) s.classList.add('open');
+    // scroll 먼저 즉시 완료 (animation 충돌 방지)
+    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: 'auto' });
+
+    // 다음 프레임에 transform + sheet 적용 → reflow 없이 compositor에서 처리
+    requestAnimationFrame(function() {
+      // GNB: 아래로 슬라이드하며 fade-out
+      var g = document.getElementById('s4-gnb');
+      if (g) {
+        g.style.transition = 'opacity 0.4s ease, transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+        g.style.opacity    = '0';
+        g.style.transform  = 'translateY(40px)';
+      }
+
+      // 채팅 영역: 165px 위로 올라가 시트 위 콘텐츠 보이게
+      if (chat) {
+        chat.style.transition = 'transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94)';
+        chat.style.transform  = 'translateY(-165px)';
+      }
+
+      var s = document.getElementById('s4-sheet');
+      if (s) s.classList.add('open');
+    });
   }, 3900);
 }
 
