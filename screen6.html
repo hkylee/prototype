@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<title>변경 완료</title>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box; margin: 0; padding: 0;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── 컨트롤 패널 ── */
+  #controls .preset {
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid #d1d5db; background: #f9fafb;
+    font-size: 12px; font-weight: 500; color: #374151;
+    cursor: pointer; transition: background .15s, border-color .15s; white-space: nowrap;
+  }
+  #controls .preset:hover  { background: #ede9fe; border-color: #8b5cf6; color: #5940df; }
+  #controls .preset.active { background: #ede9fe; border-color: #5940df; color: #5940df; }
+  #controls .ctrl-div { width: 1px; height: 20px; background: #e5e7eb; }
+  #controls input[type=number] {
+    width: 52px; padding: 3px 6px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 13px; font-weight: 500; text-align: center; color: #374151; background: #f9fafb; outline: none;
+  }
+  #controls input[type=number]:focus { border-color: #5940df; }
+  #controls input[type=number]::-webkit-inner-spin-button,
+  #controls input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  #controls label { color: #6b7280; font-size: 12px; }
+  #apply-btn {
+    padding: 4px 12px; border-radius: 6px; border: none;
+    background: #5940df; color: #fff; font-size: 12px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ── 반응형 ── */
+  @media (max-width: 767px) {
+    body { background: #fff; }
+    #controls { display: none !important; }
+    #frame { width: 100vw !important; height: 100dvh !important; border-radius: 0 !important; }
+  }
+  @media (min-width: 768px) {
+    body {
+      padding: 24px 0 48px; background: #d1d5db;
+      display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 100vh;
+    }
+    #controls {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+      background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 8px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+    #frame { flex-shrink: 0; box-shadow: 0 24px 48px rgba(0,0,0,.25), 0 8px 16px rgba(0,0,0,.12); }
+  }
+
+  /* ── 프레임 ── */
+  #frame {
+    position: relative; overflow: hidden; margin: 0 auto;
+    background: #fff;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── 스크롤 영역 ── */
+  #scroll-s6 {
+    flex: 1; min-height: 0;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  #scroll-s6::-webkit-scrollbar { display: none; }
+
+  /* ── 헤더 ── */
+  .s6-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 8px;
+    padding: 20px;
+    z-index: 10;
+  }
+  .s6-header-title {
+    flex: 1; min-width: 0;
+    font-size: 16px; font-weight: 600;
+    letter-spacing: -0.04em; color: #1c1c1e;
+    opacity: 0;
+  }
+
+  /* ── 콘텐츠 ── */
+  .s6-content {
+    padding-top: 147px; /* Figma: contents top 147px */
+    padding-bottom: 120px; /* bottom bar 높이 */
+    display: flex; flex-direction: column;
+    align-items: center; gap: 20px;
+  }
+
+  /* 제목 섹션 */
+  .s6-title-section {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+    width: 100%;
+  }
+  .s6-celebration-img {
+    width: 100%;
+    aspect-ratio: 375 / 68;
+    position: relative;
+    overflow: hidden;
+  }
+  .s6-celebration-img img {
+    position: absolute;
+    width: 117.07%;
+    left: -8.53%;
+    top: -206.9%;
+    max-width: none;
+  }
+  .s6-title-text {
+    font-size: 22px; font-weight: 600;
+    letter-spacing: -0.03em; color: #1c1c1e;
+    text-align: center; line-height: 1.36;
+    width: calc(100% - 72px);
+    max-width: 303px;
+  }
+
+  /* 상세 섹션 */
+  .s6-details {
+    display: flex; flex-direction: column;
+    gap: 8px;
+    width: calc(100% - 40px);
+    max-width: 600px;
+  }
+
+  /* 변경 내역 카드 */
+  .s6-card {
+    background: #fff;
+    border: 1px solid #e7e7e7;
+    border-radius: 12px;
+    padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 18px;
+    width: 100%;
+  }
+  .s6-card-title {
+    font-size: 15px; font-weight: 600;
+    letter-spacing: -0.04em; color: #000;
+    line-height: 18px;
+  }
+  .s6-rows {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .s6-divider {
+    height: 1px; background: #e7e7e7; width: 100%;
+  }
+  .s6-row {
+    display: flex; align-items: center; gap: 20px;
+    width: 100%;
+  }
+  .s6-row-label {
+    flex: 1; min-width: 0;
+    font-size: 14px; font-weight: 400;
+    letter-spacing: -0.03em; color: #666;
+    line-height: 18px;
+  }
+  .s6-row-value {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: -0.03em; color: #000;
+    line-height: 18px; white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .s6-row-icons {
+    display: flex; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .s6-icon-circle {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .s6-icon-circle img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .s6-icon-circle.bordered {
+    border: 0.8px solid #d5d5d5;
+  }
+
+  /* AI 메시지 박스 */
+  .s6-ai-box {
+    background: #ece8ff;
+    border-radius: 12px;
+    padding: 16px 16px 16px 12px;
+    display: flex; align-items: flex-start; gap: 4px;
+    width: 100%;
+  }
+  .s6-ai-icon {
+    width: 18px; height: 18px; flex-shrink: 0;
+  }
+  .s6-ai-icon img { width: 100%; height: 100%; display: block; }
+  .s6-ai-text {
+    flex: 1; min-width: 0;
+    font-size: 12px; font-weight: 400;
+    letter-spacing: -0.033em; color: #5940df;
+    line-height: 18px;
+  }
+
+  /* ── 하단 바 ── */
+  .s6-bottom-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 16px 20px 32px;
+    background: #fff;
+    display: flex; justify-content: center;
+  }
+  .s6-bottom-inner {
+    display: flex; align-items: center; gap: 10px;
+    width: calc(100% - 40px);
+    max-width: 600px;
+  }
+  .s6-agent-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .s6-agent-btn img { width: 20px; height: 20px; }
+  .s6-confirm-btn {
+    flex: 1;
+    background: #222;
+    border-radius: 20px;
+    padding: 16px 32px;
+    font-size: 16px; font-weight: 600;
+    letter-spacing: -0.04em; color: #fff;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 8px rgba(106,106,106,0.16);
+    border: none; outline: none;
+    line-height: 1.3;
+  }
+</style>
+</head>
+<body>
+
+<!-- 컨트롤 패널 (desktop) -->
+<div id="controls">
+  <button class="preset active" onclick="setPreset(375,812,this)">iPhone SE</button>
+  <button class="preset" onclick="setPreset(390,844,this)">iPhone 14</button>
+  <button class="preset" onclick="setPreset(393,852,this)">iPhone 16</button>
+  <button class="preset" onclick="setPreset(412,915,this)">Android L</button>
+  <div class="ctrl-div"></div>
+  <label>W</label>
+  <input type="number" id="inp-w" value="375" min="320" max="600" onchange="applyCustom()">
+  <label>H</label>
+  <input type="number" id="inp-h" value="812" min="568" max="1024" onchange="applyCustom()">
+  <button id="apply-btn" onclick="applyCustom()">적용</button>
+</div>
+
+<!-- 프레임 -->
+<div id="frame" style="width:375px;height:812px;border-radius:44px;">
+
+  <!-- 스크롤 영역 -->
+  <div id="scroll-s6">
+    <div class="s6-content">
+
+      <!-- 제목 섹션 -->
+      <div class="s6-title-section">
+        <div class="s6-celebration-img">
+          <img src="assets/screen6/img_celebration.png" alt="">
+        </div>
+        <p class="s6-title-text">0 청년 109로<br>요금제가 변경 됐어요.</p>
+      </div>
+
+      <!-- 상세 섹션 -->
+      <div class="s6-details">
+
+        <!-- 변경 내역 카드 -->
+        <div class="s6-card">
+          <p class="s6-card-title">변경 내역</p>
+          <div class="s6-rows">
+
+            <!-- 선택 약정 할인 금액 -->
+            <div class="s6-row">
+              <span class="s6-row-label">선택 약정 할인 금액</span>
+              <span class="s6-row-value">78,650원</span>
+            </div>
+            <div class="s6-divider"></div>
+
+            <!-- 공유 데이터 -->
+            <div class="s6-row">
+              <span class="s6-row-label">공유 데이터</span>
+              <span class="s6-row-value">60GB</span>
+            </div>
+            <div class="s6-divider"></div>
+
+            <!-- 기본 제공 혜택 -->
+            <div class="s6-row">
+              <span class="s6-row-label">기본 제공 혜택</span>
+              <div class="s6-icon-circle">
+                <img src="assets/screen6/logo_netflix_icon.png" alt="Netflix">
+              </div>
+            </div>
+            <div class="s6-divider"></div>
+
+            <!-- 결합 상품 -->
+            <div class="s6-row">
+              <span class="s6-row-label">결합 상품</span>
+              <div class="s6-row-icons">
+                <div class="s6-icon-circle bordered">
+                  <img src="assets/screen6/logo_google_one.png" alt="Google One">
+                </div>
+                <div class="s6-icon-circle">
+                  <img src="assets/screen6/logo_bundle2.png" alt="">
+                </div>
+              </div>
+            </div>
+            <div class="s6-divider"></div>
+
+            <!-- 적용일 -->
+            <div class="s6-row">
+              <span class="s6-row-label">적용일</span>
+              <span class="s6-row-value">다음 결제일부터</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- AI 메시지 박스 -->
+        <div class="s6-ai-box">
+          <div class="s6-ai-icon">
+            <img src="assets/screen6/ico_ai_fill.svg" alt="">
+          </div>
+          <p class="s6-ai-text">이제 지훈님은 매달 31,760원의 가치를 더 돌려 받을 수 있어요.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 헤더 (스크롤 위에 오버레이) -->
+  <div class="s6-header">
+    <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
+      <img src="assets/screen6/ico_back.svg" alt="뒤로" style="width:8px;height:15px;">
+    </button>
+    <span class="s6-header-title">나의 상품 현황</span>
+  </div>
+
+  <!-- 하단 바 -->
+  <div class="s6-bottom-bar">
+    <div class="s6-bottom-inner">
+      <div class="s6-agent-btn">
+        <img src="assets/screen6/ico_tagent_shape.svg" alt="AI">
+      </div>
+      <button class="s6-confirm-btn">확인</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function setPreset(w, h, btn) {
+    document.querySelectorAll('#controls .preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const frame = document.getElementById('frame');
+    frame.style.width  = w + 'px';
+    frame.style.height = h + 'px';
+    frame.style.borderRadius = w <= 375 ? '44px' : '48px';
+    document.getElementById('inp-w').value = w;
+    document.getElementById('inp-h').value = h;
+  }
+
+  function applyCustom() {
+    const w = parseInt(document.getElementById('inp-w').value) || 375;
+    const h = parseInt(document.getElementById('inp-h').value) || 812;
+    document.querySelectorAll('#controls .preset').forEach(b => b.classList.remove('active'));
+    const frame = document.getElementById('frame');
+    frame.style.width  = w + 'px';
+    frame.style.height = h + 'px';
+    frame.style.borderRadius = '44px';
+  }
+</script>
+</body>
+</html>
