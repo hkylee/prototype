@@ -77,15 +77,15 @@
     -webkit-backdrop-filter: blur(8px);
   }
 
-  /* ── Screen 4 슬라이드 (요금제 비교 상세) ── */
+  /* ── Screen 4 페이드 (요금제 비교 상세) ── */
   #screen-4 {
     position: absolute; inset: 0; z-index: 200;
     background: #f7f8fa;
-    transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
     display: flex; flex-direction: column;
   }
-  #screen-4.active { transform: translateX(0); }
+  #screen-4.active { opacity: 1; pointer-events: auto; }
   #scroll-s4 {
     flex: 1; min-height: 0;
     overflow-y: auto; overflow-x: hidden;
@@ -133,6 +133,104 @@
     display: flex; flex-direction: column;
   }
   .s3-slide-page.active { transform: translateX(0); }
+
+  /* ── Screen 6 슬라이드 (변경 완료) ── */
+  #screen-6 {
+    position: absolute; inset: 0; z-index: 300;
+    background: #fff;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column;
+  }
+  #screen-6.active { transform: translateX(0); }
+  #scroll-s6 {
+    flex: 1; min-height: 0;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  #scroll-s6::-webkit-scrollbar { display: none; }
+  .s6-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 8px;
+    padding: 20px; z-index: 10;
+  }
+  .s6-content {
+    padding-top: 147px; padding-bottom: 120px;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+  .s6-title-section {
+    display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;
+  }
+  .s6-celebration-img {
+    width: 100%; aspect-ratio: 375 / 68; position: relative; overflow: hidden;
+  }
+  .s6-celebration-img img {
+    position: absolute; width: 117.07%; left: -8.53%; top: -206.9%; max-width: none;
+  }
+  .s6-title-text {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: #1c1c1e;
+    text-align: center; line-height: 1.36; width: calc(100% - 72px); max-width: 303px;
+  }
+  .s6-details {
+    display: flex; flex-direction: column; gap: 8px;
+    width: calc(100% - 40px); max-width: 600px;
+  }
+  .s6-card {
+    background: #fff; border: 1px solid #e7e7e7; border-radius: 12px;
+    padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; width: 100%;
+  }
+  .s6-card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.04em; color: #000; line-height: 18px; }
+  .s6-rows { display: flex; flex-direction: column; gap: 12px; }
+  .s6-divider { height: 1px; background: #e7e7e7; width: 100%; }
+  .s6-row { display: flex; align-items: center; gap: 20px; width: 100%; }
+  .s6-row-label { flex: 1; min-width: 0; font-size: 14px; font-weight: 400; letter-spacing: -0.03em; color: #666; line-height: 18px; }
+  .s6-row-value { font-size: 14px; font-weight: 700; letter-spacing: -0.03em; color: #000; line-height: 18px; white-space: nowrap; flex-shrink: 0; }
+  .s6-row-icons { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .s6-icon-circle { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+  .s6-icon-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .s6-icon-circle.bordered { border: 0.8px solid #d5d5d5; }
+  .s6-ai-box {
+    background: #ece8ff; border-radius: 12px; padding: 16px 16px 16px 12px;
+    display: flex; align-items: flex-start; gap: 4px; width: 100%;
+  }
+  .s6-ai-icon { width: 18px; height: 18px; flex-shrink: 0; }
+  .s6-ai-icon img { width: 100%; height: 100%; display: block; }
+  .s6-ai-text { flex: 1; min-width: 0; font-size: 12px; font-weight: 400; letter-spacing: -0.033em; color: #5940df; line-height: 18px; }
+  .s6-bottom-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 16px 20px 32px; background: #fff; display: flex; justify-content: center;
+  }
+  .s6-bottom-inner { display: flex; align-items: center; gap: 10px; width: calc(100% - 40px); max-width: 600px; }
+  .s6-agent-btn {
+    width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .s6-agent-btn img { width: 20px; height: 20px; }
+  .s6-confirm-btn {
+    flex: 1; background: #222; border-radius: 20px; padding: 16px 32px;
+    font-size: 16px; font-weight: 600; letter-spacing: -0.04em; color: #fff;
+    text-align: center; cursor: pointer; box-shadow: 0 8px 8px rgba(106,106,106,0.16);
+    border: none; outline: none; line-height: 1.3;
+  }
+
+  /* ── 터치 힌트 오버레이 ── */
+  .tap-hint-overlay {
+    position: absolute;
+    pointer-events: none;
+    z-index: 99999;
+    border-radius: 999px;
+    border: 2px solid rgba(89, 64, 223, 0.65);
+    background: rgba(89, 64, 223, 0.07);
+    animation: tap-ring 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
+  }
+  .tap-hint-overlay--rect { border-radius: 14px; }
+  @keyframes tap-ring {
+    0%   { opacity: 0; transform: scale(0.94); }
+    15%  { opacity: 1; transform: scale(1);    }
+    70%  { opacity: 1; transform: scale(1);    }
+    100% { opacity: 0; transform: scale(1.03); }
+  }
 </style>
 </head>
 <body>
@@ -153,12 +251,12 @@
 </div>
 
 <!-- ── 폰 프레임 ── -->
-<div id="frame" style="width:375px; height:812px; border-radius:44px;">
+<div id="frame" style="width:375px; height:812px; border-radius:44px; position:relative;">
 
 <!-- ══════════════════════════
      SCREEN 1 : 혜택 홈
 ══════════════════════════ -->
-<div style="position:relative; width:100%; height:100%; background:#d2d4d9; overflow:hidden;">
+<div id="screen-1" style="position:relative; width:100%; height:100%; background:#d2d4d9; overflow:hidden;">
 
   <!-- ── 헤더 top:14px ── -->
   <div style="position:absolute; left:0; top:14px; width:100%; height:72px; z-index:30;
@@ -182,7 +280,7 @@
         </g>
       </svg>
     </button>
-    <button class="hbtn" aria-label="메뉴" onclick="toggleScreen2()">
+    <button id="s1-menu-btn" class="hbtn" aria-label="메뉴" onclick="toggleScreen2()">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <line x1="3" y1="6"  x2="21" y2="6"  stroke="#101010" stroke-width="2" stroke-linecap="round"/>
         <line x1="3" y1="12" x2="21" y2="12" stroke="#101010" stroke-width="2" stroke-linecap="round"/>
@@ -398,7 +496,7 @@
         <span class="text-[12px] leading-[1.3] tracking-[-0.24px] font-[600] text-[#898989] whitespace-nowrap">이용 현황 및 요금</span>
         <div class="flex flex-col gap-[8px]">
           <div class="flex gap-[16px] items-center py-[8px] w-full">
-            <span class="flex-1 min-w-0 text-[14px] leading-[1.2] tracking-[-0.56px] font-[500] text-[#101010] cursor-pointer" onclick="openScreen3()">나의 상품 현황</span>
+            <span id="s2-product-tap" class="flex-1 min-w-0 text-[14px] leading-[1.2] tracking-[-0.56px] font-[500] text-[#101010] cursor-pointer" onclick="openScreen3()">나의 상품 현황</span>
             <span class="flex-1 min-w-0 text-[14px] leading-[1.2] tracking-[-0.56px] font-[500] text-[#101010]">데이터/통화 관리</span>
           </div>
           <div class="flex gap-[16px] items-center py-[8px] w-full">
@@ -516,7 +614,7 @@
 
   <!-- 헤더 -->
   <div style="flex-shrink:0;background:#f7f8fa;display:flex;align-items:center;padding:0 20px;height:56px;gap:8px;width:100%;">
-    <button onclick="closeScreen3()" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;background:none;border:none;padding:0;cursor:pointer;">
+    <button id="s3-back-btn" onclick="closeScreen3()" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;background:none;border:none;padding:0;cursor:pointer;">
       <img src="assets/scenario1/ico_back.svg" style="width:8px;height:15px;display:block;" alt="">
     </button>
     <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;flex:1;">나의 상품 현황</span>
@@ -700,7 +798,7 @@
               </div>
               <div style="display:flex;gap:4px;width:100%;height:42px;">
                 <div style="background:white;border:1px solid #e0e0e0;border-radius:12px;height:42px;display:flex;align-items:center;justify-content:center;padding:0 20px;cursor:pointer;flex-shrink:0;"><span style="font-size:12px;font-weight:500;color:#202020;white-space:nowrap;">비교해 보기</span></div>
-                <div onclick="window.location.href='screen4.html'" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:14px;height:14px;" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
+                <div id="s3-change-btn1" onclick="openScreen4()" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:14px;height:14px;" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
               </div>
             </div>
           </div>
@@ -814,7 +912,7 @@
               </div>
               <div style="display:flex;gap:4px;width:100%;height:42px;">
                 <div style="background:white;border:1px solid #e0e0e0;border-radius:12px;height:42px;display:flex;align-items:center;justify-content:center;padding:0 20px;cursor:pointer;flex-shrink:0;"><span style="font-size:12px;font-weight:500;color:#202020;white-space:nowrap;">비교해 보기</span></div>
-                <div onclick="window.location.href='screen4.html'" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:14px;height:14px;" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
+                <div id="s3-change-btn2" onclick="openScreen4()" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:14px;height:14px;" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
               </div>
             </div>
           </div>
@@ -884,7 +982,7 @@
         기존 요금제 대비 어떤 혜택이 있는지<br>비교해 드릴게요.
       </p>
       <!-- 버튼 -->
-      <button onclick="window.location.href='screen4.html'"
+      <button id="s3-compare-btn" onclick="openScreen4()"
         class="cursor-pointer active:scale-95 transition-transform"
         style="flex-shrink:0;background:rgba(1,8,59,0.1);border:none;cursor:pointer;
                border-radius:19px;padding:10px 12px;
@@ -906,10 +1004,14 @@
 
   <!-- 헤더 -->
   <div style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:20px 20px 12px;">
-    <button onclick="closeScreen4()" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;background:none;border:none;padding:0;cursor:pointer;" aria-label="뒤로가기">
+    <button id="s4-back-btn" onclick="closeScreen4()" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;background:none;border:none;padding:0;cursor:pointer;" aria-label="뒤로가기">
       <img src="assets/scenario1/ico_back.svg" style="width:8px;height:15px;display:block;" alt="">
     </button>
-    <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;">요금제 비교</span>
+    <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;flex:1;">요금제 비교</span>
+    <button onclick="openS4Sheet()" style="flex-shrink:0;background:#222;border:none;border-radius:20px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,0.18);">
+      <img src="assets/screen3/ico_ai_fill.svg" style="width:13px;height:13px;" alt="">
+      <span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">요금제 변경하기</span>
+    </button>
   </div>
 
   <!-- 스크롤 영역 -->
@@ -1070,6 +1172,98 @@
 
 </div><!-- /screen-4 -->
 
+
+<!-- ══════════════════════════
+     SCREEN 6 : 변경 완료
+══════════════════════════ -->
+<div id="screen-6">
+
+  <!-- 스크롤 영역 -->
+  <div id="scroll-s6">
+    <div class="s6-content">
+
+      <!-- 제목 섹션 -->
+      <div class="s6-title-section">
+        <div class="s6-celebration-img">
+          <img src="assets/screen6/img_celebration.png" alt="">
+        </div>
+        <p class="s6-title-text">0 청년 109로<br>요금제가 변경 됐어요.</p>
+      </div>
+
+      <!-- 상세 섹션 -->
+      <div class="s6-details">
+
+        <!-- 변경 내역 카드 -->
+        <div class="s6-card">
+          <p class="s6-card-title">변경 내역</p>
+          <div class="s6-rows">
+            <div class="s6-row">
+              <span class="s6-row-label">선택 약정 할인 금액</span>
+              <span class="s6-row-value">78,650원</span>
+            </div>
+            <div class="s6-divider"></div>
+            <div class="s6-row">
+              <span class="s6-row-label">공유 데이터</span>
+              <span class="s6-row-value">60GB</span>
+            </div>
+            <div class="s6-divider"></div>
+            <div class="s6-row">
+              <span class="s6-row-label">기본 제공 혜택</span>
+              <div class="s6-icon-circle">
+                <img src="assets/screen6/logo_netflix_icon.png" alt="Netflix">
+              </div>
+            </div>
+            <div class="s6-divider"></div>
+            <div class="s6-row">
+              <span class="s6-row-label">결합 상품</span>
+              <div class="s6-row-icons">
+                <div class="s6-icon-circle bordered">
+                  <img src="assets/screen6/logo_google_one.png" alt="Google One">
+                </div>
+                <div class="s6-icon-circle">
+                  <img src="assets/screen6/logo_bundle2.png" alt="">
+                </div>
+              </div>
+            </div>
+            <div class="s6-divider"></div>
+            <div class="s6-row">
+              <span class="s6-row-label">적용일</span>
+              <span class="s6-row-value">다음 결제일부터</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 메시지 박스 -->
+        <div class="s6-ai-box">
+          <div class="s6-ai-icon">
+            <img src="assets/screen6/ico_ai_fill.svg" alt="">
+          </div>
+          <p class="s6-ai-text">이제 지훈님은 매달 31,760원의 가치를 더 돌려 받을 수 있어요.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 헤더 (스크롤 위에 오버레이) -->
+  <div class="s6-header">
+    <button id="s6-back-btn" onclick="closeScreen6()" style="background:none;border:none;cursor:pointer;padding:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
+      <img src="assets/screen6/ico_back.svg" alt="뒤로" style="width:8px;height:15px;">
+    </button>
+  </div>
+
+  <!-- 하단 바 -->
+  <div class="s6-bottom-bar">
+    <div class="s6-bottom-inner">
+      <div class="s6-agent-btn">
+        <img src="assets/screen6/ico_tagent_shape.svg" alt="AI">
+      </div>
+      <button id="s6-confirm-btn" class="s6-confirm-btn" onclick="closeScreen6()">확인</button>
+    </div>
+  </div>
+
+</div><!-- /screen-6 -->
+
 </div><!-- /frame -->
 
 <script>
@@ -1157,7 +1351,21 @@
     });
   }
   function confirmS4Change() {
-    window.location.href = 'screen6.html';
+    closeS4Sheet();
+    closeScreen4();
+    openScreen6();
+  }
+
+  /* ── Screen 6 네비게이션 ── */
+  function openScreen6() {
+    var s6 = document.getElementById('screen-6');
+    if (!s6) return;
+    s6.classList.add('active');
+    document.getElementById('scroll-s6').scrollTop = 0;
+  }
+  function closeScreen6() {
+    var s6 = document.getElementById('screen-6');
+    if (s6) s6.classList.remove('active');
   }
   function toggleS4Acc() {
     var pill = document.getElementById('s4-pill');
@@ -1357,6 +1565,76 @@
       s2.classList.add('active');
     }
   }
+
+  // ── 터치 힌트 (Touch Area Hint) ──
+  (function() {
+    var HINTS = {
+      'screen-1': ['s1-menu-btn'],
+      'screen-2': ['s2-product-tap'],
+      'screen-3': ['s3-change-btn1', 's3-change-btn2', 's3-compare-btn'],
+      'screen-4': ['s4-back-btn'],
+      'screen-6': ['s6-confirm-btn'],
+    };
+    var missCount = {};
+
+    function activeScreenId() {
+      var s6 = document.getElementById('screen-6');
+      var s4 = document.getElementById('screen-4');
+      var s3 = document.getElementById('screen-3');
+      var s2 = document.getElementById('screen-2');
+      if (s6 && s6.classList.contains('active')) return 'screen-6';
+      if (s4 && s4.classList.contains('active')) return 'screen-4';
+      if (s3 && s3.classList.contains('active')) return 'screen-3';
+      if (s2 && s2.classList.contains('active')) return 'screen-2';
+      return 'screen-1';
+    }
+
+    function showHints(ids) {
+      var stage = document.getElementById('frame');
+      var stageRect = stage.getBoundingClientRect();
+      ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var r = el.getBoundingClientRect();
+        var pad = 8;
+        var ov = document.createElement('div');
+        ov.className = 'tap-hint-overlay';
+        ov.style.left   = (r.left - stageRect.left - pad) + 'px';
+        ov.style.top    = (r.top  - stageRect.top  - pad) + 'px';
+        ov.style.width  = (r.width  + pad * 2) + 'px';
+        ov.style.height = (r.height + pad * 2) + 'px';
+        stage.appendChild(ov);
+        setTimeout(function() { ov.remove(); }, 1400);
+      });
+    }
+
+    document.getElementById('frame').addEventListener('pointerdown', function(e) {
+      var el = e.target;
+      while (el && el !== this) {
+        if (el.tagName === 'BUTTON' || el.tagName === 'INPUT' ||
+            el.onclick || el.getAttribute('onclick') ||
+            el.hasAttribute('onmousedown') || el.hasAttribute('ontouchstart')) {
+          return;
+        }
+        el = el.parentElement;
+      }
+      var sid = activeScreenId();
+      if (!HINTS[sid]) return;
+      missCount[sid] = (missCount[sid] || 0) + 1;
+      if (missCount[sid] >= 2) {
+        showHints(HINTS[sid]);
+        missCount[sid] = 0;
+      }
+    });
+
+    // 화면 전환 시 카운트 리셋
+    ['screen-2', 'screen-3', 'screen-4', 'screen-6'].forEach(function(sid) {
+      var el = document.getElementById(sid);
+      if (!el) return;
+      var obs = new MutationObserver(function() { missCount = {}; });
+      obs.observe(el, { attributes: true, attributeFilter: ['class'] });
+    });
+  })();
 </script>
 </body>
 </html>
