@@ -2197,21 +2197,10 @@ function transitionToScreen4() {
         el.classList.remove('visible');
       }
     });
-    /* msg1 내부 <p>: dimmed 상태를 초기(22px gradient) 상태로 복원
-       style='' 은 값 삭제이므로 22px gradient를 명시적으로 재설정 */
+    /* msg1 내부 <p>: 초기(22px gradient) 상태로 원자적 복원 */
     var s4m1p = document.querySelector('#s4-msg1 p');
     if (s4m1p) {
-      s4m1p.style.transition           = 'none';
-      s4m1p.style.fontSize             = '22px';
-      s4m1p.style.fontWeight           = '400';
-      s4m1p.style.opacity              = '';
-      s4m1p.style.letterSpacing        = '-1.54px';
-      s4m1p.style.lineHeight           = '1.3';
-      s4m1p.style.background           = 'linear-gradient(to right,#2f2f2f 0%,#959595 100%)';
-      s4m1p.style.webkitBackgroundClip = 'text';
-      s4m1p.style.backgroundClip       = 'text';
-      s4m1p.style.webkitTextFillColor  = 'transparent';
-      s4m1p.style.color                = '';
+      s4m1p.style.cssText = 'transition:none; font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3; background:linear-gradient(to right,#2f2f2f 0%,#959595 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;';
     }
 
     var gnb = document.getElementById('s4-gnb');
@@ -2250,6 +2239,8 @@ function startScreen4Animation() {
   var chatEl = document.getElementById('s4-chat');
   var aiText = document.getElementById('s4-ai-text');
   var card   = document.getElementById('s4-card');
+  var m1     = document.getElementById('s4-msg1');
+  var m1p    = m1 && m1.querySelector('p');
   initSlider4();
 
   /* T+200ms: AI 텍스트 등장 */
@@ -2273,7 +2264,6 @@ function startScreen4Animation() {
        translateY(44px) → translateY(0) 애니메이션 중 목표를 지나
        translateY(-약7px) 순간 도달("컸다가") → 다시 내려와 안착("내려가는") */
   setTimeout(function() {
-    var m1 = document.getElementById('s4-msg1');
     if (m1) {
       m1.style.transform = 'translateY(44px)';
       m1.style.opacity   = '0';
@@ -2289,21 +2279,17 @@ function startScreen4Animation() {
      msg2 slide-up 동시 진행                                              */
   setTimeout(function() {
     var ease = 'cubic-bezier(0.25,0.46,0.45,0.94)';
-    var m1 = document.getElementById('s4-msg1');
-    if (m1) {
-      var p = m1.querySelector('p');
-      if (p) {
-        void p.offsetHeight;
-        p.style.transition    = 'font-size 0.5s ' + ease
+    if (m1p) {
+      void m1p.offsetHeight;
+      m1p.style.transition    = 'font-size 0.5s ' + ease
                               + ', opacity 0.45s ' + ease
                               + ', letter-spacing 0.5s ' + ease
                               + ', line-height 0.5s ' + ease;
-        p.style.fontSize      = '16px';
-        p.style.fontWeight    = '500';
-        p.style.opacity       = '0.2';
-        p.style.letterSpacing = '-0.64px';
-        p.style.lineHeight    = '1.4';
-      }
+      m1p.style.fontSize      = '16px';
+      m1p.style.fontWeight    = '500';
+      m1p.style.opacity       = '0.2';
+      m1p.style.letterSpacing = '-0.64px';
+      m1p.style.lineHeight    = '1.4';
     }
     var m2 = document.getElementById('s4-msg2');
     if (m2) { m2.style.transition = ''; m2.classList.add('visible'); }
