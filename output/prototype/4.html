@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
 <style>
+  :root { --ease: cubic-bezier(0.22, 1, 0.36, 1); }
+
   *, *::before, *::after {
     box-sizing: border-box; margin: 0; padding: 0;
     font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
@@ -154,16 +156,14 @@
   /* 메시지 공통: 초기 opacity-0 + translateY(20px) → .visible 에서 부드럽게 안착 */
   .chat-bubble {
     opacity: 0; transform: translateY(20px);
-    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
   }
   .chat-bubble.visible { opacity: 1; transform: translateY(0); }
 
   /* 스파클 로딩 아이콘 전용: scale 등장 (translateY 대신 — 제자리에서 나타나는 느낌) */
   .chat-bubble-scale {
     opacity: 0; transform: scale(0.82);
-    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
     will-change: opacity, transform;
     transform-origin: left center;
   }
@@ -219,11 +219,7 @@
     position: absolute; top: 125px; left: 20px; width: 335px;
     display: flex; flex-direction: column; gap: 0;
     padding-bottom: 50px;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
   }
-  #s4-chat::-webkit-scrollbar { display: none; }
 
   /* Screen 4 GNB (Figma: top=726px, h=52px) */
   #s4-gnb {
@@ -235,7 +231,7 @@
     box-shadow: 0 0 20px rgba(0,0,0,.05);
     display: flex; align-items: center; padding: 0 16px;
     opacity: 0; transform: translateY(16px);
-    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
   }
   #s4-gnb.visible { opacity: 1; transform: translateY(0); }
   /* 하단 그라디언트 페이드 */
@@ -1021,9 +1017,6 @@
                 letter-spacing:-0.64px; line-height:1.5;">현재 지훈님의 데이터 사용량을 고려했을 때,<br>최대 용량을 선물해도 이번 달은 부족함 없이<br>이용하실 수 있어요.<br>어머니께 2GB를 선물할까요?</p>
     </div>
 
-    <!-- Push-up 스페이서: height 0→165px 로 확장해 컨텐츠를 위로 밀어냄 -->
-    <div id="s4-spacer" style="height:0; flex-shrink:0;
-         transition: height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);"></div>
   </div><!-- /s4-chat -->
 
   <!-- 하단 그라디언트 페이드 -->
@@ -2180,181 +2173,165 @@ function startChatAnimation() {
 }
 
 /* ══════════════════════════════════════
-   Screen 3 → 4 전환
-   Screen 3의 최종 상태(첫텍스트 dimmed + 두번째텍스트 + 카드)가
-   Screen 4 초기 상태와 동일 → 빠른 crossfade로 seamless 연결
+   Screen 3 → 4 심리스(Seamless) 전환
 ══════════════════════════════════════ */
 function transitionToScreen4() {
-  /* Step 1: Screen 3 채팅 fade-out */
-  var s3chat = document.getElementById('s3-chat');
-  if (s3chat) {
-    s3chat.style.transition = 'opacity 0.3s cubic-bezier(0.16,1,0.3,1)';
-    s3chat.style.opacity    = '0';
-  }
+  goTo('screen-4');
 
-  setTimeout(function() {
-    /* Screen 4 초기화: ai-text/card/msg1/msg2 모두 숨김 (startScreen4Animation에서 순차 등장) */
-    ['s4-ai-text','s4-card','s4-msg1','s4-msg2'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.style.setProperty('transition', 'none', 'important'); /* dimBubble/lockBubble의 !important transition도 덮어씀 */
-        el.style.opacity   = '';   /* !important opacity(dimmed/locked) 제거 */
-        el.style.transform = '';   /* !important transform(locked) 제거 */
-        el.classList.remove('visible');
-      }
-    });
-    /* msg1 내부 <p>: 초기(22px gradient) 상태로 원자적 복원 */
-    var s4m1p = document.querySelector('#s4-msg1 p');
-    if (s4m1p) {
-      s4m1p.style.cssText = 'transition:none; font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3; background:linear-gradient(to right,#2f2f2f 0%,#959595 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;';
-    }
-
-    var gnb = document.getElementById('s4-gnb');
-    if (gnb) { gnb.classList.remove('visible'); gnb.style.setProperty('transition','none','important'); gnb.style.opacity=''; gnb.style.transform=''; }
-    var sheet = document.getElementById('s4-sheet');
-    if (sheet) sheet.classList.remove('open');
-    var chatEl = document.getElementById('s4-chat');
-    if (chatEl) { chatEl.style.transition='none'; chatEl.style.transform=''; chatEl.style.height=''; chatEl.scrollTop=0; }
-    var spacer = document.getElementById('s4-spacer');
-    if (spacer) { spacer.style.transition='none'; spacer.style.height='0'; }
-    var s4hdr = document.getElementById('s4-header');
-    if (s4hdr) { s4hdr.style.transition='none'; s4hdr.style.opacity='1'; }
-
-    /* crossfade (300ms) */
-    crossfadeTo('screen-4', 300);
-
-    /* msg1/msg2 순차 등장 */
-    setTimeout(startScreen4Animation, 300);
-  }, 300);
-}
-
-/* ══════════════════════════════════════
-   등장 완료된 버블 잠금 헬퍼
-   !important 인라인 스타일로 이후
-   리플로우/컴포지팅 이슈에서 transition
-   재트리거되지 않도록 완전히 동결
-══════════════════════════════════════ */
-function lockBubble(el) {
-  if (!el) return;
-  el.style.setProperty('transition', 'none', 'important');
-  el.style.setProperty('opacity',    '1',    'important');
-  el.style.setProperty('transform',  'translateY(0)', 'important');
-}
-
-/* 새 콘텐츠 등장 시 이전 버블을 0.35로 디밍 — 시선을 최신 메시지로 유도
-   lockBubble의 !important를 rAF 2단계로 안전하게 덮어씀 */
-function dimBubble(el) {
-  if (!el) return;
-  el.style.setProperty('transition', 'opacity 0.5s cubic-bezier(0.22,1,0.36,1)', 'important');
-  requestAnimationFrame(function() {
-    el.style.setProperty('opacity', '0.35', 'important');
-  });
-}
-
-/* ══════════════════════════════════════
-   Screen 4 순차 등장 (Figma 9094-15297)
-   startScreen4Animation은 screen-4 crossfade 시작 300ms 후 호출됨
-   → T 기준 = startScreen4Animation 진입 시점
-
-   T+0ms   (총300ms)  → AI 텍스트 즉시 등장          9094-14990 일부
-   T+200ms (총500ms)  → GNB 등장
-   T+650ms            → aiText 잠금 (0+650)
-   T+700ms (총1000ms) → 가족 카드 + aiText 디밍       9094-14990 완성
-   T+1350ms           → card 잠금 (700+650)
-   T+1500ms(총1800ms) → msg1 두둥뜨기 + card 디밍     9094-14990→9094-15114
-   T+2150ms           → msg1 잠금 (1500+650)
-   T+2600ms(총2900ms) → msg1 축소·페이드 + msg2 등장
-   T+2900ms(총3200ms) → 채팅 스크롤 업 + GNB 페이드
-   T+3300ms(총3600ms) → Sheet1 슬라이드업
-══════════════════════════════════════ */
-function startScreen4Animation() {
+  var s4hdr  = document.getElementById('s4-header');
+  var aiText = document.getElementById('s4-ai-text');
+  var card   = document.getElementById('s4-card');
+  var m1     = document.getElementById('s4-msg1');
+  var m2     = document.getElementById('s4-msg2');
   var gnb    = document.getElementById('s4-gnb');
   var sheet  = document.getElementById('s4-sheet');
   var chatEl = document.getElementById('s4-chat');
+
+  // 1. 헤더 즉시 등장
+  if (s4hdr) { s4hdr.style.transition = 'none'; s4hdr.style.opacity = '1'; }
+
+  // 2. 순차 등장 애니메이션을 위해 모든 채팅 버블 초기화
+  [aiText, card, m1, m2].forEach(function(el) {
+    if (el) {
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.classList.remove('visible');
+    }
+  });
+
+  // msg1 내부 그라디언트 텍스트 초기화
+  var m1p = m1 && m1.querySelector('p');
+  if (m1p) {
+    m1p.style.transition = 'none';
+    m1p.style.fontSize = '22px';
+    m1p.style.fontWeight = '400';
+    m1p.style.opacity = '1';
+    m1p.style.letterSpacing = '-1.54px';
+    m1p.style.transform = 'none';
+    m1p.style.transformOrigin = '';
+  }
+  if (m1) {
+    m1.style.marginBottom = '';
+  }
+
+  // 4. GNB, Sheet, Chat 컨테이너 초기화
+  if (gnb) {
+    gnb.style.transition = 'none';
+    gnb.style.opacity = '0';
+    gnb.style.transform = 'translateY(40px)';
+  }
+  if (sheet) {
+    sheet.classList.remove('open');
+  }
+  if (chatEl) {
+    chatEl.style.transition = 'none';
+    chatEl.style.transform = 'translate3d(0,0,0)'; // 3D 좌표 사용으로 GPU 레이어 안정화
+  }
+
+  // 5. 프레임 안정화 후 타이트하게 순차 애니메이션 시작
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      startScreen4Animation();
+    });
+  });
+}
+
+var EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+function showEl(el, delay) {
+  setTimeout(function() {
+    if (!el) return;
+    el.style.transition = 'opacity 0.6s ' + EASE + ', transform 0.6s ' + EASE;
+    el.style.opacity    = '1';
+    el.style.transform  = 'translateY(0)';
+  }, delay);
+}
+
+function dimEl(el, delay) {
+  setTimeout(function() {
+    if (!el) return;
+    el.style.transition = 'opacity 0.6s ' + EASE;
+    el.style.opacity    = '0.35';
+  }, delay);
+}
+
+/* ══════════════════════════════════════
+   Screen 4 순차 등장 및 스무스 스크롤 업 (Layout Thrashing 완벽 제거)
+══════════════════════════════════════ */
+function startScreen4Animation() {
   var aiText = document.getElementById('s4-ai-text');
   var card   = document.getElementById('s4-card');
   var m1     = document.getElementById('s4-msg1');
   var m1p    = m1 && m1.querySelector('p');
+  var m2     = document.getElementById('s4-msg2');
+  var gnb    = document.getElementById('s4-gnb');
+  var sheet  = document.getElementById('s4-sheet');
+  var chatEl = document.getElementById('s4-chat');
+
   initSlider4();
 
-  /* T+0ms: AI 텍스트 즉시 등장 — crossfade와 동시에 콘텐츠가 올라옴 */
-  if (aiText) { aiText.style.transition = ''; aiText.classList.add('visible'); }
-  /* T+650ms: aiText 잠금 */
-  setTimeout(function() { lockBubble(aiText); }, 650);
+  // T+50ms: AI 텍스트 등장
+  showEl(aiText, 50);
 
-  /* T+200ms: GNB 등장 (aiText와 0.2s 스태거) */
+  // T+300ms: GNB 등장
   setTimeout(function() {
-    if (gnb) { gnb.style.transition = ''; gnb.classList.add('visible'); }
-  }, 200);
-
-  /* T+700ms: 가족 카드 등장 + aiText 디밍 → 9094-14990 완성
-     카드 등장과 동시에 이전 텍스트 0.35 디밍 — 시선을 카드로 유도 */
-  setTimeout(function() {
-    if (card) { card.style.transition = ''; card.classList.add('visible'); }
-    dimBubble(aiText);
-  }, 700);
-  /* T+1350ms: card 잠금 (700+650) */
-  setTimeout(function() { lockBubble(card); }, 1350);
-
-  /* T+1500ms: msg1 두둥뜨기 + card 디밍
-     cubic-bezier(0.34,1.56,0.64,1) = overshoot spring ("컸다가 내려오는" 효과)
-     setProperty !important 로 reset 의 transition:none!important 를 안전하게 덮어씀 */
-  setTimeout(function() {
-    dimBubble(card);
-    if (m1) {
-      m1.style.setProperty('transition', 'none', 'important'); /* 시작점 스냅 보장 */
-      m1.style.transform = 'translateY(44px)';
-      m1.style.opacity   = '0';
-      void m1.offsetHeight; /* 44px/opacity:0 커밋 */
-      m1.style.setProperty('transition',
-        'opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.34,1.56,0.64,1)',
-        'important');
-      m1.style.transform = 'translateY(0)';
-      m1.style.opacity   = '1';
+    if (gnb) {
+      gnb.style.transition = 'opacity 0.5s ' + EASE + ', transform 0.5s ' + EASE;
+      gnb.style.opacity = '1';
+      gnb.style.transform = 'translateY(0)';
     }
-  }, 1500);
-  /* T+2150ms: msg1 잠금 (1500+650) — <p> 자식은 T+2600ms에서 별도 관리 */
-  setTimeout(function() { lockBubble(m1); }, 2150);
+  }, 300);
 
-  /* T+2600ms: msg1 축소·페이드(22→16px, opacity→0.2) + msg2 등장
-     m1p(<p>)는 lockBubble 대상이 아니므로 일반 transition 사용 */
+  // T+600ms: 가족 카드 등장 + AI 텍스트 흐려짐
+  showEl(card, 600);
+  dimEl(aiText, 600);
+
+  // T+1200ms: msg1("어머니께 최대 2GB...") 등장 + 가족 카드 흐려짐
+  showEl(m1, 1200);
+  dimEl(card, 1200);
+
+  // T+2000ms: msg1 축소되며 흐려짐 + msg2("현재 지훈님의...") 등장
   setTimeout(function() {
-    var ease = 'cubic-bezier(0.22,1,0.36,1)';
     if (m1p) {
-      m1p.style.transition    = 'font-size 0.5s ' + ease
-                              + ', opacity 0.45s ' + ease
-                              + ', letter-spacing 0.5s ' + ease
-                              + ', line-height 0.5s ' + ease;
-      m1p.style.fontSize      = '16px';
-      m1p.style.fontWeight    = '500';
-      m1p.style.opacity       = '0.2';
-      m1p.style.letterSpacing = '-0.64px';
-      m1p.style.lineHeight    = '1.4';
-    }
-    var m2 = document.getElementById('s4-msg2');
-    if (m2) { m2.style.transition = ''; m2.classList.add('visible'); }
-  }, 2600);
+      // GPU 가속 scale()로 크기 축소 (22px → 16px ≈ 0.727배) — Layout Thrashing 방지
+      m1p.style.transformOrigin = 'left top';
+      m1p.style.transition = 'transform 0.6s ' + EASE + ', opacity 0.6s ' + EASE;
+      m1p.style.transform = 'scale(0.727)';
+      m1p.style.opacity = '0.2';
 
-  /* T+2900ms: 채팅 스크롤 업 + GNB 페이드 — Figma 9094-15297 */
+      // 글자 축소로 생기는 하단 여백 차이를 마진으로 보정
+      m1.style.transition = 'margin-bottom 0.6s ' + EASE;
+      m1.style.marginBottom = '-6px';
+    }
+    showEl(m2, 0);
+  }, 2000);
+
+  // T+2800ms: 하단 시트 등장 & 채팅 밀어 올리기 (프레임 드랍 차단)
   setTimeout(function() {
     requestAnimationFrame(function() {
-      var easing = 'cubic-bezier(0.22,1,0.36,1)';
       if (chatEl) {
-        chatEl.style.transition = 'transform 0.72s ' + easing;
-        chatEl.style.transform  = 'translateY(-165px)';
+        chatEl.style.willChange = 'transform';
+        chatEl.style.transition = 'transform 0.7s ' + EASE;
+        chatEl.style.transform = 'translate3d(0, -165px, 0)';
+
+        chatEl.addEventListener('transitionend', function cleanup() {
+          chatEl.style.willChange = 'auto';
+          chatEl.removeEventListener('transitionend', cleanup);
+        });
       }
+
       if (gnb) {
-        gnb.style.transition = 'opacity 0.4s ease, transform 0.45s ' + easing;
-        gnb.style.opacity    = '0';
-        gnb.style.transform  = 'translateY(40px)';
+        gnb.style.transition = 'opacity 0.4s ease, transform 0.5s ' + EASE;
+        gnb.style.opacity = '0';
+        gnb.style.transform = 'translate3d(0, 40px, 0)';
+      }
+
+      if (sheet) {
+        sheet.classList.add('open');
       }
     });
-  }, 2900);
-
-  /* T+3300ms: Sheet1 슬라이드업 (스크롤 안착 후 400ms) */
-  setTimeout(function() {
-    if (sheet) sheet.classList.add('open');
-  }, 3300);
+  }, 2800);
 }
 
 /* ══════════════════════════════════════
