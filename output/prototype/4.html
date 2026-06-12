@@ -2284,40 +2284,26 @@ function startScreen4Animation() {
   }, 1700);
 
   /* T+2900ms: Smart Animate → Figma 9094-15203
-     gradient 22px → solid #222 16px opacity:0.2 2단계 전환
-     Phase 1 (0.2s): gradient opacity 1→0 (fade out)
-     Phase 2 (0.35s): color snap(gradient 제거 → #222) 후 opacity 0→0.2 (fade in)
-     msg2 slide-up은 Phase 1 시작과 동시                                  */
+     font-size 22→16, opacity 1→0.2, letter-spacing 동시 transition
+     msg2 slide-up 동시 진행                                              */
   setTimeout(function() {
     var ease = 'cubic-bezier(0.25,0.46,0.45,0.94)';
     var m1 = document.getElementById('s4-msg1');
     if (m1) {
       var p = m1.querySelector('p');
       if (p) {
-        /* Phase 1: gradient 텍스트 fade out */
-        p.style.transition = 'opacity 0.2s ease';
-        p.style.opacity    = '0';
-
-        setTimeout(function() {
-          /* Phase 2: invisible 상태에서 gradient → solid #222 + 16px 스냅 */
-          p.style.transition           = 'none';
-          p.style.background           = 'none';
-          p.style.webkitBackgroundClip = 'unset';
-          p.style.backgroundClip       = 'unset';
-          p.style.webkitTextFillColor  = '#222';
-          p.style.color                = '#222';
-          p.style.fontSize             = '16px';
-          p.style.fontWeight           = '500';
-          p.style.letterSpacing        = '-0.64px';
-          p.style.lineHeight           = '1.4';
-          void p.offsetHeight;
-          /* solid #222 → dim opacity 0.2 로 fade in */
-          p.style.transition = 'opacity 0.35s ' + ease;
-          p.style.opacity    = '0.2';
-        }, 200);
+        void p.offsetHeight;
+        p.style.transition    = 'font-size 0.5s ' + ease
+                              + ', opacity 0.45s ' + ease
+                              + ', letter-spacing 0.5s ' + ease
+                              + ', line-height 0.5s ' + ease;
+        p.style.fontSize      = '16px';
+        p.style.fontWeight    = '500';
+        p.style.opacity       = '0.2';
+        p.style.letterSpacing = '-0.64px';
+        p.style.lineHeight    = '1.4';
       }
     }
-    /* msg2: Phase 1과 동시에 두둥뜨기 slide-up */
     var m2 = document.getElementById('s4-msg2');
     if (m2) { m2.style.transition = ''; m2.classList.add('visible'); }
   }, 2900);
