@@ -1131,7 +1131,7 @@
   <!-- 바텀바 -->
   <div id="s4-bar" style="position:absolute;bottom:0;left:0;right:0;z-index:300;background:white;border-radius:28px 28px 0 0;box-shadow:0 -5px 30px rgba(0,0,0,0.3);padding:16px 20px 32px;display:flex;flex-direction:column;transform:translateY(100%);opacity:0;transition:transform 0.42s cubic-bezier(0.32,0.72,0,1),opacity 0.42s cubic-bezier(0.32,0.72,0,1);">
     <div style="display:flex;gap:4px;align-items:flex-start;padding:0 4px 16px;"><img src="assets/scenario1/ico_navigate.svg" style="width:16px;height:16px;flex-shrink:0;margin-top:3px;" alt=""><p style="margin:0;flex:1 0 0;font-size:14px;font-weight:500;color:#101010;letter-spacing:-0.56px;line-height:1.5;">바로 변경해도 위약금이 발생하지 않아요.</p></div>
-    <div style="display:flex;align-items:center;gap:10px;width:100%;"><div style="width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,0.06);box-shadow:0 0 20px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><img src="assets/scenario1/ico_tagent.svg" style="width:24px;height:24px;" alt=""></div><button onclick="openS4Sheet()" style="flex:1 0 0;background:#222;border-radius:20px;padding:16px 32px;border:none;cursor:pointer;box-shadow:0 8px 8px rgba(106,106,106,0.16);"><p style="margin:0;font-size:16px;font-weight:600;color:white;letter-spacing:-0.64px;line-height:1.3;text-align:center;">요금제 변경하기</p></button></div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%;"><div style="width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,0.06);box-shadow:0 0 20px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><img src="assets/scenario1/ico_tagent.svg" style="width:24px;height:24px;" alt=""></div><button id="s4-cta-btn" onclick="openS4Sheet()" style="flex:1 0 0;background:#222;border-radius:20px;padding:16px 32px;border:none;cursor:pointer;box-shadow:0 8px 8px rgba(106,106,106,0.16);"><p style="margin:0;font-size:16px;font-weight:600;color:white;letter-spacing:-0.64px;line-height:1.3;text-align:center;">요금제 변경하기</p></button></div>
   </div>
 
   <!-- 오버레이 -->
@@ -1364,13 +1364,7 @@
     document.getElementById('scroll-s6').scrollTop = 0;
   }
   function closeScreen6() {
-    ['screen-2', 'screen-3', 'screen-4', 'screen-6'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.remove('active');
-    });
-    closeS4Sheet();
-    var bar = document.getElementById('s4-bar');
-    if (bar) { bar.style.transform = 'translateY(100%)'; bar.style.opacity = '0'; }
+    window.location.reload();
   }
   function toggleS4Acc() {
     var pill = document.getElementById('s4-pill');
@@ -1577,7 +1571,7 @@
       'screen-1': ['s1-menu-btn'],
       'screen-2': ['s2-product-tap'],
       'screen-3': ['s3-change-btn1', 's3-change-btn2', 's3-compare-btn'],
-      'screen-4': ['s4-back-btn'],
+      'screen-4': ['s4-cta-btn'],
       'screen-6': ['s6-confirm-btn'],
     };
     var missCount = {};
