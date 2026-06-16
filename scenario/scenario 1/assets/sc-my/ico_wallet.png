@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 25.2364 22.2364" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="ico_wallet" filter="url(#filter0_d_0_188)">
+<path id="bg" d="M17.3203 0.654545C18.7972 0.654545 20.0505 1.669 20.5166 3.08326H7.14162C6.51731 3.08335 6.01097 3.32323 6.01076 3.99341C6.01076 4.66391 6.51718 4.90445 7.14162 4.90455H19.2852C21.1259 4.90472 22.618 6.39686 22.6182 8.23755V14.3215C22.618 16.1622 21.1259 17.6544 19.2852 17.6545H5.95119C4.1105 17.6544 2.61836 16.1622 2.61818 14.3215V4.29712C2.61832 2.28546 4.13715 0.654707 6.01076 0.654545H17.3203Z" fill="var(--fill-0, #1D1D1D)"/>
+<path id="Ellipse" d="M19.6182 11.6545C19.6182 12.2068 19.1705 12.6545 18.6182 12.6545C18.0659 12.6545 17.6182 12.2068 17.6182 11.6545C17.6182 11.1023 18.0659 10.6545 18.6182 10.6545C19.1705 10.6545 19.6182 11.1023 19.6182 11.6545Z" fill="var(--fill-0, white)"/>
+</g>
+<defs>
+<filter id="filter0_d_0_188" x="0" y="0" width="25.2364" height="22.2364" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="1.96364"/>
+<feGaussianBlur stdDeviation="1.30909"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_188"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_188" result="shape"/>
+</filter>
+</defs>
+</svg>
