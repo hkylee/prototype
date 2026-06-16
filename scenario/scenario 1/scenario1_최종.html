@@ -649,93 +649,105 @@
 
     <!-- 왼쪽 박스: 검색바(기본) / T홈 아이콘(is-tab) -->
     <div id="gnb-left" onclick="gnbHome()"
-         style="position:relative; height:52px; border-radius:999px; overflow:hidden;
-                background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-                box-shadow:0 0 19px rgba(0,0,0,0.05); cursor:pointer;">
+         style="position:relative; height:80.75px; cursor:pointer;">
 
-      <!-- 검색바 UI — 고정 너비로 찌그러짐 방지 -->
-      <div id="gnb-search-inner"
-           style="position:absolute; top:0; left:0; height:100%; width:280px;
-                  display:flex; align-items:center; padding:0 10px 0 20px; gap:8px;">
-        <img src="assets/scenario1-hk/ico_gnb_search.svg" alt=""
-             style="width:16px;height:16px;flex-shrink:0;display:block;">
-        <span style="flex:1;min-width:0;font-size:16px;font-weight:500;color:#121212;line-height:1.4;
-                     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.64px;">
-          T에 대해 무엇이든 물어보세요
-        </span>
-        <div style="width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-          <img src="assets/scenario1-hk/ico_gnb_mic.svg" alt="" style="width:14px;height:14px;display:block;">
-        </div>
-      </div>
+      <!-- 실제 visual capsule (touch area는 outer div가 담당) -->
+      <div style="position:absolute; top:0; left:0; right:0; height:52px;
+                  border-radius:999px; overflow:hidden;
+                  background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+                  box-shadow:0 0 19px rgba(0,0,0,0.05);">
 
-      <!-- T홈 아이콘 -->
-      <div id="gnb-thome-inner"
-           style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
-        <div style="position:relative;width:23px;height:23px;">
-          <img src="screen/assets/sc-my/ico_gnb_thome.svg" alt=""
-               style="position:absolute;width:17px;height:17px;top:3px;left:50%;
-                      transform:translateX(calc(-50% - 1px));display:block;">
-          <img src="screen/assets/sc-my/ico_gnb_thome_sparkle.svg" alt=""
-               style="position:absolute;width:5.5px;height:5.5px;top:14px;left:15px;display:block;">
+        <!-- 검색바 UI — 고정 너비로 찌그러짐 방지 -->
+        <div id="gnb-search-inner"
+             style="position:absolute; top:0; left:0; height:100%; width:280px;
+                    display:flex; align-items:center; padding:0 10px 0 20px; gap:8px;">
+          <img src="assets/scenario1-hk/ico_gnb_search.svg" alt=""
+               style="width:16px;height:16px;flex-shrink:0;display:block;">
+          <span style="flex:1;min-width:0;font-size:16px;font-weight:500;color:#121212;line-height:1.4;
+                       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.64px;">
+            T에 대해 무엇이든 물어보세요
+          </span>
+          <div style="width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <img src="assets/scenario1-hk/ico_gnb_mic.svg" alt="" style="width:14px;height:14px;display:block;">
+          </div>
         </div>
-      </div>
+
+        <!-- T홈 아이콘 -->
+        <div id="gnb-thome-inner"
+             style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <div style="position:relative;width:23px;height:23px;">
+            <img src="screen/assets/sc-my/ico_gnb_thome.svg" alt=""
+                 style="position:absolute;width:17px;height:17px;top:3px;left:50%;
+                        transform:translateX(calc(-50% - 1px));display:block;">
+            <img src="screen/assets/sc-my/ico_gnb_thome_sparkle.svg" alt=""
+                 style="position:absolute;width:5.5px;height:5.5px;top:14px;left:15px;display:block;">
+          </div>
+        </div>
+
+      </div><!-- /visual capsule -->
 
     </div><!-- /gnb-left -->
 
     <!-- 오른쪽 박스: 마이 아이콘(기본) / 탭 메뉴(is-tab) -->
     <div id="gnb-right" onclick="gnbMorph()"
-         style="position:relative; height:52px; border-radius:999px; overflow:hidden;
-                background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-                box-shadow:0 0 19px rgba(0,0,0,0.05); cursor:pointer;">
+         style="position:relative; height:80.75px; cursor:pointer;">
 
-      <!-- 마이 아이콘 -->
-      <div id="gnb-my-inner"
-           style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
-        <img src="assets/scenario1-hk/ico_gnb_my.svg" alt="" style="width:24px;height:24px;display:block;">
-      </div>
+      <!-- 실제 visual capsule (touch area는 outer div가 담당) -->
+      <div style="position:absolute; top:0; left:0; right:0; height:52px;
+                  border-radius:999px; overflow:hidden;
+                  background:rgba(255,255,255,0.5); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+                  box-shadow:0 0 19px rgba(0,0,0,0.05);">
 
-      <!-- 탭 메뉴 UI — 고정 너비로 찌그러짐 방지 -->
-      <div id="gnb-tabs-inner"
-           style="position:absolute; top:0; left:0; height:100%; width:280px;">
-
-        <!-- 마이 탭 활성 배경 -->
-        <div style="position:absolute; left:calc(50% + 90px); top:50%;
-                    transform:translate(-50%, -50%);
-                    width:90px; height:44px; border-radius:22px;
-                    background:rgba(214,214,214,0.8);"></div>
-
-        <!-- 혜택 탭 -->
-        <div style="position:absolute; left:3.82px; top:50%; transform:translateY(-50%);
-                    display:flex; flex-direction:column; align-items:center; gap:2px;
-                    padding:5px 33px; overflow:hidden;">
-          <img src="screen/assets/sc-my/ico_gnb_benefit.svg" alt=""
-               style="width:23px;height:23px;display:block;flex-shrink:0;opacity:0.3;">
-          <span style="font-size:11px;font-weight:500;color:#101010;opacity:0.3;
-                       letter-spacing:-0.11px;white-space:nowrap;line-height:1.3;">혜택</span>
+        <!-- 마이 아이콘 -->
+        <div id="gnb-my-inner"
+             style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <img src="assets/scenario1-hk/ico_gnb_my.svg" alt="" style="width:24px;height:24px;display:block;">
         </div>
 
-        <!-- 쇼핑 탭 -->
-        <div style="position:absolute; left:calc(50% + 0.48px); top:50%; transform:translate(-50%, -50%);
-                    display:flex; flex-direction:column; align-items:center; gap:2px;
-                    padding:5px 33px; overflow:hidden;">
-          <img src="screen/assets/sc-my/ico_gnb_shop.svg" alt=""
-               style="width:23px;height:23px;display:block;flex-shrink:0;opacity:0.3;">
-          <span style="font-size:11px;font-weight:500;color:#101010;opacity:0.3;
-                       letter-spacing:-0.11px;white-space:nowrap;line-height:1.3;">쇼핑</span>
-        </div>
+        <!-- 탭 메뉴 UI — 고정 너비로 찌그러짐 방지 -->
+        <div id="gnb-tabs-inner"
+             style="position:absolute; top:0; left:0; height:100%; width:280px;">
 
-        <!-- 마이 탭 (활성) -->
-        <div onclick="event.stopPropagation()"
-             style="position:absolute; left:185px; top:50%; transform:translateY(-50%);
-                    display:flex; flex-direction:column; align-items:center; gap:2px;
-                    padding:5px 33px; overflow:hidden; z-index:1;">
-          <img src="screen/assets/sc-my/ico_gnb_my.svg" alt=""
-               style="width:23px;height:23px;display:block;flex-shrink:0;">
-          <span style="font-size:11px;font-weight:500;color:#101010;
-                       letter-spacing:-0.11px;white-space:nowrap;line-height:1.3;">마이</span>
-        </div>
+          <!-- 마이 탭 활성 배경 -->
+          <div style="position:absolute; left:calc(50% + 90px); top:50%;
+                      transform:translate(-50%, -50%);
+                      width:90px; height:44px; border-radius:22px;
+                      background:rgba(214,214,214,0.8);"></div>
 
-      </div><!-- /gnb-tabs-inner -->
+          <!-- 혜택 탭 -->
+          <div style="position:absolute; left:3.82px; top:50%; transform:translateY(-50%);
+                      display:flex; flex-direction:column; align-items:center; gap:2px;
+                      padding:5px 33px; overflow:hidden;">
+            <img src="screen/assets/sc-my/ico_gnb_benefit.svg" alt=""
+                 style="width:23px;height:23px;display:block;flex-shrink:0;opacity:0.3;">
+            <span style="font-size:11px;font-weight:500;color:#101010;opacity:0.3;
+                         letter-spacing:-0.11px;white-space:nowrap;line-height:1.3;">혜택</span>
+          </div>
+
+          <!-- 쇼핑 탭 -->
+          <div style="position:absolute; left:calc(50% + 0.48px); top:50%; transform:translate(-50%, -50%);
+                      display:flex; flex-direction:column; align-items:center; gap:2px;
+                      padding:5px 33px; overflow:hidden;">
+            <img src="screen/assets/sc-my/ico_gnb_shop.svg" alt=""
+                 style="width:23px;height:23px;display:block;flex-shrink:0;opacity:0.3;">
+            <span style="font-size:11px;font-weight:500;color:#101010;opacity:0.3;
+                         letter-spacing:-0.11px;white-space:nowrap;line-height:1.3;">쇼핑</span>
+          </div>
+
+          <!-- 마이 탭 (활성) -->
+          <div onclick="event.stopPropagation()"
+               style="position:absolute; left:185px; top:50%; transform:translateY(-50%);
+                      display:flex; flex-direction:column; align-items:center; gap:2px;
+                      padding:5px 33px; overflow:hidden; z-index:1;">
+            <img src="screen/assets/sc-my/ico_gnb_my.svg" alt=""
+                 style="width:23px;height:23px;display:block;flex-shrink:0;">
+            <span style="font-size:11px;font-weight:500;color:#101010;
+                         letter-spacing:-0.11px;white-space:nowrap;line-height:1.3;">마이</span>
+          </div>
+
+        </div><!-- /gnb-tabs-inner -->
+
+      </div><!-- /visual capsule -->
 
     </div><!-- /gnb-right -->
 
