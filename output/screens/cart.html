@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
-<title>SKT T Next UX — 시나리오 6</title>
+<title>SKT T Next UX — 장바구니</title>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -19,7 +19,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* ── 컨트롤 바 ── */
   #controls .preset {
     padding: 4px 10px; border-radius: 6px;
     border: 1px solid #d1d5db; background: #f9fafb;
@@ -44,7 +43,6 @@
   }
   #apply-btn:hover { opacity: .85; }
 
-  /* ── 반응형 ── */
   @media (max-width: 767px) {
     body { background: #f7f8fa; }
     #controls { display: none !important; }
@@ -64,7 +62,6 @@
     #frame { flex-shrink: 0; box-shadow: 0 24px 48px rgba(0,0,0,.25), 0 8px 16px rgba(0,0,0,.12); }
   }
 
-  /* ── 프레임 ── */
   #frame {
     position: relative; overflow: hidden;
     width: 375px; height: 812px; border-radius: 40px;
@@ -72,13 +69,9 @@
   }
   #ut-stage { position: relative; width: 100%; height: 100%; overflow: hidden; }
 
-  .screen {
-    position: absolute; inset: 0;
-    overflow: hidden; display: none;
-  }
+  .screen { position: absolute; inset: 0; overflow: hidden; display: none; }
   .screen.active { display: block; }
 
-  /* ── Screen 9 ── */
   #screen-9 { background: #f7f8fa; }
 
   #s9-header {
@@ -87,7 +80,7 @@
   }
 
   #s9-scroll {
-    position: absolute; top: 100px; bottom: 115px; left: 0; right: 0;
+    position: absolute; top: 120px; bottom: 115px; left: 0; right: 0;
     overflow-y: auto; -webkit-overflow-scrolling: touch;
     padding: 0 16px 8px;
   }
@@ -97,51 +90,60 @@
     position: absolute; bottom: 0; left: 0; right: 0; height: 115px; z-index: 50;
   }
 
-  /* ── 공통 컴포넌트 ── */
+  /* 카드 */
   .cart-card {
     background: #fff; border-radius: 32px; padding: 20px;
-    display: flex; flex-direction: column; gap: 10px; width: 100%;
-    margin-bottom: 8px;
+    display: flex; flex-direction: column; gap: 10px;
+    width: 100%; margin-bottom: 8px;
   }
   .cart-card.bd-black { border: 2px solid #000; }
   .cart-card.bd-gray  { border: 1px solid #e7e7e7; }
 
-  .cat-hd {
-    display: flex; align-items: center; gap: 5px;
-    padding: 16px 0 10px;
-  }
+  /* 카테고리 헤더 */
+  .cat-hd { display: flex; align-items: center; gap: 5px; padding: 16px 0 10px; }
   .cat-hd-txt {
     font-size: 15px; font-weight: 600; color: rgba(0,0,0,.7);
     letter-spacing: -0.45px; line-height: 20px;
   }
 
+  /* 체크박스 */
+  .chk {
+    width: 20px; height: 20px; border: 2px solid #808080;
+    border-radius: 8px; opacity: .5; flex-shrink: 0; cursor: pointer;
+  }
+  .chk-done {
+    width: 20px; height: 20px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .chk-done img { width: 20px; height: 20px; display: block; }
+
+  /* 상품 행 */
   .prod-row { display: flex; gap: 10px; align-items: flex-start; }
   .prod-thumb {
-    width: 40px; height: 40px; border-radius: 5px;
-    flex-shrink: 0; overflow: hidden; background: rgba(169,169,169,.2);
-    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0;
+    overflow: hidden; position: relative;
   }
-  .prod-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .prod-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .prod-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .prod-name {
     display: inline-flex; align-items: center; gap: 2px;
     font-size: 15px; font-weight: 700; color: rgba(0,0,0,.7);
     letter-spacing: -0.45px; line-height: 20px;
   }
-  .prod-name.wrap { flex-wrap: wrap; }
   .prod-sub {
     display: flex; gap: 5px; font-size: 14px; font-weight: 400;
     color: rgba(0,0,0,.7); letter-spacing: -0.42px; line-height: 20px;
   }
-  .chk {
-    width: 20px; height: 20px; border: 2px solid #808080;
-    border-radius: 8px; opacity: .5; flex-shrink: 0;
-  }
-  .chk-done {
-    width: 20px; height: 20px; flex-shrink: 0; display: flex;
-    align-items: center; justify-content: center;
-  }
+  .change { font-weight: 500; color: rgba(0,0,0,.3); text-decoration: underline; }
 
+  /* 화살표 아이콘 (회전된 chevron) */
+  .arr-ico {
+    display: inline-flex; align-items: center; justify-content: center;
+    opacity: .5; flex-shrink: 0;
+  }
+  .arr-ico img { width: 15.087px; height: 15.087px; transform: rotate(90deg); display: block; }
+
+  /* 옵션 박스 */
   .opt-box {
     background: #f1f1f1; border-radius: 14px; padding: 15px;
     display: flex; flex-direction: column; gap: 5px;
@@ -160,24 +162,24 @@
     font-size: 14px; font-weight: 500; color: rgba(0,0,0,.5); letter-spacing: -0.42px; line-height: 20px;
     text-decoration: underline; white-space: nowrap; flex-shrink: 0;
   }
-  .change { font-weight: 500; color: rgba(0,0,0,.3); text-decoration: underline; font-size: 14px; letter-spacing: -0.42px; }
 
+  /* 납부 금액 */
   .pay-div { background: #ededed; height: 1px; }
-  .pay-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+  .pay-row { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; }
   .pay-lbl { font-size: 14px; font-weight: 500; color: #202020; letter-spacing: -0.4px; line-height: 18px; }
   .pay-amt { font-size: 15px; font-weight: 600; color: #000; letter-spacing: -1px; line-height: 26px; }
 
+  /* AI 배너 */
   .ai-bnr {
     background: #f2f0fd; border-radius: 14px;
     padding: 10px 10px 10px 14px;
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
   }
-  .ai-bnr-l { display: flex; gap: 4px; align-items: flex-start; flex: 1; }
+  .ai-bnr-l { display: flex; gap: 4px; align-items: flex-start; }
   .ai-bnr-txt {
     font-size: 12px; font-weight: 400; color: #5940df;
-    letter-spacing: -0.36px; line-height: 18px;
-    overflow: hidden; display: -webkit-box;
-    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    letter-spacing: -0.36px; line-height: 18px; height: 35px;
+    overflow: hidden; width: 194px;
   }
   .merge-btn {
     background: #fff; border: 1px solid #e7e7e7; border-radius: 99px;
@@ -185,6 +187,7 @@
     font-size: 12px; font-weight: 400; color: #202020; letter-spacing: -0.8px; line-height: 1.4;
   }
 
+  /* 6G 썸네일 */
   .thumb-6g {
     width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0;
     background: rgba(169,169,169,.2);
@@ -192,7 +195,8 @@
     font-size: 17px; font-weight: 800; color: rgba(0,0,0,.5); letter-spacing: -0.51px;
   }
 
-  .ai-sect { background: #ece8ff; border-radius: 24px; padding: 16px; }
+  /* T 에이전트 분석 섹션 */
+  .ai-sect { background: #ece8ff; border-radius: 24px; padding: 16px; margin-bottom: 8px; }
   .ai-sect-inner { display: flex; flex-direction: column; gap: 16px; }
   .ai-tag-row { display: flex; gap: 2px; align-items: center; }
   .ai-sect-lbl { font-size: 12px; font-weight: 600; color: #5940df; letter-spacing: -0.4px; line-height: 1.4; }
@@ -201,14 +205,14 @@
 
   .rec-card { background: #fff; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
   .rec-ai-row { display: flex; gap: 3px; align-items: center; }
-  .rec-ai-txt { font-size: 13px; font-weight: 500; color: #5940df; letter-spacing: -0.39px; line-height: 18px; white-space: nowrap; }
+  .rec-ai-txt { font-size: 13px; font-weight: 500; color: #5940df; letter-spacing: -0.39px; line-height: 18px; }
   .rec-prod-row { display: flex; align-items: flex-end; justify-content: space-between; }
   .rec-prod-nm { font-size: 14px; font-weight: 500; color: #666; letter-spacing: -1px; line-height: 18px; }
   .rec-prod-pr { font-size: 15px; font-weight: 600; color: #000; letter-spacing: -1px; line-height: 26px; }
   .add-btn {
     background: #fff; border: 1px solid #e0e0e0; border-radius: 12px;
     width: 89px; height: 33px; font-size: 12px; font-weight: 500; color: #202020;
-    cursor: pointer; flex-shrink: 0;
+    cursor: pointer; flex-shrink: 0; letter-spacing: -0.3px;
   }
 
   .more-btn {
@@ -221,7 +225,6 @@
 </head>
 <body>
 
-<!-- 컨트롤 바 -->
 <div id="controls">
   <button class="preset active" data-w="375" data-h="812">375×812</button>
   <button class="preset" data-w="390" data-h="844">390×844</button>
@@ -232,49 +235,28 @@
   <button id="apply-btn">적용</button>
 </div>
 
-<!-- 폰 프레임 -->
 <div id="frame">
 <div id="ut-stage">
-
-<!-- ════ Screen 9: 장바구니 ════ -->
 <div class="screen active" id="screen-9">
 
   <!-- ── 고정 헤더 ── -->
   <div id="s9-header">
     <!-- 상태바 -->
-    <div style="display:flex;align-items:center;justify-content:space-between;height:44px;padding:14px 24px 0;">
-      <span style="font-size:15px;font-weight:700;color:#1c1c1e;letter-spacing:0;">9:41</span>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <!-- 신호 -->
-        <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-          <rect x="0" y="7" width="3" height="5" rx="1" fill="#1c1c1e"/>
-          <rect x="4.5" y="5" width="3" height="7" rx="1" fill="#1c1c1e"/>
-          <rect x="9" y="2" width="3" height="10" rx="1" fill="#1c1c1e"/>
-          <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1c1c1e"/>
-        </svg>
-        <!-- 와이파이 -->
-        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-          <path d="M1 4C4 1 12 1 15 4" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M3 6.5C5 4.5 11 4.5 13 6.5" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M5.5 9C6.5 8 9.5 8 10.5 9" stroke="#1c1c1e" stroke-width="1.5" stroke-linecap="round"/>
-          <circle cx="8" cy="11" r="1" fill="#1c1c1e"/>
-        </svg>
-        <!-- 배터리 -->
-        <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
-          <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#1c1c1e" stroke-opacity=".35"/>
-          <rect x="2" y="2" width="17" height="8" rx="2" fill="#1c1c1e"/>
-          <path d="M23 4V8C24 7.5 24.5 6.5 24.5 6C24.5 5.5 24 4.5 23 4Z" fill="#1c1c1e" fill-opacity=".4"/>
-        </svg>
+    <div style="display:flex;align-items:center;justify-content:space-between;height:54px;padding:14px 24px 0;">
+      <span style="font-size:15px;font-weight:700;color:#1c1c1e;">9:41</span>
+      <div style="display:flex;gap:5px;align-items:center;">
+        <img src="https://www.figma.com/api/mcp/asset/7d98923c-e286-40a3-b924-9e81c2fcff3e" alt="" style="width:18px;height:22px;display:block;transform:scaleY(-1);">
+        <img src="https://www.figma.com/api/mcp/asset/f3a800c7-be62-49f5-8c29-f79affa27e4d" alt="" style="width:18px;height:22px;display:block;transform:scaleY(-1);">
+        <img src="https://www.figma.com/api/mcp/asset/9210db28-c951-4a21-811e-155c042cde4d" alt="" style="width:18px;height:22px;display:block;transform:scaleY(-1);">
       </div>
     </div>
     <!-- 네비 -->
-    <div style="display:flex;align-items:center;gap:8px;padding:8px 20px 10px;">
-      <button onclick="history.back()" style="width:24px;height:24px;background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;">
-        <!-- 뒤로가기 화살표 -->
-        <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
-          <path d="M8 14L1 7.5L8 1" stroke="#1c1c1e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+    <div style="display:flex;align-items:center;gap:8px;padding:0 20px 20px;">
+      <div style="position:relative;width:24px;height:24px;flex-shrink:0;">
+        <!-- 뒤로가기: Figma ico (8×15 in 24×24 container) -->
+        <img src="https://www.figma.com/api/mcp/asset/7a5263b9-af77-47bd-aa70-2cded516b3c0" alt="뒤로"
+          style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:15px;display:block;">
+      </div>
       <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;">장바구니</span>
     </div>
   </div>
@@ -283,53 +265,49 @@
   <div id="s9-scroll">
 
     <!-- 전체 선택 -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 5px;">
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="chk"></div>
+        <div class="chk" id="chk-all"></div>
         <span style="font-size:15px;font-weight:600;color:rgba(0,0,0,.7);letter-spacing:-0.45px;line-height:20px;">전체 선택 (5건)</span>
       </div>
-      <button style="background:#e7e7e7;border:none;border-radius:5px;padding:0 5px;font-size:12px;font-weight:500;color:rgba(0,0,0,.9);letter-spacing:-0.36px;line-height:20px;opacity:.7;cursor:pointer;">선택 삭제</button>
+      <div style="background:#e7e7e7;border-radius:5px;padding:0 5px;">
+        <span style="font-size:12px;font-weight:500;color:rgba(0,0,0,.9);letter-spacing:-0.36px;line-height:20px;opacity:.7;">선택 삭제</span>
+      </div>
     </div>
-    <div style="height:1px;background:#ededed;margin-bottom:4px;"></div>
+    <div style="height:1px;background:#ededed;margin:0 5px 4px;"></div>
 
     <!-- ── 단말기 ── -->
-    <div class="cat-hd">
-      <!-- 단말기 아이콘 (phone) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="opacity:.5;flex-shrink:0;">
-        <rect x="5" y="2" width="14" height="20" rx="3" stroke="#000" stroke-width="1.5"/>
-        <circle cx="12" cy="18" r="1" fill="#000"/>
-      </svg>
+    <div class="cat-hd" style="padding-left:5px;padding-right:5px;">
+      <!-- Device icon: 24×24, shape img inset 15% vert, 25% horiz -->
+      <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
+        <img src="https://www.figma.com/api/mcp/asset/42a05ed4-c631-4697-919b-d424c96d58a0" alt=""
+          style="position:absolute;top:15%;bottom:15%;left:25%;right:25%;width:50%;height:70%;object-fit:contain;">
+      </div>
       <span class="cat-hd-txt">단말기</span>
     </div>
 
+    <!-- 갤럭시 S29 카드 -->
     <div class="cart-card bd-black">
       <div class="prod-row">
-        <div class="prod-thumb">
-          <!-- Galaxy S29 product image -->
-          <img src="https://www.figma.com/api/mcp/asset/d60ce664-5f43-4479-b3b4-42beda1a1c53" alt="갤럭시 S29" style="width:100%;height:100%;object-fit:cover;border-radius:5px;">
+        <div class="prod-thumb" style="background:rgba(169,169,169,.2);">
+          <img src="https://www.figma.com/api/mcp/asset/2196b6a7-7a40-4e0b-82ca-66032f51e2ea" alt="갤럭시 S29">
         </div>
         <div class="prod-info">
           <div class="prod-name">
             갤럭시 S29
-            <svg width="9" height="14" viewBox="0 0 9 14" fill="none" style="opacity:.5;">
-              <path d="M1 13L8 7L1 1" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <span class="arr-ico"><img src="https://www.figma.com/api/mcp/asset/81ae9adf-9ca6-4fd6-92f5-bb9c9dd46617" alt=""></span>
           </div>
           <div class="prod-sub">
             <span>BLACK · 256GB · 행복배송</span>
             <span class="change">변경</span>
           </div>
         </div>
-        <!-- 체크 아이콘 (체크됨) -->
-        <div class="chk-done">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <rect width="20" height="20" rx="8" fill="#222"/>
-            <path d="M5 10.5L8.5 14L15 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <!-- 체크 완료 -->
+        <div class="chk-done" data-card="galaxy">
+          <img src="https://www.figma.com/api/mcp/asset/58913421-5e44-47f4-bfad-a2fd42b6c06b" alt="선택됨">
         </div>
       </div>
 
-      <!-- 옵션 박스 -->
       <div class="opt-box">
         <span class="opt-lbl">상품 옵션</span>
         <div class="opt-div"></div>
@@ -353,36 +331,29 @@
         </div>
       </div>
 
-      <div style="padding-top:2px;">
-        <div class="pay-div"></div>
-        <div class="pay-row">
-          <span class="pay-lbl">납부 금액</span>
-          <span class="pay-amt">월 118,700원</span>
-        </div>
+      <div><div class="pay-div"></div>
+        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 118,700원</span></div>
       </div>
     </div>
 
     <!-- ── 구독 상품 ── -->
-    <div class="cat-hd">
-      <!-- 구독 아이콘 (circular arrows) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="opacity:.5;flex-shrink:0;">
-        <path d="M4 12C4 7.6 7.6 4 12 4C15.1 4 17.8 5.7 19.3 8.3" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M20 12C20 16.4 16.4 20 12 20C8.9 20 6.2 18.3 4.7 15.7" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M17 6L19.3 8.3L21.5 6" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M7 18L4.7 15.7L2.5 18" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <div class="cat-hd" style="padding-left:5px;padding-right:5px;">
+      <!-- Subscribe icon: 24×24, shape img inset 14.58% vert, 16.67% horiz -->
+      <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
+        <img src="https://www.figma.com/api/mcp/asset/991d693d-eccf-4038-9197-570cc4e2c2b4" alt=""
+          style="position:absolute;top:14.58%;bottom:14.58%;left:16.67%;right:16.67%;width:66.66%;height:70.84%;object-fit:contain;">
+      </div>
       <span class="cat-hd-txt">구독 상품</span>
     </div>
 
+    <!-- 6G 프레스티지 카드 -->
     <div class="cart-card bd-gray">
       <div class="prod-row">
         <div class="thumb-6g">6G</div>
         <div class="prod-info">
           <div class="prod-name">
             6G 프레스티지
-            <svg width="9" height="14" viewBox="0 0 9 14" fill="none" style="opacity:.5;">
-              <path d="M1 13L8 7L1 1" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <span class="arr-ico"><img src="https://www.figma.com/api/mcp/asset/49619878-42e3-438f-87a7-c0a06848150a" alt=""></span>
           </div>
           <div class="prod-sub">
             <span>T 패스 AI · 골프존 스크린 패스</span>
@@ -391,22 +362,18 @@
         </div>
         <div class="chk"></div>
       </div>
-      <div style="padding-top:2px;">
-        <div class="pay-div"></div>
-        <div class="pay-row">
-          <span class="pay-lbl">납부 금액</span>
-          <span class="pay-amt">월 76,000원</span>
-        </div>
+      <div><div class="pay-div"></div>
+        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 76,000원</span></div>
       </div>
     </div>
 
     <!-- ── 부가 혜택 ── -->
-    <div class="cat-hd">
-      <!-- 혜택 아이콘 (navigation/compass) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="opacity:.5;flex-shrink:0;">
-        <circle cx="12" cy="12" r="9" stroke="#000" stroke-width="1.5"/>
-        <path d="M15.5 8.5L13 13L8.5 15.5L11 11L15.5 8.5Z" stroke="#000" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <div class="cat-hd" style="padding-left:5px;padding-right:5px;">
+      <!-- Benefit icon: 24×24, shape img inset ~10.53% -->
+      <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
+        <img src="https://www.figma.com/api/mcp/asset/39e8cfda-f142-4fc7-8b4f-870b843cc30f" alt=""
+          style="position:absolute;top:10.53%;bottom:10.53%;left:10.53%;right:10.53%;width:78.94%;height:78.94%;object-fit:contain;">
+      </div>
       <span class="cat-hd-txt">부가 혜택</span>
     </div>
 
@@ -414,34 +381,28 @@
     <div class="cart-card bd-gray">
       <div class="prod-row">
         <div class="prod-thumb" style="background:#303030;">
-          <img src="https://www.figma.com/api/mcp/asset/f06add98-df37-4dd8-9e45-667b9caa37cb" alt="신라호텔" style="width:100%;height:100%;object-fit:cover;border-radius:5px;">
+          <img src="https://www.figma.com/api/mcp/asset/a0d48b5c-5182-49f3-8168-f64ebc463dce" alt="신라호텔">
         </div>
         <div class="prod-info">
-          <div class="prod-name wrap" style="font-size:14px;line-height:1.4;">
-            신라호텔 패스트리부티크 20% 할인
-            <svg width="9" height="14" viewBox="0 0 9 14" fill="none" style="opacity:.5;">
-              <path d="M1 13L8 7L1 1" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+          <div class="prod-name" style="flex-wrap:wrap;font-size:14px;">
+            신라호텔
+            패스트리부티크 20% 할인
+            <span class="arr-ico"><img src="https://www.figma.com/api/mcp/asset/21ca1e00-2409-4da1-82b6-4be9f9c06680" alt=""></span>
           </div>
         </div>
         <div class="chk"></div>
       </div>
-      <div class="ai-bnr">
-        <div class="ai-bnr-l">
-          <!-- AI fill 아이콘 (sparkle/star) -->
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;">
-            <path d="M9 2L10.5 7H15.5L11.5 10L13 15L9 12L5 15L6.5 10L2.5 7H7.5L9 2Z" fill="#5940df"/>
-          </svg>
-          <span class="ai-bnr-txt">6G 프레스티지 요금제와 합치면 3,000원 저렴한 가격으로 주문할 수 있어요.</span>
+      <div>
+        <div class="ai-bnr">
+          <div class="ai-bnr-l">
+            <img src="https://www.figma.com/api/mcp/asset/8080532b-46e9-42b4-8541-69093d812134" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
+            <span class="ai-bnr-txt">6G 프레스티지 요금제와 합치면 3,000원 저렴한 가격으로 주문할 수 있어요.</span>
+          </div>
+          <button class="merge-btn">합치기</button>
         </div>
-        <button class="merge-btn">합치기</button>
       </div>
-      <div style="padding-top:2px;">
-        <div class="pay-div"></div>
-        <div class="pay-row">
-          <span class="pay-lbl">납부 금액</span>
-          <span class="pay-amt">월 12,900원</span>
-        </div>
+      <div><div class="pay-div"></div>
+        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 12,900원</span></div>
       </div>
     </div>
 
@@ -450,27 +411,19 @@
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div class="prod-name">
           T 퀀텀 쉴드
-          <svg width="9" height="14" viewBox="0 0 9 14" fill="none" style="opacity:.5;">
-            <path d="M1 13L8 7L1 1" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="arr-ico"><img src="https://www.figma.com/api/mcp/asset/81ae9adf-9ca6-4fd6-92f5-bb9c9dd46617" alt=""></span>
         </div>
         <div class="chk"></div>
       </div>
       <div class="ai-bnr">
         <div class="ai-bnr-l">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;">
-            <path d="M9 2L10.5 7H15.5L11.5 10L13 15L9 12L5 15L6.5 10L2.5 7H7.5L9 2Z" fill="#5940df"/>
-          </svg>
+          <img src="https://www.figma.com/api/mcp/asset/8080532b-46e9-42b4-8541-69093d812134" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
           <span class="ai-bnr-txt">갤럭시 S29 안에 부가서비스로 묶으면 4,000원 저렴한 0원에 이용할 수 있어요.</span>
         </div>
         <button class="merge-btn">합치기</button>
       </div>
-      <div style="padding-top:2px;">
-        <div class="pay-div"></div>
-        <div class="pay-row">
-          <span class="pay-lbl">납부 금액</span>
-          <span class="pay-amt">월 4,000원</span>
-        </div>
+      <div><div class="pay-div"></div>
+        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 4,000원</span></div>
       </div>
     </div>
 
@@ -479,32 +432,23 @@
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div class="prod-name">
           T 올케어 AI 프리미엄
-          <svg width="9" height="14" viewBox="0 0 9 14" fill="none" style="opacity:.5;">
-            <path d="M1 13L8 7L1 1" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="arr-ico"><img src="https://www.figma.com/api/mcp/asset/81ae9adf-9ca6-4fd6-92f5-bb9c9dd46617" alt=""></span>
         </div>
         <div class="chk"></div>
       </div>
-      <div style="padding-top:2px;">
-        <div class="pay-div"></div>
-        <div class="pay-row">
-          <span class="pay-lbl">납부 금액</span>
-          <span class="pay-amt">무료</span>
-        </div>
+      <div><div class="pay-div"></div>
+        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">무료</span></div>
       </div>
     </div>
 
-    <!-- 구분선 -->
-    <div style="height:1px;background:#ededed;margin:8px 0 16px;"></div>
+    <div style="height:1px;background:#ededed;margin:8px 5px 16px;"></div>
 
     <!-- ── T 에이전트 분석 ── -->
-    <div class="ai-sect" style="margin-bottom:8px;">
+    <div class="ai-sect">
       <div class="ai-sect-inner">
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div class="ai-tag-row">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;">
-              <path d="M9 2L10.5 7H15.5L11.5 10L13 15L9 12L5 15L6.5 10L2.5 7H7.5L9 2Z" fill="#5940df"/>
-            </svg>
+            <img src="https://www.figma.com/api/mcp/asset/8080532b-46e9-42b4-8541-69093d812134" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
             <span class="ai-sect-lbl">T 에이전트 분석</span>
           </div>
           <p class="ai-sect-txt">갤럭시 S29 블랙과 T 퀀텀 쉴드를 담으셨네요. 민수님처럼 비즈니스 보안과 생산성을 중시하는 VIP 고객이 함께 묶었을 때 시너지가 나는 상품을 가져왔어요.</p>
@@ -515,9 +459,7 @@
         <!-- 추천 1 -->
         <div class="rec-card">
           <div class="rec-ai-row">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;">
-              <path d="M9 1.5L10.8 6.8H16.2L11.7 9.9L13.5 15.2L9 12.1L4.5 15.2L6.3 9.9L1.8 6.8H7.2L9 1.5Z" fill="#5940df"/>
-            </svg>
+            <img src="https://www.figma.com/api/mcp/asset/14ed9533-6cf9-4378-9bd3-17cb9fd0d015" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
             <span class="rec-ai-txt">다중 스마트기기 유저에게 필수예요.</span>
           </div>
           <div class="rec-prod-row">
@@ -532,9 +474,7 @@
         <!-- 추천 2 -->
         <div class="rec-card">
           <div class="rec-ai-row">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;">
-              <path d="M9 1.5L10.8 6.8H16.2L11.7 9.9L13.5 15.2L9 12.1L4.5 15.2L6.3 9.9L1.8 6.8H7.2L9 1.5Z" fill="#5940df"/>
-            </svg>
+            <img src="https://www.figma.com/api/mcp/asset/14ed9533-6cf9-4378-9bd3-17cb9fd0d015" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
             <span class="rec-ai-txt">50대 VIP 남성 만족도 1위 상품이에요.</span>
           </div>
           <div class="rec-prod-row">
@@ -548,10 +488,10 @@
 
         <!-- 더 추천받기 -->
         <button class="more-btn">
-          <!-- 별 아이콘 -->
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 1L8.5 5.5H13L9.5 8L11 12.5L7 10L3 12.5L4.5 8L1 5.5H5.5L7 1Z" fill="#fff"/>
-          </svg>
+          <div style="position:relative;width:14px;height:14px;">
+            <img src="https://www.figma.com/api/mcp/asset/9d5f2528-a914-46d3-acf3-f128c1edbfd9" alt=""
+              style="position:absolute;inset:4.07%;width:91.86%;height:91.86%;display:block;">
+          </div>
           더 추천받기
         </button>
       </div>
@@ -560,23 +500,26 @@
     <div style="height:8px;"></div>
   </div><!-- /s9-scroll -->
 
-  <!-- ── 고정 하단 바 ── -->
+  <!-- ── 고정 하단 ── -->
   <div id="s9-bottom">
-    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(247,248,250,0) 0%,#f7f8fa 12%);pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(247,248,250,0) 0%,#f7f8fa 10%);pointer-events:none;"></div>
 
     <!-- 예상 납부 금액 -->
     <div style="position:absolute;bottom:67px;left:36px;right:36px;display:flex;align-items:center;justify-content:space-between;">
       <span style="font-size:14px;font-weight:500;color:#202020;letter-spacing:-0.4px;line-height:18px;">예상 납부 금액</span>
       <div style="display:flex;align-items:center;gap:4px;">
         <span style="font-size:15px;font-weight:600;color:#000;letter-spacing:-1px;line-height:26px;">월 118,700원</span>
-        <!-- 아래 화살표 -->
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-          <path d="M1 1.5L6 6.5L11 1.5" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <!-- 아래 화살표 (imgIco1 rotated) -->
+        <div style="position:relative;width:16px;height:16px;">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <img src="https://www.figma.com/api/mcp/asset/f2a02335-37ec-48d1-a696-95a379b045af" alt=""
+              style="width:5.333px;height:10px;transform:rotate(-90deg) scaleY(-1);display:block;">
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- CTA 버튼 -->
+    <!-- CTA -->
     <div style="position:absolute;bottom:17px;left:16px;right:16px;display:flex;gap:8px;">
       <button style="flex:1;background:#e8e7ee;border:none;border-radius:999px;height:44px;font-size:12px;font-weight:600;color:#1c1c1e;letter-spacing:-0.36px;cursor:pointer;">선물하기</button>
       <button style="flex:1;background:#222;border:none;border-radius:999px;height:44px;font-size:12px;font-weight:600;color:#fff;letter-spacing:-0.36px;cursor:pointer;">주문하기</button>
@@ -584,8 +527,8 @@
   </div>
 
 </div><!-- /screen-9 -->
-</div><!-- /ut-stage -->
-</div><!-- /frame -->
+</div>
+</div>
 
 <script>
 const frame = document.getElementById('frame');
@@ -604,7 +547,6 @@ document.getElementById('apply-btn').addEventListener('click', () => {
   applySize(+inpW.value || 375, +inpH.value || 812);
   document.querySelectorAll('#controls .preset').forEach(b => b.classList.remove('active'));
 });
-
 function applySize(w, h) {
   frame.style.width  = w + 'px';
   frame.style.height = h + 'px';
@@ -628,13 +570,9 @@ function applySize(w, h) {
 })();
 
 // ── 체크박스 토글 ──
-const CHK_SVG = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-  <rect width="20" height="20" rx="8" fill="#222"/>
-  <path d="M5 10.5L8.5 14L15 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`;
+const CHK_DONE_HTML = `<img src="https://www.figma.com/api/mcp/asset/58913421-5e44-47f4-bfad-a2fd42b6c06b" alt="선택됨" style="width:20px;height:20px;display:block;">`;
 
 document.querySelectorAll('.chk, .chk-done').forEach(el => {
-  el.style.cursor = 'pointer';
   el.addEventListener('click', () => {
     const card = el.closest('.cart-card');
     if (el.classList.contains('chk-done')) {
@@ -643,7 +581,7 @@ document.querySelectorAll('.chk, .chk-done').forEach(el => {
       card && (card.classList.remove('bd-black'), card.classList.add('bd-gray'));
     } else {
       el.className = 'chk-done';
-      el.innerHTML = CHK_SVG;
+      el.innerHTML = CHK_DONE_HTML;
       card && (card.classList.remove('bd-gray'), card.classList.add('bd-black'));
     }
   });
