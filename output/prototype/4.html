@@ -114,6 +114,7 @@
   }
   /* keyboard-open: transform은 JS에서 동적으로 계산 (chat 실제 높이 기준 10px gap) */
   #s1-cards.keyboard-open { /* transform set by showKeyboard() */ }
+  #s1-banner.keyboard-open { display: none; }
 
   #s1-keyboard {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -946,10 +947,7 @@
 <div class="screen" id="screen-4">
 
   <!-- 헤더 (Screen 3과 동일 구조) -->
-  <div id="s4-header" style="position:absolute;top:0;left:0;right:0;height:130px;z-index:50;
-                              padding:12px 20px;display:flex;align-items:flex-start;
-                              justify-content:space-between;gap:6px;
-                              background:linear-gradient(to bottom,#d2d4d9 0%,rgba(210,212,217,0) 100%);">
+  <div id="s4-header" class="chat-header">
     <div class="chat-header-pill" onclick="goBack()">
       <!-- 뒤로 아이콘 (Figma: 8461:21301 ico/header/back) -->
       <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
@@ -2034,7 +2032,7 @@ function crossfadeTo(targetId, duration) {
 ══════════════════════════════════════ */
 function showKeyboard() {
   document.getElementById('s1-dim').classList.add('open');
-  document.getElementById('s1-banner').style.display = 'none';
+  document.getElementById('s1-banner').classList.add('keyboard-open');
   var kb     = document.getElementById('s1-keyboard');
   var cards  = document.getElementById('s1-cards');
   var screen = document.getElementById('screen-1');
@@ -2053,7 +2051,7 @@ function showKeyboard() {
 
 function hideKeyboard() {
   document.getElementById('s1-dim').classList.remove('open');
-  document.getElementById('s1-banner').style.display = '';
+  document.getElementById('s1-banner').classList.remove('keyboard-open');
   document.getElementById('s1-keyboard').classList.remove('open');
   var cards = document.getElementById('s1-cards');
   cards.classList.remove('keyboard-open');
