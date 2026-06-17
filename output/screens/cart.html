@@ -82,7 +82,8 @@
   #s9-scroll {
     position: absolute; top: 120px; bottom: 115px; left: 0; right: 0;
     overflow-y: auto; -webkit-overflow-scrolling: touch;
-    padding: 0 16px 8px;
+    padding: 0 16px 24px;
+    display: flex; flex-direction: column; gap: 16px;
   }
   #s9-scroll::-webkit-scrollbar { display: none; }
 
@@ -94,13 +95,13 @@
   .cart-card {
     background: #fff; border-radius: 32px; padding: 20px;
     display: flex; flex-direction: column; gap: 10px;
-    width: 100%; margin-bottom: 8px;
+    width: 100%;
   }
   .cart-card.bd-black { border: 2px solid #000; }
   .cart-card.bd-gray  { border: 1px solid #e7e7e7; }
 
   /* 카테고리 헤더 */
-  .cat-hd { display: flex; align-items: center; gap: 5px; padding: 16px 0 10px; }
+  .cat-hd { display: flex; align-items: center; gap: 5px; }
   .cat-hd-txt {
     font-size: 15px; font-weight: 600; color: rgba(0,0,0,.7);
     letter-spacing: -0.45px; line-height: 20px;
@@ -250,8 +251,8 @@
         <img src="https://www.figma.com/api/mcp/asset/9210db28-c951-4a21-811e-155c042cde4d" alt="" style="width:18px;height:22px;display:block;transform:scaleY(-1);">
       </div>
     </div>
-    <!-- 네비 -->
-    <div style="display:flex;align-items:center;gap:8px;padding:0 20px 20px;">
+    <!-- 네비 (p-[20px] all sides = 총 헤더 120px) -->
+    <div style="display:flex;align-items:center;gap:8px;padding:20px;">
       <div style="position:relative;width:24px;height:24px;flex-shrink:0;">
         <!-- 뒤로가기: Figma ico (8×15 in 24×24 container) -->
         <img src="https://www.figma.com/api/mcp/asset/7a5263b9-af77-47bd-aa70-2cded516b3c0" alt="뒤로"
@@ -265,7 +266,7 @@
   <div id="s9-scroll">
 
     <!-- 전체 선택 -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 5px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="chk" id="chk-all"></div>
         <span style="font-size:15px;font-weight:600;color:rgba(0,0,0,.7);letter-spacing:-0.45px;line-height:20px;">전체 선택 (5건)</span>
@@ -274,10 +275,10 @@
         <span style="font-size:12px;font-weight:500;color:rgba(0,0,0,.9);letter-spacing:-0.36px;line-height:20px;opacity:.7;">선택 삭제</span>
       </div>
     </div>
-    <div style="height:1px;background:#ededed;margin:0 5px 4px;"></div>
+    <div style="height:1px;background:#ededed;"></div>
 
     <!-- ── 단말기 ── -->
-    <div class="cat-hd" style="padding-left:5px;padding-right:5px;">
+    <div class="cat-hd">
       <!-- Device icon: 24×24, shape img inset 15% vert, 25% horiz -->
       <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
         <img src="https://www.figma.com/api/mcp/asset/42a05ed4-c631-4697-919b-d424c96d58a0" alt=""
@@ -337,7 +338,7 @@
     </div>
 
     <!-- ── 구독 상품 ── -->
-    <div class="cat-hd" style="padding-left:5px;padding-right:5px;">
+    <div class="cat-hd">
       <!-- Subscribe icon: 24×24, shape img inset 14.58% vert, 16.67% horiz -->
       <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
         <img src="https://www.figma.com/api/mcp/asset/991d693d-eccf-4038-9197-570cc4e2c2b4" alt=""
@@ -368,7 +369,7 @@
     </div>
 
     <!-- ── 부가 혜택 ── -->
-    <div class="cat-hd" style="padding-left:5px;padding-right:5px;">
+    <div class="cat-hd">
       <!-- Benefit icon: 24×24, shape img inset ~10.53% -->
       <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
         <img src="https://www.figma.com/api/mcp/asset/39e8cfda-f142-4fc7-8b4f-870b843cc30f" alt=""
@@ -441,7 +442,7 @@
       </div>
     </div>
 
-    <div style="height:1px;background:#ededed;margin:8px 5px 16px;"></div>
+    <div style="height:1px;background:#ededed;"></div>
 
     <!-- ── T 에이전트 분석 ── -->
     <div class="ai-sect">
