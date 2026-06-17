@@ -10,8 +10,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
 <style>
-  :root { --ease: cubic-bezier(0.22, 1, 0.36, 1); }
-
   *, *::before, *::after {
     box-sizing: border-box; margin: 0; padding: 0;
     font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
@@ -87,15 +85,27 @@
   }
   #s9-scroll::-webkit-scrollbar { display: none; }
 
+  /* 하단 바: flex 레이아웃으로 position 중첩 제거 */
   #s9-bottom {
     position: absolute; bottom: 0; left: 0; right: 0; height: 115px; z-index: 50;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 16px 17px;
   }
+  #s9-bottom-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(247,248,250,0) 0%, #f7f8fa 10%);
+    pointer-events: none;
+  }
+  #s9-pay-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px 16px; position: relative;
+  }
+  #s9-cta { display: flex; gap: 8px; position: relative; }
 
   /* 카드 */
   .cart-card {
     background: #fff; border-radius: 32px; padding: 20px;
-    display: flex; flex-direction: column; gap: 10px;
-    width: 100%;
+    display: flex; flex-direction: column; gap: 10px; width: 100%;
   }
   .cart-card.bd-black { border: 2px solid #000; }
   .cart-card.bd-gray  { border: 1px solid #e7e7e7; }
@@ -106,6 +116,8 @@
     font-size: 15px; font-weight: 600; color: rgba(0,0,0,.7);
     letter-spacing: -0.45px; line-height: 20px;
   }
+  /* 카테고리 아이콘 */
+  .cat-ico { width: 24px; height: 24px; flex-shrink: 0; opacity: .5; object-fit: contain; display: block; }
 
   /* 체크박스 */
   .chk {
@@ -122,7 +134,7 @@
   .prod-row { display: flex; gap: 10px; align-items: flex-start; }
   .prod-thumb {
     width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0;
-    overflow: hidden; position: relative;
+    overflow: hidden; position: relative; background: rgba(169,169,169,.2);
   }
   .prod-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .prod-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -137,12 +149,20 @@
   }
   .change { font-weight: 500; color: rgba(0,0,0,.3); text-decoration: underline; }
 
-  /* 화살표 아이콘 (회전된 chevron) */
+  /* 화살표 아이콘 (Arrow UP 90° 회전 → right) */
   .arr-ico {
     display: inline-flex; align-items: center; justify-content: center;
     opacity: .5; flex-shrink: 0;
   }
   .arr-ico img { width: 15.087px; height: 15.087px; transform: rotate(90deg); display: block; }
+
+  /* 6G 썸네일 */
+  .thumb-6g {
+    width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0;
+    background: rgba(169,169,169,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 800; color: rgba(0,0,0,.5); letter-spacing: -0.51px;
+  }
 
   /* 옵션 박스 */
   .opt-box {
@@ -176,11 +196,11 @@
     padding: 10px 10px 10px 14px;
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
   }
-  .ai-bnr-l { display: flex; gap: 4px; align-items: flex-start; }
+  .ai-bnr-l { display: flex; gap: 4px; align-items: flex-start; flex: 1; min-width: 0; }
   .ai-bnr-txt {
+    flex: 1; min-width: 0;
     font-size: 12px; font-weight: 400; color: #5940df;
-    letter-spacing: -0.36px; line-height: 18px; height: 35px;
-    overflow: hidden; width: 194px;
+    letter-spacing: -0.36px; line-height: 18px; height: 35px; overflow: hidden;
   }
   .merge-btn {
     background: #fff; border: 1px solid #e7e7e7; border-radius: 99px;
@@ -188,16 +208,8 @@
     font-size: 12px; font-weight: 400; color: #202020; letter-spacing: -0.8px; line-height: 1.4;
   }
 
-  /* 6G 썸네일 */
-  .thumb-6g {
-    width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0;
-    background: rgba(169,169,169,.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px; font-weight: 800; color: rgba(0,0,0,.5); letter-spacing: -0.51px;
-  }
-
   /* T 에이전트 분석 섹션 */
-  .ai-sect { background: #ece8ff; border-radius: 24px; padding: 16px; margin-bottom: 8px; }
+  .ai-sect { background: #ece8ff; border-radius: 24px; padding: 16px; }
   .ai-sect-inner { display: flex; flex-direction: column; gap: 16px; }
   .ai-tag-row { display: flex; gap: 2px; align-items: center; }
   .ai-sect-lbl { font-size: 12px; font-weight: 600; color: #5940df; letter-spacing: -0.4px; line-height: 1.4; }
@@ -242,7 +254,7 @@
 
   <!-- ── 고정 헤더 ── -->
   <div id="s9-header">
-    <!-- 상태바 -->
+    <!-- 상태바 h-[54px] -->
     <div style="display:flex;align-items:center;justify-content:space-between;height:54px;padding:14px 24px 0;">
       <span style="font-size:15px;font-weight:700;color:#1c1c1e;">9:41</span>
       <div style="display:flex;gap:5px;align-items:center;">
@@ -251,12 +263,10 @@
         <img src="https://www.figma.com/api/mcp/asset/9210db28-c951-4a21-811e-155c042cde4d" alt="" style="width:18px;height:22px;display:block;transform:scaleY(-1);">
       </div>
     </div>
-    <!-- 네비 (p-[20px] all sides = 총 헤더 120px) -->
+    <!-- 네비 p-[20px] → 총 헤더 120px -->
     <div style="display:flex;align-items:center;gap:8px;padding:20px;">
-      <div style="position:relative;width:24px;height:24px;flex-shrink:0;">
-        <!-- 뒤로가기: Figma ico (8×15 in 24×24 container) -->
-        <img src="https://www.figma.com/api/mcp/asset/7a5263b9-af77-47bd-aa70-2cded516b3c0" alt="뒤로"
-          style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:15px;display:block;">
+      <div style="width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        <img src="https://www.figma.com/api/mcp/asset/7a5263b9-af77-47bd-aa70-2cded516b3c0" alt="뒤로" style="width:8px;height:15px;display:block;">
       </div>
       <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;">장바구니</span>
     </div>
@@ -279,18 +289,14 @@
 
     <!-- ── 단말기 ── -->
     <div class="cat-hd">
-      <!-- Device icon: 24×24, shape img inset 15% vert, 25% horiz -->
-      <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
-        <img src="https://www.figma.com/api/mcp/asset/42a05ed4-c631-4697-919b-d424c96d58a0" alt=""
-          style="position:absolute;top:15%;bottom:15%;left:25%;right:25%;width:50%;height:70%;object-fit:contain;">
-      </div>
+      <img src="https://www.figma.com/api/mcp/asset/42a05ed4-c631-4697-919b-d424c96d58a0" alt="" class="cat-ico">
       <span class="cat-hd-txt">단말기</span>
     </div>
 
     <!-- 갤럭시 S29 카드 -->
     <div class="cart-card bd-black">
       <div class="prod-row">
-        <div class="prod-thumb" style="background:rgba(169,169,169,.2);">
+        <div class="prod-thumb">
           <img src="https://www.figma.com/api/mcp/asset/2196b6a7-7a40-4e0b-82ca-66032f51e2ea" alt="갤럭시 S29">
         </div>
         <div class="prod-info">
@@ -303,8 +309,7 @@
             <span class="change">변경</span>
           </div>
         </div>
-        <!-- 체크 완료 -->
-        <div class="chk-done" data-card="galaxy">
+        <div class="chk-done">
           <img src="https://www.figma.com/api/mcp/asset/58913421-5e44-47f4-bfad-a2fd42b6c06b" alt="선택됨">
         </div>
       </div>
@@ -332,18 +337,13 @@
         </div>
       </div>
 
-      <div><div class="pay-div"></div>
-        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 118,700원</span></div>
-      </div>
+      <div class="pay-div"></div>
+      <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 118,700원</span></div>
     </div>
 
     <!-- ── 구독 상품 ── -->
     <div class="cat-hd">
-      <!-- Subscribe icon: 24×24, shape img inset 14.58% vert, 16.67% horiz -->
-      <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
-        <img src="https://www.figma.com/api/mcp/asset/991d693d-eccf-4038-9197-570cc4e2c2b4" alt=""
-          style="position:absolute;top:14.58%;bottom:14.58%;left:16.67%;right:16.67%;width:66.66%;height:70.84%;object-fit:contain;">
-      </div>
+      <img src="https://www.figma.com/api/mcp/asset/991d693d-eccf-4038-9197-570cc4e2c2b4" alt="" class="cat-ico">
       <span class="cat-hd-txt">구독 상품</span>
     </div>
 
@@ -363,18 +363,13 @@
         </div>
         <div class="chk"></div>
       </div>
-      <div><div class="pay-div"></div>
-        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 76,000원</span></div>
-      </div>
+      <div class="pay-div"></div>
+      <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 76,000원</span></div>
     </div>
 
     <!-- ── 부가 혜택 ── -->
     <div class="cat-hd">
-      <!-- Benefit icon: 24×24, shape img inset ~10.53% -->
-      <div style="position:relative;width:24px;height:24px;flex-shrink:0;opacity:.5;">
-        <img src="https://www.figma.com/api/mcp/asset/39e8cfda-f142-4fc7-8b4f-870b843cc30f" alt=""
-          style="position:absolute;top:10.53%;bottom:10.53%;left:10.53%;right:10.53%;width:78.94%;height:78.94%;object-fit:contain;">
-      </div>
+      <img src="https://www.figma.com/api/mcp/asset/39e8cfda-f142-4fc7-8b4f-870b843cc30f" alt="" class="cat-ico">
       <span class="cat-hd-txt">부가 혜택</span>
     </div>
 
@@ -386,25 +381,21 @@
         </div>
         <div class="prod-info">
           <div class="prod-name" style="flex-wrap:wrap;font-size:14px;">
-            신라호텔
-            패스트리부티크 20% 할인
+            신라호텔 패스트리부티크 20% 할인
             <span class="arr-ico"><img src="https://www.figma.com/api/mcp/asset/21ca1e00-2409-4da1-82b6-4be9f9c06680" alt=""></span>
           </div>
         </div>
         <div class="chk"></div>
       </div>
-      <div>
-        <div class="ai-bnr">
-          <div class="ai-bnr-l">
-            <img src="https://www.figma.com/api/mcp/asset/8080532b-46e9-42b4-8541-69093d812134" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
-            <span class="ai-bnr-txt">6G 프레스티지 요금제와 합치면 3,000원 저렴한 가격으로 주문할 수 있어요.</span>
-          </div>
-          <button class="merge-btn">합치기</button>
+      <div class="ai-bnr">
+        <div class="ai-bnr-l">
+          <img src="https://www.figma.com/api/mcp/asset/8080532b-46e9-42b4-8541-69093d812134" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
+          <span class="ai-bnr-txt">6G 프레스티지 요금제와 합치면 3,000원 저렴한 가격으로 주문할 수 있어요.</span>
         </div>
+        <button class="merge-btn">합치기</button>
       </div>
-      <div><div class="pay-div"></div>
-        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 12,900원</span></div>
-      </div>
+      <div class="pay-div"></div>
+      <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 12,900원</span></div>
     </div>
 
     <!-- T 퀀텀 쉴드 카드 -->
@@ -423,9 +414,8 @@
         </div>
         <button class="merge-btn">합치기</button>
       </div>
-      <div><div class="pay-div"></div>
-        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 4,000원</span></div>
-      </div>
+      <div class="pay-div"></div>
+      <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 4,000원</span></div>
     </div>
 
     <!-- T 올케어 AI 프리미엄 카드 -->
@@ -437,9 +427,8 @@
         </div>
         <div class="chk"></div>
       </div>
-      <div><div class="pay-div"></div>
-        <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">무료</span></div>
-      </div>
+      <div class="pay-div"></div>
+      <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">무료</span></div>
     </div>
 
     <div style="height:1px;background:#ededed;"></div>
@@ -457,7 +446,6 @@
 
         <div class="ai-wdiv"></div>
 
-        <!-- 추천 1 -->
         <div class="rec-card">
           <div class="rec-ai-row">
             <img src="https://www.figma.com/api/mcp/asset/14ed9533-6cf9-4378-9bd3-17cb9fd0d015" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
@@ -472,7 +460,6 @@
           </div>
         </div>
 
-        <!-- 추천 2 -->
         <div class="rec-card">
           <div class="rec-ai-row">
             <img src="https://www.figma.com/api/mcp/asset/14ed9533-6cf9-4378-9bd3-17cb9fd0d015" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
@@ -487,41 +474,30 @@
           </div>
         </div>
 
-        <!-- 더 추천받기 -->
         <button class="more-btn">
-          <div style="position:relative;width:14px;height:14px;">
-            <img src="https://www.figma.com/api/mcp/asset/9d5f2528-a914-46d3-acf3-f128c1edbfd9" alt=""
-              style="position:absolute;inset:4.07%;width:91.86%;height:91.86%;display:block;">
-          </div>
+          <img src="https://www.figma.com/api/mcp/asset/9d5f2528-a914-46d3-acf3-f128c1edbfd9" alt="" style="width:14px;height:14px;display:block;">
           더 추천받기
         </button>
       </div>
     </div>
 
-    <div style="height:8px;"></div>
   </div><!-- /s9-scroll -->
 
   <!-- ── 고정 하단 ── -->
   <div id="s9-bottom">
-    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(247,248,250,0) 0%,#f7f8fa 10%);pointer-events:none;"></div>
+    <div id="s9-bottom-gradient"></div>
 
-    <!-- 예상 납부 금액 -->
-    <div style="position:absolute;bottom:67px;left:36px;right:36px;display:flex;align-items:center;justify-content:space-between;">
+    <div id="s9-pay-row">
       <span style="font-size:14px;font-weight:500;color:#202020;letter-spacing:-0.4px;line-height:18px;">예상 납부 금액</span>
       <div style="display:flex;align-items:center;gap:4px;">
         <span style="font-size:15px;font-weight:600;color:#000;letter-spacing:-1px;line-height:26px;">월 118,700원</span>
-        <!-- 아래 화살표 (imgIco1 rotated) -->
-        <div style="position:relative;width:16px;height:16px;">
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-            <img src="https://www.figma.com/api/mcp/asset/f2a02335-37ec-48d1-a696-95a379b045af" alt=""
-              style="width:5.333px;height:10px;transform:rotate(-90deg) scaleY(-1);display:block;">
-          </div>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;">
+          <img src="https://www.figma.com/api/mcp/asset/f2a02335-37ec-48d1-a696-95a379b045af" alt="" style="width:5.333px;height:10px;transform:rotate(-90deg) scaleY(-1);display:block;">
         </div>
       </div>
     </div>
 
-    <!-- CTA -->
-    <div style="position:absolute;bottom:17px;left:16px;right:16px;display:flex;gap:8px;">
+    <div id="s9-cta">
       <button style="flex:1;background:#e8e7ee;border:none;border-radius:999px;height:44px;font-size:12px;font-weight:600;color:#1c1c1e;letter-spacing:-0.36px;cursor:pointer;">선물하기</button>
       <button style="flex:1;background:#222;border:none;border-radius:999px;height:44px;font-size:12px;font-weight:600;color:#fff;letter-spacing:-0.36px;cursor:pointer;">주문하기</button>
     </div>
@@ -532,25 +508,29 @@
 </div>
 
 <script>
-const frame = document.getElementById('frame');
-const inpW  = document.getElementById('inp-w');
-const inpH  = document.getElementById('inp-h');
+const frame   = document.getElementById('frame');
+const inpW    = document.getElementById('inp-w');
+const inpH    = document.getElementById('inp-h');
+const presets = document.querySelectorAll('#controls .preset');
 
-document.querySelectorAll('#controls .preset').forEach(btn => {
+presets.forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('#controls .preset').forEach(b => b.classList.remove('active'));
+    presets.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     applySize(+btn.dataset.w, +btn.dataset.h);
-    inpW.value = btn.dataset.w; inpH.value = btn.dataset.h;
+    inpW.value = btn.dataset.w;
+    inpH.value = btn.dataset.h;
   });
 });
+
 document.getElementById('apply-btn').addEventListener('click', () => {
   applySize(+inpW.value || 375, +inpH.value || 812);
-  document.querySelectorAll('#controls .preset').forEach(b => b.classList.remove('active'));
+  presets.forEach(b => b.classList.remove('active'));
 });
+
 function applySize(w, h) {
-  frame.style.width  = w + 'px';
-  frame.style.height = h + 'px';
+  frame.style.width        = w + 'px';
+  frame.style.height       = h + 'px';
   frame.style.borderRadius = Math.round(w * 0.107) + 'px';
 }
 
@@ -558,11 +538,10 @@ function applySize(w, h) {
   const BASE_W = 375, BASE_H = 812;
   function resize() {
     if (window.innerWidth < 768) return;
-    const vw = window.innerWidth, vh = window.innerHeight - 120;
-    const scale = Math.min(vw * 0.9 / BASE_W, vh / BASE_H, 1.2);
+    const scale = Math.min(window.innerWidth * 0.9 / BASE_W, (window.innerHeight - 120) / BASE_H, 1.2);
     if (+inpW.value === BASE_W && +inpH.value === BASE_H) {
-      frame.style.width  = BASE_W * scale + 'px';
-      frame.style.height = BASE_H * scale + 'px';
+      frame.style.width        = BASE_W * scale + 'px';
+      frame.style.height       = BASE_H * scale + 'px';
       frame.style.borderRadius = 40 * Math.min(scale, 1) + 'px';
     }
   }
@@ -573,19 +552,37 @@ function applySize(w, h) {
 // ── 체크박스 토글 ──
 const CHK_DONE_HTML = `<img src="https://www.figma.com/api/mcp/asset/58913421-5e44-47f4-bfad-a2fd42b6c06b" alt="선택됨" style="width:20px;height:20px;display:block;">`;
 
-document.querySelectorAll('.chk, .chk-done').forEach(el => {
+// 개별 카드 체크박스 (전체선택 제외)
+document.querySelectorAll('.cart-card .chk, .cart-card .chk-done').forEach(el => {
   el.addEventListener('click', () => {
     const card = el.closest('.cart-card');
     if (el.classList.contains('chk-done')) {
       el.className = 'chk';
       el.innerHTML = '';
-      card && (card.classList.remove('bd-black'), card.classList.add('bd-gray'));
+      card.classList.replace('bd-black', 'bd-gray');
     } else {
       el.className = 'chk-done';
       el.innerHTML = CHK_DONE_HTML;
-      card && (card.classList.remove('bd-gray'), card.classList.add('bd-black'));
+      card.classList.replace('bd-gray', 'bd-black');
     }
   });
+});
+
+// 전체선택 체크박스
+document.getElementById('chk-all').addEventListener('click', function() {
+  const isChecked = this.classList.contains('chk-done');
+  document.querySelectorAll('.cart-card .chk, .cart-card .chk-done').forEach(el => {
+    const card = el.closest('.cart-card');
+    if (isChecked) {
+      el.className = 'chk'; el.innerHTML = '';
+      card.classList.replace('bd-black', 'bd-gray');
+    } else {
+      el.className = 'chk-done'; el.innerHTML = CHK_DONE_HTML;
+      card.classList.replace('bd-gray', 'bd-black');
+    }
+  });
+  if (isChecked) { this.className = 'chk'; this.innerHTML = ''; }
+  else           { this.className = 'chk-done'; this.innerHTML = CHK_DONE_HTML; }
 });
 </script>
 </body>
