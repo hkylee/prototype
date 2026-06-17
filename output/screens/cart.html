@@ -173,8 +173,14 @@
     text-decoration: underline; white-space: nowrap; flex-shrink: 0;
   }
 
+  /* 갤럭시 S29 카드: opt-box + separator 묶음 (Figma gap-5 구조) */
+  .opt-group { display: flex; flex-direction: column; gap: 5px; }
+  .sep-wrap { padding-top: 12px; }
+
   .pay-div { background: #ededed; height: 1px; }
   .pay-row { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; }
+  /* opt-group 내 pay-row는 sep-wrap에서 이미 12px 확보 */
+  .opt-group .pay-row { padding-top: 0; }
   .pay-lbl { font-size: 14px; font-weight: 500; color: #202020; letter-spacing: -0.4px; line-height: 18px; }
   .pay-amt { font-size: 15px; font-weight: 600; color: #000; letter-spacing: -1px; line-height: 26px; }
 
@@ -290,30 +296,33 @@
         </div>
       </div>
 
-      <div class="opt-box">
-        <span class="opt-lbl">상품 옵션</span>
-        <div class="opt-div"></div>
-        <div class="opt-rows">
-          <div class="opt-row">
-            <div class="opt-l"><span class="opt-tag">요금제</span><span class="opt-val">6G 인피니티</span></div>
-            <span class="opt-chg">변경</span>
-          </div>
-          <div class="opt-row">
-            <div class="opt-l"><span class="opt-tag">구독</span><span class="opt-val">넷플릭스 광고형 스탠다드,<br>ChatGPT Plus 이용권</span></div>
-            <span class="opt-chg">변경</span>
-          </div>
-          <div class="opt-row">
-            <div class="opt-l"><span class="opt-tag">AI</span><span class="opt-val">T 에이전트 프로</span></div>
-            <span class="opt-chg">변경</span>
-          </div>
-          <div class="opt-row">
-            <div class="opt-l"><span class="opt-tag">기프트</span><span class="opt-val">갤럭시 링 3</span></div>
-            <span class="opt-chg">변경</span>
+      <!-- opt-group: Figma gap-5 구조 (opt-box + 구분선 묶음) -->
+      <div class="opt-group">
+        <div class="opt-box">
+          <span class="opt-lbl">상품 옵션</span>
+          <div class="opt-div"></div>
+          <div class="opt-rows">
+            <div class="opt-row">
+              <div class="opt-l" style="align-items:center;"><span class="opt-tag">요금제</span><span class="opt-val">6G 인피니티</span></div>
+              <span class="opt-chg">변경</span>
+            </div>
+            <div class="opt-row">
+              <div class="opt-l"><span class="opt-tag">구독</span><span class="opt-val">넷플릭스 광고형 스탠다드,<br>ChatGPT Plus 이용권</span></div>
+              <span class="opt-chg">변경</span>
+            </div>
+            <div class="opt-row">
+              <div class="opt-l"><span class="opt-tag">AI</span><span class="opt-val">T 에이전트 프로</span></div>
+              <span class="opt-chg">변경</span>
+            </div>
+            <div class="opt-row">
+              <div class="opt-l"><span class="opt-tag">기프트</span><span class="opt-val">갤럭시 링 3</span></div>
+              <span class="opt-chg">변경</span>
+            </div>
           </div>
         </div>
+        <div class="sep-wrap"><div class="pay-div"></div></div>
       </div>
 
-      <div class="pay-div"></div>
       <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">월 118,700원</span></div>
     </div>
 
@@ -356,8 +365,12 @@
           <img src="../../assets/images/scenario6/img-shilla.png" alt="신라호텔">
         </div>
         <div class="prod-info">
-          <div class="prod-name" style="flex-wrap:wrap;font-size:14px;">
-            신라호텔 패스트리부티크 20% 할인
+          <!-- Figma: flex-col 2줄 + 화살표 items-end -->
+          <div style="display:flex;gap:2px;align-items:flex-end;">
+            <div style="display:flex;flex-direction:column;font-size:15px;font-weight:700;color:rgba(0,0,0,.7);letter-spacing:-0.45px;line-height:20px;opacity:.7;">
+              <span>신라호텔</span>
+              <span>패스트리부티크 20% 할인</span>
+            </div>
             <span class="arr-ico"><img src="../../assets/images/scenario6/ico-arrow.svg" alt=""></span>
           </div>
         </div>
@@ -423,10 +436,8 @@
         <div class="ai-wdiv"></div>
 
         <div class="rec-card">
-          <div class="rec-ai-row">
-            <img src="../../assets/images/scenario6/ico-ai-fill.svg" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
-            <span class="rec-ai-txt">다중 스마트기기 유저에게 필수예요.</span>
-          </div>
+          <!-- Figma AI 라벨: 아이콘+텍스트 벡터 SVG (196×18) -->
+          <img src="../../assets/images/scenario6/ico-ai-rec1.svg" alt="다중 스마트기기 유저에게 필수예요." style="width:196px;height:18px;display:block;">
           <div class="rec-prod-row">
             <div style="display:flex;flex-direction:column;gap:4px;">
               <span class="rec-prod-nm">6G XR 글래스 &amp; 워치 쉐어링</span>
@@ -437,10 +448,8 @@
         </div>
 
         <div class="rec-card">
-          <div class="rec-ai-row">
-            <img src="../../assets/images/scenario6/ico-ai-fill.svg" alt="" style="width:18px;height:18px;flex-shrink:0;display:block;">
-            <span class="rec-ai-txt">50대 VIP 남성 만족도 1위 상품이에요.</span>
-          </div>
+          <!-- Figma AI 라벨: 아이콘+텍스트 벡터 SVG (208×18) -->
+          <img src="../../assets/images/scenario6/ico-ai-rec2.svg" alt="50대 VIP 남성 만족도 1위 상품이에요." style="width:208px;height:18px;display:block;">
           <div class="rec-prod-row">
             <div style="display:flex;flex-direction:column;gap:4px;">
               <span class="rec-prod-nm">B tv 8K 무손실 홈시어터 팩</span>
