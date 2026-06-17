@@ -1954,9 +1954,10 @@
 /* ══════════════════════════════════════
    프레임 크기 컨트롤
 ══════════════════════════════════════ */
-const frame = document.getElementById('frame');
-const inpW  = document.getElementById('inp-w');
-const inpH  = document.getElementById('inp-h');
+const frame    = document.getElementById('frame');
+const inpW     = document.getElementById('inp-w');
+const inpH     = document.getElementById('inp-h');
+const s1Banner = document.getElementById('s1-banner');
 
 document.querySelectorAll('#controls .preset').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2032,7 +2033,7 @@ function crossfadeTo(targetId, duration) {
 ══════════════════════════════════════ */
 function showKeyboard() {
   document.getElementById('s1-dim').classList.add('open');
-  document.getElementById('s1-banner').classList.add('keyboard-open');
+  s1Banner.classList.add('keyboard-open');
   var kb     = document.getElementById('s1-keyboard');
   var cards  = document.getElementById('s1-cards');
   var screen = document.getElementById('screen-1');
@@ -2051,7 +2052,7 @@ function showKeyboard() {
 
 function hideKeyboard() {
   document.getElementById('s1-dim').classList.remove('open');
-  document.getElementById('s1-banner').classList.remove('keyboard-open');
+  s1Banner.classList.remove('keyboard-open');
   document.getElementById('s1-keyboard').classList.remove('open');
   var cards = document.getElementById('s1-cards');
   cards.classList.remove('keyboard-open');
