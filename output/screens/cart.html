@@ -131,7 +131,7 @@
     width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0;
     overflow: hidden; position: relative; background: rgba(169,169,169,.2);
   }
-  .prod-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: bottom; }
+  .prod-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
   .prod-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .prod-name {
     display: inline-flex; align-items: center; gap: 2px;
@@ -267,7 +267,7 @@
         <span style="font-size:12px;font-weight:500;color:rgba(0,0,0,.9);letter-spacing:-0.36px;line-height:20px;opacity:.7;">선택 삭제</span>
       </div>
     </div>
-    <div style="height:1px;background:#ededed;"></div>
+    <div style="height:1px;min-height:1px;flex-shrink:0;background:#ededed;width:100%;"></div>
 
     <!-- ── 단말기 ── -->
     <div class="cat-hd">
@@ -367,7 +367,7 @@
         <div class="prod-info">
           <!-- Figma: flex-col 2줄 + 화살표 items-end -->
           <div style="display:flex;gap:2px;align-items:flex-end;">
-            <div style="display:flex;flex-direction:column;font-size:15px;font-weight:700;color:rgba(0,0,0,.7);letter-spacing:-0.45px;line-height:20px;opacity:.7;">
+            <div style="display:flex;flex-direction:column;font-size:15px;font-weight:700;color:rgba(0,0,0,.7);letter-spacing:-0.45px;line-height:20px;">
               <span>신라호텔</span>
               <span>패스트리부티크 20% 할인</span>
             </div>
@@ -420,7 +420,7 @@
       <div class="pay-row"><span class="pay-lbl">납부 금액</span><span class="pay-amt">무료</span></div>
     </div>
 
-    <div style="height:1px;background:#ededed;"></div>
+    <div style="height:1px;min-height:1px;flex-shrink:0;background:#ededed;width:100%;"></div>
 
     <!-- ── T 에이전트 분석 ── -->
     <div class="ai-sect">
