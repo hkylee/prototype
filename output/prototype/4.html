@@ -293,6 +293,12 @@
     justify-content: space-between; gap: 6px;
     background: linear-gradient(to bottom, #d2d4d9 0%, rgba(210,212,217,0) 100%);
   }
+  .chat-header-pill {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 999px; height: 48px; padding: 0 16px; flex: 1;
+    box-shadow: 0 0 20px rgba(0,0,0,.05); overflow: hidden; cursor: pointer;
+  }
   #s5-card {
     background: #fff;
     border-radius: 23px;
@@ -602,7 +608,7 @@
   </div><!-- /s1-cards -->
 
   <!-- RIMOWA 배너 (Figma: left=20, top=640, w=335, h=101) -->
-  <div style="position:absolute; z-index:0; left:20px; top:640px; width:335px;
+  <div id="s1-banner" style="position:absolute; z-index:0; left:20px; right:20px; top:640px;
               height:101px; border-radius:28px; overflow:hidden;
               background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);">
     <div style="position:absolute; left:28px; top:24px; display:flex; flex-direction:column; gap:4px;">
@@ -818,11 +824,7 @@
   <!-- 뒤로가기 pill + 질문 텍스트 + 히스토리 버튼 -->
   <div id="s3-header">
     <!-- 왼쪽: 뒤로가기 + 질문 텍스트 pill -->
-    <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.4);
-                backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-radius:999px;
-                height:48px; padding:0 16px; flex:1;
-                box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden; cursor:pointer;"
-         onclick="goBack()">
+    <div class="chat-header-pill" onclick="goBack()">
       <!-- 뒤로 아이콘 (Figma: 8461:21301 ico/header/back) -->
       <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
         <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
@@ -948,10 +950,7 @@
                               padding:12px 20px;display:flex;align-items:flex-start;
                               justify-content:space-between;gap:6px;
                               background:linear-gradient(to bottom,#d2d4d9 0%,rgba(210,212,217,0) 100%);">
-    <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.4);
-                backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:999px;
-                height:48px;padding:0 16px;flex:1;box-shadow:0 0 20px rgba(0,0,0,.05);
-                overflow:hidden;cursor:pointer;" onclick="goBack()">
+    <div class="chat-header-pill" onclick="goBack()">
       <!-- 뒤로 아이콘 (Figma: 8461:21301 ico/header/back) -->
       <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
         <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
@@ -1285,11 +1284,7 @@
 
   <!-- 헤더 (Screen 4와 동일 구조) -->
   <div id="s5-header" class="chat-header">
-    <div style="display:flex; align-items:center; gap:12px;
-                background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
-                -webkit-backdrop-filter:blur(20px); border-radius:999px;
-                height:48px; padding:0 16px; flex:1;
-                box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden;">
+    <div class="chat-header-pill">
       <!-- 뒤로 아이콘 -->
       <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
         <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
@@ -1550,11 +1545,7 @@
 
   <!-- 헤더 (Screen 4/5와 동일 asset) -->
   <div id="s6-header" class="chat-header">
-    <div style="display:flex; align-items:center; gap:12px;
-                background:rgba(255,255,255,.4); backdrop-filter:blur(20px);
-                -webkit-backdrop-filter:blur(20px); border-radius:999px;
-                height:48px; padding:0 16px; flex:1;
-                box-shadow:0 0 20px rgba(0,0,0,.05); overflow:hidden;">
+    <div class="chat-header-pill">
       <div style="position:relative; width:24px; height:24px; flex-shrink:0;">
         <div style="position:absolute; left:3px; top:50%; transform:translateY(-50%); width:18px; height:16px;">
           <img src="https://www.figma.com/api/mcp/asset/93b6f537-2ff0-4028-9c92-56528564593d" alt=""
@@ -2043,6 +2034,7 @@ function crossfadeTo(targetId, duration) {
 ══════════════════════════════════════ */
 function showKeyboard() {
   document.getElementById('s1-dim').classList.add('open');
+  document.getElementById('s1-banner').style.display = 'none';
   var kb     = document.getElementById('s1-keyboard');
   var cards  = document.getElementById('s1-cards');
   var screen = document.getElementById('screen-1');
@@ -2061,6 +2053,7 @@ function showKeyboard() {
 
 function hideKeyboard() {
   document.getElementById('s1-dim').classList.remove('open');
+  document.getElementById('s1-banner').style.display = '';
   document.getElementById('s1-keyboard').classList.remove('open');
   var cards = document.getElementById('s1-cards');
   cards.classList.remove('keyboard-open');
