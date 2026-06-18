@@ -2747,7 +2747,11 @@ function goToScreen7() {
     msg.style.opacity   = '1';
     msg.style.transform = 'translate3d(0, 0, 0)';
 
-    /* "이대로 선물하기를 진행할까요?" — 사용자 확인 후에도 계속 표시 유지 */
+    /* "이대로 선물하기를 진행할까요?" — "네, 선물할게요." 등장과 함께 자연스럽게 fade-out */
+    if (giftConfirm) {
+      giftConfirm.style.transition = 'opacity 0.65s ease';
+      giftConfirm.style.opacity    = '0';
+    }
 
     /* Screen 8에 완벽한 좌표 연동을 위해 Y값 저장 */
     chat.dataset.finalY = targetY;
