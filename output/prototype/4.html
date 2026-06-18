@@ -1804,8 +1804,8 @@
       </div>
     </div>
 
-    <!-- "이대로 선물하기를 진행할까요?" — S6에서 opacity:0으로 fade된 상태 유지 (레이아웃 연속성) -->
-    <div style="padding:0 9.5px; opacity:0;">
+    <!-- "이대로 선물하기를 진행할까요?" — S8에서도 계속 표시 -->
+    <div style="padding:0 9.5px; opacity:1;">
       <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
                 background:linear-gradient(to right, #2f2f2f, #959595);
                 -webkit-background-clip:text; background-clip:text;
@@ -2747,20 +2747,7 @@ function goToScreen7() {
     msg.style.opacity   = '1';
     msg.style.transform = 'translate3d(0, 0, 0)';
 
-    /* "이대로 선물하기를 진행할까요?" morph: 22px gradient → 16px dimmed (Figma 9094-16592) */
-    if (giftConfirm) {
-      var gcP = giftConfirm.querySelector('p');
-      if (gcP) {
-        gcP.style.transition = 'font-size 1.25s ' + ease + ', opacity 1.25s ' + ease + ', letter-spacing 1.25s ' + ease + ', line-height 1.25s ' + ease;
-        gcP.style.fontSize             = '16px';
-        gcP.style.fontWeight           = '500';
-        gcP.style.opacity              = '0.2';
-        gcP.style.letterSpacing        = '-0.64px';
-        gcP.style.lineHeight           = '1.5';
-        gcP.style.webkitTextFillColor  = '#222';
-        gcP.style.backgroundImage      = 'none';
-      }
-    }
+    /* "이대로 선물하기를 진행할까요?" — 사용자 확인 후에도 계속 표시 유지 */
 
     /* Screen 8에 완벽한 좌표 연동을 위해 Y값 저장 */
     chat.dataset.finalY = targetY;
@@ -2877,13 +2864,13 @@ function goToScreen8() {
       }, 300);
 
       revealAndPush('s8-ai-text', 700);
-      revealAndPush('s8-card', 2000);
+      revealAndPush('s8-card', 3000);
 
       // 전송중 카드 렌더링 완료 후 '완료' 상태로 자동 전환
       setTimeout(function() {
         if (s8chat) s8chat.style.willChange = 'auto';
         goToScreen9();
-      }, 3800);
+      }, 5500);
     });
   });
 }
