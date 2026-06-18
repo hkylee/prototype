@@ -2673,12 +2673,27 @@ function goToScreen6() {
    Screen 6: Sheet 2 ("이대로 선물하기를 진행할까요?")
 ══════════════════════════════════════ */
 function showSheet2() {
+  var s   = document.getElementById('s6-sheet2');
+  var gnb = document.getElementById('s6-gnb');
+
+  /* 1. GNB 먼저 페이드아웃 — 시트와 동시 실행 방지 */
+  if (gnb) {
+    gnb.style.transition    = 'opacity 0.2s ease';
+    gnb.style.opacity       = '0';
+    gnb.style.pointerEvents = 'none';
+  }
+
+  /* 2. GNB 완전히 사라진 뒤 시트 슬라이드업 */
   setTimeout(function() {
-    var s   = document.getElementById('s6-sheet2');
-    var gnb = document.getElementById('s6-gnb');
-    if (s) s.classList.add('open');
-    if (gnb) { gnb.style.opacity = '0'; gnb.style.pointerEvents = 'none'; }
-  }, 160);
+    if (s) {
+      s.style.willChange = 'transform';
+      s.classList.add('open');
+      s.addEventListener('transitionend', function h() {
+        s.style.willChange = 'auto';
+        s.removeEventListener('transitionend', h);
+      }, { once: true });
+    }
+  }, 240);
 }
 
 function closeSheet2() {
@@ -2944,7 +2959,7 @@ function goToScreen10() {
     }
   }
 
-  // 2. 1000ms 후 "추가로 도움이 필요한..." (b3) 등장 및 밀어올리기
+  // 2. 2500ms 후 "추가로 도움이 필요한..." (b3) 등장 및 밀어올리기
   setTimeout(function() {
     if (b2) {
       b2.style.transition = 'opacity 0.5s ease';
@@ -2991,7 +3006,7 @@ function goToScreen10() {
       }
     }, 150);
 
-  }, 1000);
+  }, 2500);
 }
 
 /* ══════════════════════════════════════
