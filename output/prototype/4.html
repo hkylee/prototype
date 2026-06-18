@@ -1804,8 +1804,8 @@
       </div>
     </div>
 
-    <!-- "이대로 선물하기를 진행할까요?" — S8에서도 계속 표시 -->
-    <div style="padding:0 9.5px; opacity:1;">
+    <!-- "이대로 선물하기를 진행할까요?" — S8에서도 계속 표시, goToScreen10에서 fade-out -->
+    <div id="s8-gift-question" style="padding:0 9.5px; opacity:1;">
       <p style="font-size:22px; font-weight:400; letter-spacing:-1.54px; line-height:1.3;
                 background:linear-gradient(to right, #2f2f2f, #959595);
                 -webkit-background-clip:text; background-clip:text;
@@ -2863,8 +2863,8 @@ function goToScreen8() {
         }
       }, 300);
 
-      revealAndPush('s8-ai-text', 700);
-      revealAndPush('s8-card', 3000);
+      revealAndPush('s8-ai-text', 1800);
+      revealAndPush('s8-card', 3500);
 
       // 전송중 카드 렌더링 완료 후 '완료' 상태로 자동 전환
       setTimeout(function() {
@@ -2929,6 +2929,13 @@ function goToScreen10() {
   var currentY = chat && chat.dataset.finalY ? parseFloat(chat.dataset.finalY) : -326;
 
   if (chat) chat.style.willChange = 'transform';
+
+  // 0. "이대로 선물하기를 진행할까요?" — scroll로 사라지지 않고 부드럽게 fade-out
+  var giftQ = document.getElementById('s8-gift-question');
+  if (giftQ) {
+    giftQ.style.transition = 'opacity 0.9s ease';
+    giftQ.style.opacity    = '0';
+  }
 
   // 1. "어머니께 2GB 선물을 안전하게..." 메시지 등장 및 밀어올리기
   if (b2) {
