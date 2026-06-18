@@ -2877,13 +2877,13 @@ function goToScreen8() {
       }, 300);
 
       revealAndPush('s8-ai-text', 700);
-      revealAndPush('s8-card', 1300);
+      revealAndPush('s8-card', 2000);
 
       // 전송중 카드 렌더링 완료 후 '완료' 상태로 자동 전환
       setTimeout(function() {
         if (s8chat) s8chat.style.willChange = 'auto';
         goToScreen9();
-      }, 2200);
+      }, 3800);
     });
   });
 }
