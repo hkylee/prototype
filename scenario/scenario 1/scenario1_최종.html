@@ -1828,7 +1828,12 @@
   <!-- 하단 바 — Figma node 9800-32737 -->
   <div class="s7-bottom-bar">
     <button class="s7-agent-btn">
-      <img src="assets/screen7/ico_agent.svg" style="width:24px;height:24px;display:block;" alt="">
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="assets/screen7/ico_agent_t.svg" alt="T"
+             style="position:absolute; width:18px; height:18px; top:3px; left:50%; transform:translateX(calc(-50% - 1px)); display:block;">
+        <img src="assets/screen7/ico_agent_plus.svg" alt=""
+             style="position:absolute; width:6px; height:6px; top:15px; left:16px; display:block;">
+      </div>
     </button>
     <button class="s7-save-btn" onclick="closeScreen7();openScreen4();">선택한 혜택 저장하기</button>
   </div>
