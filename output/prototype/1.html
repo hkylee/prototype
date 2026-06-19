@@ -51,17 +51,25 @@
     #frame { width: 100vw !important; height: 100dvh !important; border-radius: 0 !important; }
   }
   @media (min-width: 768px) {
+    html, body {
+      height: 100dvh; overflow: hidden;
+    }
     body {
-      padding: 24px 0 48px; background: #c8cdd8;
-      display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 100vh;
+      padding: 16px 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(186,207,246,0.55) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 80% 90%, rgba(160,185,230,0.45) 0%, transparent 55%),
+        linear-gradient(155deg, #cdd8ee 0%, #b4c5df 45%, #9fb3d1 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
     }
     #controls {
       display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
-      background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
-      border: 1px solid rgba(0,0,0,.1); border-radius: 12px; padding: 8px 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      background: rgba(255,255,255,.88); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.6); border-radius: 12px; padding: 8px 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+      flex-shrink: 0;
     }
-    #frame { flex-shrink: 0; box-shadow: 0 24px 48px rgba(0,0,0,.25), 0 8px 16px rgba(0,0,0,.12); }
+    #frame { flex-shrink: 0; box-shadow: 0 32px 64px rgba(0,0,0,.28), 0 8px 20px rgba(0,0,0,.14); }
   }
 
   /* ── 프레임 ── */
@@ -90,16 +98,15 @@
 
   /* ── S1 배경 마스크 ── */
   #s1-bg {
-    position: absolute;
-    width: 387.259px; height: 839.554px;
-    left: -6.13px; top: -41.28px;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     -webkit-mask-image: url("../../assets/images/scenario1/bg-mask.svg");
-    -webkit-mask-size: 375px 867px;
-    -webkit-mask-position: 6.129px -13.722px;
+    -webkit-mask-size: cover;
+    -webkit-mask-position: center;
     -webkit-mask-repeat: no-repeat;
     mask-image: url("../../assets/images/scenario1/bg-mask.svg");
-    mask-size: 375px 867px;
-    mask-position: 6.129px -13.722px;
+    mask-size: cover;
+    mask-position: center;
     mask-repeat: no-repeat;
   }
   #s1-bg img {
@@ -346,7 +353,7 @@ iPhone20 Pro가 도착했어요</p>
       </div>
 
       <!-- 하단 그라디언트 -->
-      <div style="position:absolute; bottom:0; left:0; width:375px; height:105px; z-index:5;
+      <div style="position:absolute; bottom:0; left:0; width:100%; height:105px; z-index:5;
                   background:linear-gradient(to bottom, rgba(186,207,246,0) 0%, #bacff6 45%);
                   pointer-events:none;"></div>
 
@@ -517,8 +524,11 @@ document.getElementById('apply-btn').addEventListener('click', () => {
   const BASE_W = 375, BASE_H = 812;
   function resize() {
     if (window.innerWidth < 768) return;
-    const vw = window.innerWidth, vh = window.innerHeight - 120;
-    const scale = Math.min(vw * 0.9 / BASE_W, vh / BASE_H, 1.2);
+    const controls = document.getElementById('controls');
+    const controlsH = controls ? controls.offsetHeight + 14 : 0; /* gap */
+    const vw = window.innerWidth;
+    const vh = window.innerHeight - controlsH - 32; /* 상하 padding 16+16 */
+    const scale = Math.min(vw * 0.92 / BASE_W, vh / BASE_H, 1.2);
     if (+inpW.value === BASE_W && +inpH.value === BASE_H) {
       frame.style.width  = BASE_W * scale + 'px';
       frame.style.height = BASE_H * scale + 'px';

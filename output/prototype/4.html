@@ -2638,12 +2638,13 @@ function goToScreen8() {
 
           if (id === 's8-progress-row') el.classList.add('visible');
 
+          // offsetHeight 먼저 읽어 forced reflow를 transition 시작 전에 처리
+          var pushHeight = el.offsetHeight + 19;
+          currentY -= pushHeight;
+
           el.style.transition = 'opacity 0.6s ' + ease + ', transform 0.6s ' + ease;
           el.style.opacity = '1';
           el.style.transform = 'translate3d(0,0,0)';
-
-          var pushHeight = el.offsetHeight + 19;
-          currentY -= pushHeight;
 
           if (chat) {
             chat.style.transition = 'transform 0.6s ' + ease;
@@ -2702,13 +2703,19 @@ function goToScreen9() {
   if (txtD) { txtD.style.transition = 'opacity 0.35s ease'; txtD.style.opacity = '1'; }
 
   // '중단하기' 버튼 영역 부드럽게 닫기
-  if (cBottom) {
-    cBottom.style.transition = 'max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease';
-    cBottom.style.maxHeight = '0';
+  // max-height 대신 실제 높이 측정 후 height 애니메이션 → 뚝끊김 방지
+  var chat = document.getElementById('s6-chat');
+  var bottomH = cBottom ? cBottom.offsetHeight : 0;
+  if (cBottom && bottomH > 0) {
+    cBottom.style.height   = bottomH + 'px';
+    cBottom.style.maxHeight = '';
+    void cBottom.offsetHeight; // force reflow
+    cBottom.style.transition = 'height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease';
+    cBottom.style.height  = '0';
     cBottom.style.opacity = '0';
   }
   if (cBp) {
-    cBp.style.transition = 'height 0.4s cubic-bezier(0.22, 1, 0.36, 1)';
+    cBp.style.transition = 'height 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
     cBp.style.height = '22px';
   }
 
@@ -2739,13 +2746,13 @@ function goToScreen10() {
 
   // 1. "어머니께 2GB 선물을 안전하게..." 메시지 등장 및 밀어올리기
   if (b2) {
+    // offsetHeight 먼저 읽어 forced reflow를 transition 시작 전에 처리
+    var pushDist = b2.offsetHeight + 9;
+    currentY -= pushDist;
+
     b2.style.transition = 'opacity 0.6s ' + ease + ', transform 0.6s ' + ease;
     b2.style.opacity = '1';
     b2.style.transform = 'translate3d(0,0,0)';
-
-    // 카드 축소(중단하기 버튼 사라짐)로 인한 오차 보정 -10px 포함 밀어올리기
-    var pushDist = b2.offsetHeight + 9;
-    currentY -= pushDist;
 
     if (chat) {
       chat.style.transition = 'transform 0.6s ' + ease;
