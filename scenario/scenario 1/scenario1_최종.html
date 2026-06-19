@@ -155,32 +155,85 @@
     display: flex; flex-direction: column; overflow: hidden;
   }
   #screen-7.active { transform: translateX(0); }
-  #scroll-s7 {
+
+  /* [Rule 2] 상단 고정 컨테이너 — 스크롤해도 항상 최상단 고정 */
+  #s7-sticky-top {
+    flex-shrink: 0;
+    background: #f7f8fa;
+    z-index: 50;
+  }
+
+  /* 상단 흰색 카드 (헤더 + 슬롯 + 요약) */
+  #s7-top-card {
+    background: white;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 6px 4px rgba(0,0,0,0.10);
+    overflow: hidden;
+  }
+
+  /* [Rule 1] 헤더 최상단 배치 — 상태바 영역 제거 */
+  .s7-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 20px 20px 0;
+    background: white;
+    flex-shrink: 0;
+  }
+
+  /* 아코디언 본문 (접기/펼치기) — grid-template-rows 방식으로 네이티브급 스무스 모션 */
+  #s7-acc-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition: grid-template-rows 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.35s ease;
+  }
+  #s7-acc-body.collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+  /* grid-template-rows 방식은 직계 자식에 min-height:0 + overflow:hidden 필수 */
+  #s7-acc-body > div {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* 셰브론 회전 */
+  #s7-chevron { transition: transform 0.3s ease; display:flex; align-items:center; justify-content:center; }
+  #s7-chevron.collapsed { transform: rotate(180deg); }
+
+  /* [Rule 3] 하단 혜택 리스트 독립 스크롤 */
+  #s7-list-scroll {
     flex: 1; min-height: 0;
     overflow-y: auto; overflow-x: hidden;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
-  #scroll-s7::-webkit-scrollbar { display: none; }
-  .s7-header {
-    display: flex; align-items: center; gap: 8px; padding: 54px 20px 12px;
-    background: transparent; flex-shrink: 0;
+  #s7-list-scroll::-webkit-scrollbar { display: none; }
+
+  /* [Rule 4] 슬롯 채워짐 애니메이션 (Scale + Opacity) */
+  @keyframes s7SlotEnter {
+    0%   { transform: scale(0.5);  opacity: 0; }
+    65%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1);    opacity: 1; }
   }
+  .s7-slot-anim { animation: s7SlotEnter 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+  /* 하단 바 */
   .s7-bottom-bar {
     position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
-    padding: 0 16px 20px;
-    display: flex; gap: 8px; align-items: center;
+    padding: 16px 20px 32px;
+    display: flex; gap: 10px; align-items: center;
     background: linear-gradient(to bottom, rgba(247,248,250,0) 0%, #f7f8fa 42%);
-    padding-top: 48px;
   }
   .s7-save-btn {
-    flex: 1; background: #222; color: #fff; border: none; border-radius: 999px;
-    padding: 12px 20px; font-size: 12px; font-weight: 600; letter-spacing: -0.4px;
-    cursor: pointer; font-family: inherit;
+    flex: 1; background: #222; color: #fff; border: none; border-radius: 20px;
+    padding: 16px 32px; font-size: 16px; font-weight: 600; letter-spacing: -0.64px;
+    cursor: pointer; font-family: inherit; line-height: 1.3;
+    box-shadow: 0 8px 8px rgba(106,106,106,0.16);
   }
-  .s7-music-btn {
-    width: 61px; height: 42px; background: white; border: 1px solid rgba(0,0,0,0.2);
-    border-radius: 100px; overflow: hidden; flex-shrink: 0; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+  .s7-agent-btn {
+    width: 52px; height: 52px; border-radius: 26px; flex-shrink: 0;
+    background: rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    border: none;
   }
   #scroll-s6 {
     flex: 1; min-height: 0;
@@ -1111,21 +1164,21 @@
                   <p style="font-size:14px;font-weight:600;background:linear-gradient(to right,#5940df,#0d0052);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.8px;line-height:1.4;margin:0;">자주 쓰는 넷플릭스에 커피·영화·로밍 할인까지 더해 훨씬 합리적인 구성이에요.</p>
                 </div>
                 <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;">넷플릭스 무료</span></div>
-                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;">주요 혜택 50% 할인</span></div>
+                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;display:flex;align-items:center;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;line-height:1.5;">넷플릭스 무료</span></div>
+                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;display:flex;align-items:center;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;line-height:1.5;">주요 혜택 50% 할인</span></div>
                 </div>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.8);width:100%;"></div>
               <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
                 <p style="font-size:13px;font-weight:600;color:#5940df;letter-spacing:-0.8px;line-height:18px;margin:0;">지훈님의 패턴에 맞게 최적 옵션을 설정했어요.</p>
                 <div style="display:flex;flex-direction:column;gap:8px;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#1c1c1e;opacity:0.6;letter-spacing:-0.8px;">변경 전</span><div style="background:rgba(255,255,255,0.5);border-radius:4px;padding:4px 8px;"><span style="font-size:12px;font-weight:500;color:rgba(64,64,64,0.8);letter-spacing:-0.4px;white-space:nowrap;">6GX 프레스티지</span></div></div>
-                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#5940df;letter-spacing:-0.8px;">변경 후</span><div style="background:rgba(255,255,255,0.8);border:1px solid #5940df;border-radius:4px;padding:4px 8px;"><span style="font-size:12px;font-weight:600;color:#5940df;letter-spacing:-0.4px;white-space:nowrap;">0 청년 109</span></div></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#1c1c1e;opacity:0.6;letter-spacing:-0.8px;">변경 전</span><div style="background:rgba(255,255,255,0.5);border-radius:4px;padding:4px 8px;display:flex;align-items:center;"><span style="font-size:12px;font-weight:500;color:rgba(64,64,64,0.8);letter-spacing:-0.4px;white-space:nowrap;line-height:1.5;">6GX 프레스티지</span></div></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#5940df;letter-spacing:-0.8px;">변경 후</span><div style="background:rgba(255,255,255,0.8);border:1px solid #5940df;border-radius:4px;padding:4px 8px;display:flex;align-items:center;"><span style="font-size:12px;font-weight:600;color:#5940df;letter-spacing:-0.4px;white-space:nowrap;line-height:1.5;">0 청년 109</span></div></div>
                 </div>
               </div>
               <div style="display:flex;gap:4px;width:100%;height:42px;">
                 <div style="background:white;border:1px solid #e0e0e0;border-radius:12px;height:42px;display:flex;align-items:center;justify-content:center;padding:0 20px;cursor:pointer;flex-shrink:0;"><span style="font-size:12px;font-weight:500;color:#202020;white-space:nowrap;">비교해 보기</span></div>
-                <div id="s3-change-btn1" onclick="openScreen4()" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:14px;height:14px;" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
+                <div id="s3-change-btn1" onclick="openScreen4()" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:18px;height:18px;filter:brightness(0) invert(1);" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
               </div>
             </div>
           </div>
@@ -1225,21 +1278,21 @@
                   <p style="font-size:14px;font-weight:600;background:linear-gradient(to right,#5940df,#0d0052);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.8px;line-height:1.4;margin:0;">잘 안 보는 디즈니 플러스 대신, 자주 사용하는 Google AI Pro를 결합해 보세요.</p>
                 </div>
                 <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;">디즈니 플러스 해지</span></div>
-                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;">Google AI Pro 무료 교체</span></div>
+                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;display:flex;align-items:center;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;line-height:1.5;">디즈니 플러스 해지</span></div>
+                  <div style="background:rgba(255,255,255,0.8);border-radius:4px;padding:4px 8px;display:flex;align-items:center;"><span style="font-size:12px;font-weight:500;color:#5940df;letter-spacing:-0.4px;line-height:1.5;">Google AI Pro 무료 교체</span></div>
                 </div>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.8);width:100%;"></div>
               <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
                 <p style="font-size:13px;font-weight:600;color:#5940df;letter-spacing:-0.8px;line-height:18px;margin:0;">지훈님의 패턴에 맞게 최적 옵션을 설정했어요.</p>
                 <div style="display:flex;flex-direction:column;gap:8px;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#1c1c1e;opacity:0.6;letter-spacing:-0.8px;">변경 전</span><div style="background:rgba(255,255,255,0.5);border-radius:4px;padding:4px 8px;display:flex;align-items:center;gap:4px;"><div style="width:18px;height:18px;border-radius:135px;overflow:hidden;flex-shrink:0;"><img src="assets/screen3/logo_disney_plus.png" style="width:100%;height:100%;object-fit:cover;" alt=""></div><span style="font-size:12px;font-weight:500;color:rgba(64,64,64,0.8);letter-spacing:-0.4px;white-space:nowrap;">디즈니 플러스 스탠다드</span></div></div>
-                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#5940df;letter-spacing:-0.8px;">변경 후</span><div style="background:rgba(255,255,255,0.8);border:1px solid #5940df;border-radius:4px;padding:4px 8px;display:flex;align-items:center;gap:4px;"><div style="width:18px;height:18px;border-radius:56px;overflow:hidden;border:1px solid #d6d2e9;flex-shrink:0;"><img src="assets/screen3/logo_google_ai_pro.png" style="width:100%;height:100%;object-fit:cover;" alt=""></div><span style="font-size:12px;font-weight:600;color:#5940df;letter-spacing:-0.4px;white-space:nowrap;">Google AI Pro</span></div></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#1c1c1e;opacity:0.6;letter-spacing:-0.8px;">변경 전</span><div style="background:rgba(255,255,255,0.5);border-radius:4px;padding:4px 8px;display:flex;align-items:center;gap:4px;"><div style="width:18px;height:18px;border-radius:135px;overflow:hidden;flex-shrink:0;"><img src="assets/screen3/logo_disney_plus.png" style="width:100%;height:100%;object-fit:cover;" alt=""></div><span style="font-size:12px;font-weight:500;color:rgba(64,64,64,0.8);letter-spacing:-0.4px;white-space:nowrap;line-height:1.5;">디즈니 플러스 스탠다드</span></div></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:400;color:#5940df;letter-spacing:-0.8px;">변경 후</span><div style="background:rgba(255,255,255,0.8);border:1px solid #5940df;border-radius:4px;padding:4px 8px;display:flex;align-items:center;gap:4px;"><div style="width:18px;height:18px;border-radius:56px;overflow:hidden;border:1px solid #d6d2e9;flex-shrink:0;"><img src="assets/screen3/logo_google_ai_pro.png" style="width:100%;height:100%;object-fit:cover;" alt=""></div><span style="font-size:12px;font-weight:600;color:#5940df;letter-spacing:-0.4px;white-space:nowrap;line-height:1.5;">Google AI Pro</span></div></div>
                 </div>
               </div>
               <div style="display:flex;gap:4px;width:100%;height:42px;">
                 <div style="background:white;border:1px solid #e0e0e0;border-radius:12px;height:42px;display:flex;align-items:center;justify-content:center;padding:0 20px;cursor:pointer;flex-shrink:0;"><span style="font-size:12px;font-weight:500;color:#202020;white-space:nowrap;">비교해 보기</span></div>
-                <div id="s3-change-btn2" onclick="openScreen4()" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:14px;height:14px;" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
+                <div id="s3-change-btn2" onclick="openScreen4()" class="cursor-pointer active:scale-95 transition-transform" style="background:#222;border-radius:12px;height:42px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;"><img src="assets/screen3/ico_ai_fill.svg" style="width:18px;height:18px;filter:brightness(0) invert(1);" alt=""><span style="font-size:12px;font-weight:600;color:white;letter-spacing:-0.4px;white-space:nowrap;">한 번에 변경하기</span></div>
               </div>
             </div>
           </div>
@@ -1599,210 +1652,192 @@
 ══════════════════════════ -->
 <div id="screen-7">
 
-  <!-- 스크롤 영역 -->
-  <div id="scroll-s7">
-    <!-- 헤더: 스크롤과 함께 움직임 -->
-    <div class="s7-header">
-      <button onclick="closeScreen7()" style="background:none;border:none;cursor:pointer;padding:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:-10px;">
-        <img src="assets/screen7/ico_back.svg" style="width:8px;height:15px;display:block;" alt="">
-      </button>
-      <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;">혜택 시뮬레이션</span>
-    </div>
-    <div style="padding:0 0 140px;display:flex;flex-direction:column;gap:0;">
+  <!-- [Rule 2] 상단 고정 컨테이너: 흰 카드(헤더+슬롯+요약)만 고정 -->
+  <div id="s7-sticky-top">
 
-      <!-- 섹션 1: 제목 + 혜택 카드 -->
-      <div style="padding:12px 20px 0;">
-        <p style="font-size:18px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:22px;margin:0;">지훈님의 라이프스타일 패턴에 맞는<br>최적의 혜택 조합을 함께 구성해 드릴게요.</p>
+    <!-- 흰색 카드: 헤더 + 슬롯 + 절약 요약 -->
+    <div id="s7-top-card">
+
+      <!-- [Rule 1] 헤더 최상단 배치 (상태바 없음) -->
+      <div class="s7-header">
+        <button onclick="closeScreen7()" style="background:none;border:none;cursor:pointer;padding:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:-10px;">
+          <img src="assets/screen7/ico_back.svg" style="width:8px;height:15px;display:block;" alt="">
+        </button>
+        <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;">혜택 시뮬레이션</span>
       </div>
 
-      <div style="padding:16px;">
-        <div style="background:white;border:1px solid #e7e7e7;border-radius:24px;padding:16px 20px 20px;display:flex;flex-direction:column;gap:16px;">
+      <!-- 아코디언 본문: 슬롯 영역 -->
+      <div id="s7-acc-body">
+        <!-- [반응형] Figma 기준: justify-center로 슬롯 그룹 중앙 정렬 -->
+        <div style="display:flex;align-items:flex-end;justify-content:center;padding:12px 20px 0;width:100%;">
+          <!-- inline-flex로 내부 너비(아이콘 행 기준) 자동 결정 -->
+          <div style="display:inline-flex;flex-direction:column;gap:4px;">
 
-          <!-- 혜택 조합 아이콘 행 (position:relative for badge absolute positioning) -->
-          <div id="s7-icon-row" style="display:flex;gap:16px;align-items:flex-end;justify-content:center;padding:20px 0;position:relative;">
-            <!-- 기본 제공: Netflix -->
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
-              <span style="font-size:12px;color:#666;letter-spacing:-0.4px;">기본 제공</span>
-              <div style="width:52px;height:52px;border-radius:12px;overflow:hidden;box-shadow:0 6px 10px rgba(0,0,0,0.1);">
+            <!-- 레이블 행 (Figma: justify-between / 현재이용중 52px + 변경후 114px) -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#666;letter-spacing:-0.6px;text-align:center;line-height:18px;">
+              <span style="display:inline-block;width:52px;">현재 이용중</span>
+              <span style="display:inline-block;width:114px;font-weight:600;">변경 후</span>
+            </div>
+
+            <!-- 아이콘 행 (Figma: gap-16, Netflix(52) + arrow(13) + [slot1(52) gap10 slot2(52)]) -->
+            <div id="s7-icon-row" style="display:flex;gap:16px;align-items:center;">
+
+              <!-- 현재 서비스 아이콘 (Netflix, 52×52) -->
+              <div style="width:52px;height:52px;border-radius:12px;overflow:hidden;box-shadow:0 6px 10px rgba(0,0,0,0.1);flex-shrink:0;">
                 <img src="assets/screen7/logo_netflix.png" style="width:100%;height:100%;object-fit:cover;" alt="">
               </div>
-            </div>
-            <!-- 플러스 -->
-            <div style="width:18px;height:52px;display:flex;align-items:center;justify-content:center;">
-              <img src="assets/screen7/ico_plus.svg" style="width:9px;height:9px;" alt="">
-            </div>
-            <!-- 결합 상품 -->
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
-              <span style="font-size:12px;color:#666;letter-spacing:-0.4px;">결합 상품</span>
-              <div style="display:flex;gap:16px;align-items:center;">
-                <!-- 슬롯 1: 초기 GoogleOne -->
-                <div id="s7-slot1" style="width:52px;height:52px;border-radius:12px;overflow:hidden;box-shadow:0 6px 10px rgba(0,0,0,0.1);">
-                  <img id="s7-slot1-img" src="assets/screen7/logo_googleone.png" style="width:100%;height:100%;object-fit:cover;" alt="">
-                </div>
-                <!-- 슬롯 2: 비어있다가 추가시 채워짐 -->
-                <div id="s7-slot2" style="width:52px;height:52px;border-radius:12px;background:#f7f7f7;border:1px dashed #cdcdcd;overflow:hidden;">
-                  <img id="s7-slot2-img" src="" style="width:100%;height:100%;object-fit:cover;display:none;" alt="">
-                </div>
-              </div>
-            </div>
-            <!-- 마이너스 뱃지 1: 슬롯1 아이템 제거 -->
-            <div id="s7-badge1" onclick="s7RemoveSlot(1)" style="position:absolute;left:175.5px;top:34px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-              <img src="assets/screen7/ico_minus.svg" style="width:16px;height:16px;" alt="">
-            </div>
-            <!-- 마이너스 뱃지 2: 슬롯2 아이템 제거 -->
-            <div id="s7-badge2" onclick="s7RemoveSlot(2)" style="position:absolute;left:243.5px;top:34px;width:32px;height:32px;cursor:pointer;display:none;align-items:center;justify-content:center;">
-              <img src="assets/screen7/ico_minus.svg" style="width:16px;height:16px;" alt="">
-            </div>
-          </div>
 
-          <!-- 구분선 (node 9537:13205 Line1713) -->
-          <div style="height:1px;background:#eaeaea;margin:0 -20px;"></div>
+              <!-- 화살표 (Figma: chevron -rotate-90, ~13×10px) -->
+              <div style="width:13px;height:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                <svg width="9" height="10" viewBox="0 0 9 10" fill="none">
+                  <path d="M1 1.5L4.5 5L8 1.5" stroke="#c0c0c0" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-90 4.5 5) translate(0 -0.5)"/>
+                </svg>
+              </div>
 
-          <!-- 절약 금액 박스 -->
-          <div style="background:#f7f7f7;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:12px;">
-            <p style="margin:0;font-size:13px;color:#404040;letter-spacing:-0.8px;">
-              매달 <span id="s7-amount" style="font-size:20px;font-weight:600;color:#000;letter-spacing:-1px;">9,900</span>원 아낄 수 있어요.
-            </p>
-            <div style="height:1px;background:#eaeaea;width:100%;"></div>
-            <div style="display:flex;flex-direction:column;gap:8px;">
-              <div id="s7-googleone-row" style="display:flex;align-items:center;justify-content:space-between;">
-                <span style="font-size:14px;color:rgba(64,64,64,0.7);letter-spacing:-0.8px;">Google AI Pro</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <span style="font-size:14px;font-weight:600;color:#5940df;letter-spacing:-0.8px;">무료</span>
-                  <span style="font-size:14px;color:rgba(64,64,64,0.3);letter-spacing:-0.8px;text-decoration:line-through;">9,900원</span>
-                </div>
-              </div>
-              <!-- ChatGPT 절약 행 -->
-              <div id="s7-chatgpt-row" style="display:none;align-items:center;justify-content:space-between;">
-                <span style="font-size:14px;color:rgba(64,64,64,0.7);letter-spacing:-0.8px;">ChatGPT Plus</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <span style="font-size:14px;font-weight:600;color:#5940df;letter-spacing:-0.8px;">17,940원</span>
-                  <span style="font-size:14px;color:rgba(64,64,64,0.3);letter-spacing:-0.8px;text-decoration:line-through;">29,900원</span>
-                </div>
-              </div>
-              <!-- Wavve 절약 행 -->
-              <div id="s7-wavve-row" style="display:none;align-items:center;justify-content:space-between;">
-                <span style="font-size:14px;color:rgba(64,64,64,0.7);letter-spacing:-0.8px;">Wavve</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <span style="font-size:14px;font-weight:600;color:#5940df;letter-spacing:-0.8px;">무료</span>
-                  <span style="font-size:14px;color:rgba(64,64,64,0.3);letter-spacing:-0.8px;text-decoration:line-through;">8,900원</span>
-                </div>
-              </div>
-              <!-- 11번가 절약 행 -->
-              <div id="s7-11st-row" style="display:none;align-items:center;justify-content:space-between;">
-                <span style="font-size:14px;color:rgba(64,64,64,0.7);letter-spacing:-0.8px;">11번가</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <span style="font-size:14px;font-weight:600;color:#5940df;letter-spacing:-0.8px;">무료</span>
-                  <span style="font-size:14px;color:rgba(64,64,64,0.3);letter-spacing:-0.8px;text-decoration:line-through;">4,900원</span>
-                </div>
-              </div>
-              <!-- 유튜브 절약 행 -->
-              <div id="s7-youtube-row" style="display:none;align-items:center;justify-content:space-between;">
-                <span style="font-size:14px;color:rgba(64,64,64,0.7);letter-spacing:-0.8px;">유튜브 프리미엄</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  <span style="font-size:14px;font-weight:600;color:#5940df;letter-spacing:-0.8px;">무료</span>
-                  <span style="font-size:14px;color:rgba(64,64,64,0.3);letter-spacing:-0.8px;text-decoration:line-through;">14,900원</span>
-                </div>
-              </div>
-            </div>
-          </div>
+              <!-- 결합 슬롯 2개 (Figma: gap-10) -->
+              <!-- 결합 슬롯 2개 (62px 래퍼로 뱃지 클리핑 버그 해결) -->
+              <div style="display:flex; gap:0px; align-items:center; margin-left:-5px; margin-right:-5px;">
 
-          <!-- AI 분석 박스 -->
-          <div style="background:#ece8ff;border-radius:12px;padding:16px;">
-            <div style="display:flex;gap:2px;align-items:center;margin-bottom:8px;">
-              <img src="assets/screen7/ico_ai.svg" style="width:18px;height:18px;" alt="">
-              <span style="font-size:12px;font-weight:600;color:#5940df;letter-spacing:-0.4px;">T 에이전트 분석</span>
-            </div>
-            <p id="s7-ai-text" style="margin:0;font-size:12px;color:#5940df;letter-spacing:-0.4px;line-height:1.5;">
-              지훈님은 <strong>T VIP 멤버십 혜택</strong>으로 결합 상품을 한 가지 더 선택하실 수 있어요.
-              <strong>ChatGPT Plus</strong>를 별도로 구독 중이신데, 결합하면 지금보다 10,960원 더 할인 받을 수 있어요.
-            </p>
-          </div>
+                <div style="position:relative; width:62px; height:62px; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+                  <div id="s7-slot1" style="width:52px; height:52px; border-radius:12px; background:#f7f7f7; border:1px dashed #cdcdcd; overflow:hidden; transition:all 0.3s ease;">
+                    <img id="s7-slot1-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" alt="">
+                  </div>
+                  <div id="s7-badge1" onclick="s7RemoveSlot(1)" style="position:absolute; top:0; right:0; width:18px; height:18px; display:none; align-items:center; justify-content:center; cursor:pointer; z-index:10;">
+                    <img src="assets/screen7/ico_minus.svg" style="width:18px; height:18px;" alt="">
+                  </div>
+                </div>
 
-          <!-- 선택 초기화 -->
-          <div onclick="s7Reset()" style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;opacity:0.4;">
-            <span style="font-size:13px;color:#1c1c1e;letter-spacing:-0.6px;">선택 초기화</span>
-            <img src="assets/screen7/ico_reset.svg" style="width:16px;height:16px;" alt="">
+                <div style="position:relative; width:62px; height:62px; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+                  <div id="s7-slot2" style="width:52px; height:52px; border-radius:12px; background:#f7f7f7; border:1px dashed #cdcdcd; overflow:hidden; transition:all 0.3s ease;">
+                    <img id="s7-slot2-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;" alt="">
+                  </div>
+                  <div id="s7-badge2" onclick="s7RemoveSlot(2)" style="position:absolute; top:0; right:0; width:18px; height:18px; display:none; align-items:center; justify-content:center; cursor:pointer; z-index:10;">
+                    <img src="assets/screen7/ico_minus.svg" style="width:18px; height:18px;" alt="">
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- /아이콘 행 -->
           </div>
+        </div>
+      </div><!-- /s7-acc-body -->
+
+      <!-- 절약 요약 행 + 아코디언 토글 -->
+      <div onclick="s7ToggleAcc()" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;background:#f7f7f7;margin:12px 16px 16px;border-radius:12px;">
+        <p id="s7-summary-text" style="margin:0;font-size:13px;font-weight:500;color:#404040;letter-spacing:-0.8px;line-height:1.4;">
+          아래에서 혜택을 선택해 보세요
+        </p>
+        <div id="s7-chevron" style="width:18px;height:18px;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M4.5 11.25L9 6.75L13.5 11.25" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
       </div>
 
-      <!-- 섹션 2: 넷플릭스 결합 혜택 목록 -->
-      <div style="padding:12px 20px 0;">
-        <p style="font-size:18px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:22px;margin:0;">넷플릭스와 결합할 수 있는 혜택들이에요.</p>
+    </div><!-- /s7-top-card -->
+
+  </div><!-- /s7-sticky-top -->
+
+
+  <!-- [Rule 3] 하단 혜택 리스트 독립 스크롤 -->
+  <div id="s7-list-scroll">
+    <div style="padding:0 16px 140px;display:flex;flex-direction:column;gap:4px;">
+
+      <!-- 리스트 섹션 타이틀 (스크롤과 함께 내려감 — Figma 기준) -->
+      <div style="padding:20px 4px 8px;">
+        <p style="font-size:18px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:22px;margin:0;">추가 혜택을 2가지 선택하실 수 있어요.</p>
       </div>
 
-      <div style="padding:16px;display:flex;flex-direction:column;gap:6px;">
-        <!-- ChatGPT Plus -->
-        <div id="s7-chatgpt-item" style="background:white;border:1px solid #e7e7e7;border-radius:24px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
-          <div style="display:flex;gap:10px;align-items:center;">
-            <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;">
-              <img src="assets/screen7/logo_chatgpt.png" style="width:100%;height:100%;object-fit:cover;" alt="">
-            </div>
-            <div style="display:flex;gap:4px;align-items:center;">
-              <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">ChatGPT Plus 1개월 무료 이용</span>
-              <span style="background:#5940df;border-radius:2px;padding:3px 4px;font-size:10px;font-weight:500;color:white;letter-spacing:-0.2px;white-space:nowrap;">AI 추천</span>
-            </div>
+      <!-- Google AI Pro -->
+      <div id="s7-googleone-item" style="background:white;border:1px solid #e7e7e7;border-radius:16px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;border:1px solid #eaeaea;">
+            <img src="assets/screen7/logo_googleone.png" style="width:100%;height:100%;object-fit:cover;" alt="">
           </div>
-          <button id="s7-chatgpt-btn" onclick="s7AddItem('chatgpt')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
-        </div>
-        <!-- Wavve -->
-        <div id="s7-wavve-item" style="background:white;border:1px solid #e7e7e7;border-radius:24px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
-          <div style="display:flex;gap:10px;align-items:center;">
-            <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;">
-              <img src="assets/screen7/logo_wavve.png" style="width:100%;height:100%;object-fit:cover;" alt="">
-            </div>
-            <div style="display:flex;gap:4px;align-items:center;">
-              <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">Wavve 스트리밍 무료 이용</span>
-              <span style="background:#5940df;border-radius:2px;padding:3px 4px;font-size:10px;font-weight:500;color:white;letter-spacing:-0.2px;white-space:nowrap;">AI 추천</span>
-            </div>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">Google AI Pro 무료 이용</span>
+            <span style="background:#5940df;border-radius:2px;padding:3px 4px;font-size:10px;font-weight:500;color:white;letter-spacing:-0.2px;white-space:nowrap;">AI 추천</span>
           </div>
-          <button id="s7-wavve-btn" onclick="s7AddItem('wavve')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
         </div>
-        <!-- 11번가 -->
-        <div id="s7-11st-item" style="background:white;border:1px solid #e7e7e7;border-radius:24px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
-          <div style="display:flex;gap:10px;align-items:center;">
-            <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;">
-              <img src="assets/screen7/logo_11st.png" style="width:100%;height:100%;object-fit:cover;filter:grayscale(1);" alt="">
-            </div>
-            <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">11번가 Amazon 무료배송</span>
+        <button id="s7-googleone-btn" onclick="s7AddItem('googleone')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
+      </div>
+
+      <!-- ChatGPT Plus -->
+      <div id="s7-chatgpt-item" style="background:white;border:1px solid #e7e7e7;border-radius:16px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;">
+            <img src="assets/screen7/logo_chatgpt.png" style="width:100%;height:100%;object-fit:cover;" alt="">
           </div>
-          <button id="s7-11st-btn" onclick="s7AddItem('11st')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
-        </div>
-        <!-- 유튜브 프리미엄 -->
-        <div id="s7-youtube-item" style="background:white;border:1px solid #e7e7e7;border-radius:24px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
-          <div style="display:flex;gap:10px;align-items:center;">
-            <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;border:1px solid #eaeaea;">
-              <img src="assets/screen7/logo_youtube.png" style="width:100%;height:100%;object-fit:cover;" alt="">
-            </div>
-            <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">유튜브 프리미엄 무료 이용</span>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">ChatGPT Plus 1개월 무료 이용</span>
+            <span style="background:#5940df;border-radius:2px;padding:3px 4px;font-size:10px;font-weight:500;color:white;letter-spacing:-0.2px;white-space:nowrap;">AI 추천</span>
           </div>
-          <button id="s7-youtube-btn" onclick="s7AddItem('youtube')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
         </div>
-        <!-- Google One -->
-        <div id="s7-googleone-item" style="background:white;border:1px solid #e7e7e7;border-radius:24px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;opacity:0.3;transition:opacity 0.3s;">
-          <div style="display:flex;gap:10px;align-items:center;">
-            <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;border:1px solid #eaeaea;">
-              <img src="assets/screen7/logo_googleone.png" style="width:100%;height:100%;object-fit:cover;" alt="">
-            </div>
-            <div style="display:flex;gap:4px;align-items:center;">
-              <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">Google One 100GB 무료 이용</span>
-              <span style="background:#5940df;border-radius:2px;padding:3px 4px;font-size:10px;font-weight:500;color:white;letter-spacing:-0.2px;white-space:nowrap;">AI 추천</span>
-            </div>
+        <button id="s7-chatgpt-btn" onclick="s7AddItem('chatgpt')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
+      </div>
+
+      <!-- Wavve -->
+      <div id="s7-wavve-item" style="background:white;border:1px solid #e7e7e7;border-radius:16px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;">
+            <img src="assets/screen7/logo_wavve.png" style="width:100%;height:100%;object-fit:cover;" alt="">
           </div>
-          <button id="s7-googleone-btn" style="background:none;border:none;font-size:11px;color:#404040;letter-spacing:-0.4px;padding:0 8px;cursor:default;font-family:inherit;">추가됨</button>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">Wavve 스트리밍 무료 이용</span>
+            <span style="background:#5940df;border-radius:2px;padding:3px 4px;font-size:10px;font-weight:500;color:white;letter-spacing:-0.2px;white-space:nowrap;">AI 추천</span>
+          </div>
         </div>
+        <button id="s7-wavve-btn" onclick="s7AddItem('wavve')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
+      </div>
+
+      <!-- 11번가 (Figma: mix-blend-luminosity → grayscale) -->
+      <div id="s7-11st-item" style="background:white;border:1px solid #e7e7e7;border-radius:16px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;mix-blend-mode:luminosity;">
+            <img src="assets/screen7/logo_11st.png" style="width:100%;height:100%;object-fit:cover;" alt="">
+          </div>
+          <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">11번가 Amazon 무료배송</span>
+        </div>
+        <button id="s7-11st-btn" onclick="s7AddItem('11st')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
+      </div>
+
+      <!-- 유튜브 프리미엄 -->
+      <div id="s7-youtube-item" style="background:white;border:1px solid #e7e7e7;border-radius:16px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between;transition:opacity 0.3s;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:32px;height:32px;border-radius:999px;overflow:hidden;flex-shrink:0;border:1px solid #eaeaea;">
+            <img src="assets/screen7/logo_youtube.png" style="width:100%;height:100%;object-fit:cover;" alt="">
+          </div>
+          <span style="font-size:14px;font-weight:500;color:#404040;letter-spacing:-1px;">유튜브 프리미엄 무료 이용</span>
+        </div>
+        <button id="s7-youtube-btn" onclick="s7AddItem('youtube')" style="background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;">추가하기</button>
+      </div>
+
+      <!-- AI 분석 박스 -->
+      <div style="background:#ece8ff;border-radius:12px;padding:16px 16px 16px 12px;margin-top:8px;">
+        <div style="display:flex;gap:4px;align-items:flex-start;">
+          <img src="assets/screen7/ico_ai.svg" style="width:18px;height:18px;flex-shrink:0;margin-top:1px;" alt="">
+          <p id="s7-ai-text" style="margin:0;font-size:12px;color:#5940df;letter-spacing:-0.4px;line-height:1.5;">
+            지훈님은 평소 AI 서비스를 자주 쓰시니까 <strong>ChatGPT Plus</strong>와 <strong>Google AI Pro</strong>를 결합하는 걸 추천드려요.
+          </p>
+        </div>
+      </div>
+
+      <!-- 선택 초기화 -->
+      <div onclick="s7Reset()" style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;opacity:0.4;padding:12px 0 0;">
+        <span style="font-size:13px;color:#1c1c1e;letter-spacing:-0.6px;">선택 초기화</span>
+        <img src="assets/screen7/ico_reset.svg" style="width:16px;height:16px;" alt="">
       </div>
 
     </div>
-  </div>
+  </div><!-- /s7-list-scroll -->
 
-  <!-- 하단 바 -->
+  <!-- 하단 바 (Figma BottomGroup: 52px 원형 에이전트 버튼 + 저장 버튼) -->
   <div class="s7-bottom-bar">
-    <button class="s7-save-btn" onclick="closeScreen7();openScreen4();">혜택 조합 저장하기</button>
-    <button class="s7-music-btn">
-      <img src="assets/screen7/ico_music.svg" style="width:18px;height:18px;" alt="">
+    <!-- Figma node 9800-32959 기준: 52×52, border-radius 26px, 내부 24px 아이콘 -->
+    <button class="s7-agent-btn">
+      <img src="assets/screen7/ico_agent.svg" style="width:24px;height:24px;display:block;" alt="">
     </button>
+    <button class="s7-save-btn" onclick="closeScreen7();openScreen4();">선택한 혜택 저장하기</button>
   </div>
 
 </div><!-- /screen-7 -->
@@ -1935,39 +1970,86 @@
     var s7 = document.getElementById('screen-7');
     if (!s7) return;
     s7.classList.add('active');
-    document.getElementById('scroll-s7').scrollTop = 0;
+    var ls = document.getElementById('s7-list-scroll');
+    if (ls) ls.scrollTop = 0;
+    // 화면 열릴 때 아코디언 펼침 초기화
+    var body = document.getElementById('s7-acc-body');
+    var chev = document.getElementById('s7-chevron');
+    if (body) body.classList.remove('collapsed');
+    if (chev) chev.classList.remove('collapsed');
   }
   function closeScreen7() {
     var s7 = document.getElementById('screen-7');
     if (s7) s7.classList.remove('active');
   }
+
+  // [Rule 2] 아코디언 토글 (슬롯 영역 접기/펼치기)
+  function s7ToggleAcc() {
+    var body = document.getElementById('s7-acc-body');
+    var chev = document.getElementById('s7-chevron');
+    if (!body) return;
+    body.classList.toggle('collapsed');
+    if (chev) chev.classList.toggle('collapsed');
+  }
+
   // ── Screen 7 슬롯 시스템 ──
   var S7_ITEMS = {
     googleone: { logo: 'assets/screen7/logo_googleone.png', saving: 9900  },
     chatgpt:   { logo: 'assets/screen7/logo_chatgpt.png',   saving: 17940 },
     wavve:     { logo: 'assets/screen7/logo_wavve.png',     saving: 8900  },
-    '11st':    { logo: 'assets/screen7/logo_11st.png',      saving: 4900  },
+    '11st':    { logo: 'assets/screen7/logo_11st.png',      saving: 4900, filter: 'grayscale(1)' },
     youtube:   { logo: 'assets/screen7/logo_youtube.png',   saving: 14900 }
   };
-  var s7Slots = ['googleone', null]; // 초기: 슬롯1=googleone, 슬롯2=비어있음
+  var s7Slots = [null, null]; // 초기: 2개 모두 비어있음
 
+  // [Rule 4] 리스트 항목 클릭 → 상단 슬롯 채워짐
   function s7AddItem(key) {
     var slotIdx = s7Slots.indexOf(null);
-    if (slotIdx === -1) return;
+    if (slotIdx === -1) return; // 슬롯 꽉 참
     s7Slots[slotIdx] = key;
     var n = slotIdx + 1;
+
+    // 슬롯 스타일 전환
     var slot = document.getElementById('s7-slot' + n);
     var img  = document.getElementById('s7-slot' + n + '-img');
-    if (slot) { slot.style.border = 'none'; slot.style.background = 'transparent'; slot.style.boxShadow = '0 6px 10px rgba(0,0,0,0.1)'; }
-    if (img)  { img.src = S7_ITEMS[key].logo; img.style.display = 'block'; }
+    if (slot) {
+      slot.style.border = 'none';
+      slot.style.background = 'transparent';
+      slot.style.boxShadow = '0 6px 10px rgba(0,0,0,0.1)';
+    }
+    // [Rule 4] Scale + Opacity 트랜지션으로 부드럽게 채워짐
+    if (img) {
+      img.src = S7_ITEMS[key].logo;
+      img.style.display = 'block';
+      // 11번가는 Figma mix-blend-luminosity 기준으로 슬롯에서도 grayscale 유지
+      img.style.filter = S7_ITEMS[key].filter || '';
+      img.classList.remove('s7-slot-anim');
+      void img.offsetWidth; // reflow → 애니메이션 재시작
+      img.classList.add('s7-slot-anim');
+    }
+
+    // 마이너스 뱃지 표시
     var badge = document.getElementById('s7-badge' + n);
     if (badge) badge.style.display = 'flex';
+
+    // 아코디언 열려있지 않으면 살짝 펼침 (슬롯 변화 확인 유도)
+    var body = document.getElementById('s7-acc-body');
+    var chev = document.getElementById('s7-chevron');
+    if (body && body.classList.contains('collapsed')) {
+      body.classList.remove('collapsed');
+      if (chev) chev.classList.remove('collapsed');
+    }
+
+    // 리스트 아이템 비활성화
     var item = document.getElementById('s7-' + key + '-item');
     var btn  = document.getElementById('s7-' + key + '-btn');
     if (item) item.style.opacity = '0.3';
-    if (btn)  { btn.textContent = '추가됨'; btn.style.cssText = 'background:none;border:none;font-size:11px;font-weight:500;color:#404040;letter-spacing:-0.4px;padding:0 8px;cursor:default;font-family:inherit;'; btn.onclick = null; }
-    var row = document.getElementById('s7-' + key + '-row');
-    if (row) row.style.display = 'flex';
+    if (btn)  {
+      btn.textContent = '추가됨';
+      btn.style.cssText = 'background:none;border:none;font-size:11px;font-weight:500;color:#404040;letter-spacing:-0.4px;padding:0 8px;cursor:default;font-family:inherit;';
+      btn.onclick = null;
+    }
+
     s7UpdateSummary();
   }
 
@@ -1976,12 +2058,32 @@
     var key = s7Slots[slotIdx];
     if (!key) return;
     s7Slots[slotIdx] = null;
+
+    // 슬롯 초기화 (크로스페이드 opacity)
     var slot = document.getElementById('s7-slot' + n);
     var img  = document.getElementById('s7-slot' + n + '-img');
-    if (slot) { slot.style.border = '1px dashed #cdcdcd'; slot.style.background = '#f7f7f7'; slot.style.boxShadow = 'none'; }
-    if (img)  img.style.display = 'none';
+    if (img) {
+      img.style.transition = 'opacity 0.2s ease';
+      img.style.opacity = '0';
+      setTimeout(function() {
+        img.style.display = 'none';
+        img.style.opacity = '1';
+        img.style.filter = '';
+        img.style.transition = '';
+        img.classList.remove('s7-slot-anim');
+        if (slot) {
+          slot.style.border = '1px dashed #cdcdcd';
+          slot.style.background = '#f7f7f7';
+          slot.style.boxShadow = 'none';
+        }
+      }, 220);
+    }
+
+    // 마이너스 뱃지 숨김
     var badge = document.getElementById('s7-badge' + n);
     if (badge) badge.style.display = 'none';
+
+    // 리스트 아이템 복원
     var item = document.getElementById('s7-' + key + '-item');
     var btn  = document.getElementById('s7-' + key + '-btn');
     if (item) item.style.opacity = '1';
@@ -1990,33 +2092,41 @@
       btn.style.cssText = 'background:#404040;border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:600;color:white;letter-spacing:-0.4px;cursor:pointer;font-family:inherit;white-space:nowrap;';
       (function(k){ btn.onclick = function(){ s7AddItem(k); }; })(key);
     }
-    var row = document.getElementById('s7-' + key + '-row');
-    if (row) row.style.display = 'none';
+
     s7UpdateSummary();
   }
 
   function s7UpdateSummary() {
     var total = 0;
     s7Slots.forEach(function(k){ if (k && S7_ITEMS[k]) total += S7_ITEMS[k].saving; });
-    var amtEl = document.getElementById('s7-amount');
-    if (amtEl) amtEl.textContent = total.toLocaleString();
-    var hasGoogle = s7Slots.indexOf('googleone') !== -1;
-    var hasChatGPT = s7Slots.indexOf('chatgpt') !== -1;
+
+    var summaryEl = document.getElementById('s7-summary-text');
+    if (summaryEl) {
+      if (total === 0) {
+        summaryEl.innerHTML = '아래에서 혜택을 선택해 보세요';
+      } else {
+        summaryEl.innerHTML = '매달 <strong style="font-weight:700;color:#000;">' + total.toLocaleString() + '원</strong> 아낄 수 있어요.';
+      }
+    }
+
+    // AI 메시지 업데이트
+    var hasGoogle   = s7Slots.indexOf('googleone') !== -1;
+    var hasChatGPT  = s7Slots.indexOf('chatgpt')   !== -1;
     var ai = document.getElementById('s7-ai-text');
     if (!ai) return;
     if (hasGoogle && hasChatGPT) {
-      ai.innerHTML = '콘텐츠/OTT 서비스와 최신 AI 서비스를 적극적으로 사용하시는 지훈님께 <strong>최적의 혜택 조합</strong>이에요.';
+      ai.innerHTML = 'AI 서비스를 적극 활용하시는 지훈님께 <strong>최적의 혜택 조합</strong>이에요! 매달 ' + total.toLocaleString() + '원을 아낄 수 있어요.';
     } else if (hasGoogle) {
-      ai.innerHTML = '지훈님은 <strong>T VIP 멤버십 혜택</strong>으로 결합 상품을 한 가지 더 선택하실 수 있어요. <strong>ChatGPT Plus</strong>를 별도로 구독 중이신데, 결합하면 지금보다 10,960원 더 할인 받을 수 있어요.';
+      ai.innerHTML = '<strong>ChatGPT Plus</strong>를 별도 구독 중이신데, 결합하면 지금보다 17,940원을 더 절약할 수 있어요.';
     } else if (hasChatGPT) {
-      ai.innerHTML = '<strong>ChatGPT Plus</strong>가 결합된 상태예요. <strong>Google AI Pro</strong>도 추가하면 매달 9,900원을 더 아낄 수 있어요.';
+      ai.innerHTML = '<strong>Google AI Pro</strong>도 추가하면 매달 9,900원을 더 아낄 수 있어요.';
     } else {
-      ai.innerHTML = '아래 목록에서 결합할 혜택을 선택해 보세요. 최대 2개까지 추가할 수 있어요.';
+      ai.innerHTML = '지훈님은 평소 AI 서비스를 자주 쓰시니까 <strong>ChatGPT Plus</strong>와 <strong>Google AI Pro</strong>를 결합하는 걸 추천드려요.';
     }
   }
 
   function s7Reset() {
-    for (var i = 1; i <= 2; i++) { s7RemoveSlot(i); }
+    for (var i = 1; i <= 2; i++) { if (s7Slots[i-1]) s7RemoveSlot(i); }
   }
   // 플로팅 바 버튼: 디즈니 영역이면 screen7, 아니면 screen4
   var _fbarIsDisney = false;
@@ -2250,12 +2360,13 @@
       'screen-3': ['s3-change-btn1', 's3-change-btn2', 'fbar-btn'],
       'screen-4': ['s4-change-btn'],
       'screen-6': ['s6-confirm-btn'],
+      'screen-7': ['s7-googleone-btn', 's7-chatgpt-btn'],
     };
     var missCount = {};
     var startY = null;
 
     function activeScreenId() {
-      var screens = ['screen-6', 'screen-4', 'screen-3', 'screen-2'];
+      var screens = ['screen-7', 'screen-6', 'screen-4', 'screen-3', 'screen-2'];
       for (var i = 0; i < screens.length; i++) {
         var el = document.getElementById(screens[i]);
         if (el && el.classList.contains('active')) return screens[i];
@@ -2366,7 +2477,7 @@
     });
 
     // Rule 2: 스크롤 컨테이너에 scroll 이벤트 → 힌트 즉시 삭제
-    ['scroll-s2', 'scroll-s3', 'scroll-s4', 'scroll-s6'].forEach(function(scrollId) {
+    ['scroll-s2', 'scroll-s3', 'scroll-s4', 'scroll-s6', 's7-list-scroll'].forEach(function(scrollId) {
       var el = document.getElementById(scrollId);
       if (el) el.addEventListener('scroll', clearAllHints, { passive: true });
     });
