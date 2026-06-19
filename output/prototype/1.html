@@ -197,6 +197,32 @@
     transition: background 0.5s ease, box-shadow 0.5s ease;
   }
 
+  /* ── 테스트 완료 알림바 ── */
+  #s1-test-bar {
+    position: absolute;
+    left: 50%;
+    width: 250px; height: 61.4167px;
+    z-index: 60;
+    display: flex; flex-direction: column; align-items: flex-start;
+    overflow: hidden;
+    padding: 14.583px 19.792px;
+    border-radius: 52.083px;
+    border: 1.563px solid rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8.333px);
+    -webkit-backdrop-filter: blur(8.333px);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateX(-50%) translateY(16px);
+    transition: opacity 0.42s cubic-bezier(0.16,1,0.3,1), transform 0.42s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none;
+  }
+  #s1-test-bar.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+
   /* ── 터치 힌트 오버레이 ── */
   .tap-hint-overlay {
     position: absolute;
@@ -387,6 +413,30 @@ iPhone20 Pro가 도착했어요</p>
         </button>
       </div>
 
+      <!-- ── 테스트 완료 알림바 (키보드 열린 후 1.5초 뒤 등장) ── -->
+      <div id="s1-test-bar" role="button" onclick="window.location.href='https://skt-ut-prototype.vercel.app/scenario-home.html'">
+        <!-- 9897:17415 inner flex row -->
+        <div style="display:flex; gap:13.542px; align-items:center; width:100%; position:relative; flex-shrink:0;">
+          <!-- 9897:17416 text column -->
+          <div style="display:flex; flex-direction:column; gap:6.25px; flex:1 0 0; min-width:1px; position:relative;">
+            <!-- 9897:17417 title row -->
+            <div style="display:flex; align-items:center; position:relative; flex-shrink:0;">
+              <p style="font-size:14.583px; font-weight:700; color:#fff; letter-spacing:-0.2083px; line-height:12.5px; white-space:nowrap;">테스트 완료하기</p>
+            </div>
+            <!-- 9897:17420 subtitle -->
+            <p style="font-size:12.5px; font-weight:400; color:#fff; letter-spacing:-0.2083px; line-height:12.5px; white-space:nowrap;">다음 테스트로 넘어가시려면 눌러주세요.</p>
+          </div>
+          <!-- 9897:17421 chevron (3.125×9.375px) -->
+          <div style="position:relative; flex-shrink:0; width:3.125px; height:9.375px;">
+            <div style="position:absolute; inset:-1.042px -1.042px -1.042px -1.042px;">
+              <svg width="5.208" height="11.458" viewBox="0 0 5.208 11.458" fill="none" style="display:block; width:100%; height:100%;">
+                <path d="M1.3 1.3L3.9 5.729L1.3 10.158" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ══ 키보드 시트 (z-50, 아래에서 슬라이드업) ══ -->
       <div id="s1-keyboard">
 
@@ -567,6 +617,21 @@ function showKeyboard() {
   var kbTop   = screenH - kbH;
   var ty      = kbTop - 10 - cardsH - 197.55;
   cards.style.transform = 'translateY(' + ty + 'px)';
+
+  /* 알림바: 키보드 열린 후 1.5초 뒤 등장 — 키보드 상단 기준 동적 위치 */
+  clearTimeout(window._testBarTimer);
+  window._testBarTimer = setTimeout(function() {
+    var bar = document.getElementById('s1-test-bar');
+    var kb2 = document.getElementById('s1-keyboard');
+    var scr = document.getElementById('screen-1');
+    if (bar && kb2 && scr) {
+      var scrH = scr.offsetHeight;
+      var kb2H = kb2.offsetHeight || 340;
+      var barTop = scrH - kb2H + 12; /* 키보드 상단에서 12px 아래 */
+      bar.style.top = barTop + 'px';
+      bar.classList.add('visible');
+    }
+  }, 1500);
 }
 
 function hideKeyboard() {
@@ -576,6 +641,11 @@ function hideKeyboard() {
   var kb      = document.getElementById('s1-keyboard');
   var dim     = document.getElementById('s1-dim');
   var cards   = document.getElementById('s1-cards');
+
+  /* 알림바 숨기기 */
+  clearTimeout(window._testBarTimer);
+  var bar = document.getElementById('s1-test-bar');
+  if (bar) bar.classList.remove('visible');
 
   /* 1. 키보드 빠르게 퇴장 */
   kb.style.transition = 'transform 0.28s cubic-bezier(0.4, 0, 1, 1)';
