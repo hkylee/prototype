@@ -1547,7 +1547,7 @@
             <!-- ── AI 검색 딤 오버레이 ── -->
             <div id="ai-cards-group" style="
           position:absolute;
-          left:19.08px; right:19.08px; top:197.55px;
+          left:19.08px; right:19.08px; bottom:109.722px;
           display:flex; flex-direction:column; gap:9.542px;
           align-items:flex-start;
           pointer-events:auto;
@@ -2327,13 +2327,13 @@
                     cardsGroup.style.zIndex = '150';
                     requestAnimationFrame(function() {
                         var kbH = kb.offsetHeight || 340;
-                        var frH = fr.offsetHeight || 812;
-                        var cardsH = cardsGroup.offsetHeight;
-                        var kbTop = frH - kbH;
-                        var targetBottom = kbTop - 20;
-                        var currentTop = 197.55;
-                        var targetTop = targetBottom - cardsH;
-                        var ty = targetTop - currentTop;
+                        var frH = fr.offsetHeight;
+                        var frRect = fr.getBoundingClientRect();
+                        var cardsRect = cardsGroup.getBoundingClientRect();
+                        // current bottom of cards from frame bottom
+                        var currentBottom = frH - (cardsRect.bottom - frRect.top);
+                        var targetBottom = kbH + 20;
+                        var ty = -(targetBottom - currentBottom);
                         cardsGroup.style.transform = 'translateY(' + ty + 'px)';
                     });
                 }
