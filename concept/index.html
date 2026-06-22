@@ -2138,7 +2138,7 @@
 
             // ── 키보드 / DimAi (홈 화면 전용, 스크롤 후 비활성) ──
             function showKeyboard() {
-                if (isInBenefitTab || isAnimating) return;
+                if (isInBenefitTab) return;
                 var frm   = document.getElementById('frame');
                 var kb    = document.getElementById('s1-keyboard');
                 var dim   = document.getElementById('s1-dim');
