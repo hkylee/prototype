@@ -2135,20 +2135,32 @@
                 });
 
                 // [Mobile] 터치 시작
+                let _touchTriggered = false;
                 fr.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
+                    _touchTriggered = false;
                 }
                 , {
                     passive: true
                 });
 
-                // [Mobile] 터치 종료
+                // [Mobile] 터치 이동 중 — 홈→혜택 스와이프 30px로 즉시 트리거
+                fr.addEventListener('touchmove', (e) => {
+                    if (isAnimating || isInBenefitTab || _touchTriggered) return;
+                    const dy = touchStartY - e.touches[0].clientY;
+                    if (dy > 30) {
+                        _touchTriggered = true;
+                        triggerHomeExit();
+                    }
+                }, { passive: true });
+
+                // [Mobile] 터치 종료 — 혜택→홈 복귀 제스처
                 fr.addEventListener('touchend', (e) => {
                     if (isAnimating)
                         return;
                     const dy = touchStartY - e.changedTouches[0].clientY;
                     const ap = getActivePanel();
-                    if (!isInBenefitTab && dy > 60) {
+                    if (!isInBenefitTab && !_touchTriggered && dy > 40) {
                         triggerHomeExit();
                     } else if (isInBenefitTab && dy < -15 && ap && ap.scrollTop <= 60) {
                         revertToGnb1();
