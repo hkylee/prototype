@@ -2160,17 +2160,23 @@
                     passive: true
                 });
 
-                // [Mobile] 터치 이동 중 — 홈→혜택 스와이프 30px로 즉시 트리거
+                // [Mobile] 터치 이동 중 — 양방향 스와이프 즉시 트리거
                 fr.addEventListener('touchmove', (e) => {
-                    if (isAnimating || isInBenefitTab || _touchTriggered) return;
+                    if (isAnimating || _touchTriggered) return;
                     const dy = touchStartY - e.touches[0].clientY;
-                    if (dy > 30) {
+                    if (!isInBenefitTab && dy > 30) {
                         _touchTriggered = true;
                         triggerHomeExit();
+                    } else if (isInBenefitTab && dy < -30) {
+                        const ap = getActivePanel();
+                        if (ap && ap.scrollTop <= 10) {
+                            _touchTriggered = true;
+                            revertToGnb1();
+                        }
                     }
                 }, { passive: true });
 
-                // [Mobile] 터치 종료 — 혜택→홈 복귀 제스처
+                // [Mobile] 터치 종료 — 미트리거 시 fallback
                 fr.addEventListener('touchend', (e) => {
                     if (isAnimating)
                         return;
@@ -2178,7 +2184,7 @@
                     const ap = getActivePanel();
                     if (!isInBenefitTab && !_touchTriggered && dy > 40) {
                         triggerHomeExit();
-                    } else if (isInBenefitTab && dy < -15 && ap && ap.scrollTop <= 60) {
+                    } else if (isInBenefitTab && !_touchTriggered && dy < -15 && ap && ap.scrollTop <= 60) {
                         revertToGnb1();
                     }
                 }
