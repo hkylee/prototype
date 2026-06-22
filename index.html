@@ -1735,6 +1735,7 @@
                 if (cards2) {
                     cards2.style.transition = 'opacity 0.5s ease';
                     cards2.style.opacity = '0';
+                    cards2.style.pointerEvents = 'none';
                 }
 
                 const greeting = document.getElementById('greeting-text');
@@ -1997,6 +1998,7 @@
                     if (cards3) {
                         cards3.style.transition = 'opacity 0.9s ease';
                         cards3.style.opacity = '1';
+                        cards3.style.pointerEvents = 'auto';
                     }
                 }
                 const greeting = document.getElementById('greeting-text');
