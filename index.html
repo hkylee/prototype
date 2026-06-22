@@ -2,20 +2,25 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
         <title>Concept</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://cdn.jsdelivr.net">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
         <style>
-            html, body {
+            html {
+                height: 100%;
+                overflow: hidden;
+            }
+            body {
                 margin: 0;
                 padding: 0;
                 height: 100%;
                 overflow: hidden;
-            }
-
-            body {
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
                 display: flex;
                 align-items: flex-start;
                 justify-content: center;
@@ -384,7 +389,7 @@
       transition:transform 0.7s cubic-bezier(0.25,1,0.5,1), opacity 1.4s ease;
     ">
             <div id="tab-panels" style="position:relative;width:100%;height:100%;">
-            <div id="panel-benefit" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:pan-y;display:block;">
+            <div id="panel-benefit" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:auto;display:block;">
                 <div style="padding:79px 0 0 0;">
                     <div style="overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
                         <div style="width:max-content;display:flex;flex-direction:column;gap:6px;padding:0 19.08px;">
@@ -814,7 +819,7 @@
                 </div>
             </div>
             </div>
-            <div id="panel-shopping" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:pan-y;display:none;">
+            <div id="panel-shopping" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:auto;display:none;">
 
   <!-- 2줄 가로 탭 (피그마 9360:34337) -->
   <!-- 2줄 가로 탭 (피그마 9360:34341) -->
@@ -1169,7 +1174,7 @@
     </div>
   </div><!-- /콘텐츠 카드 -->
 </div>
-            <div id="panel-my" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:pan-y;display:none;">
+            <div id="panel-my" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:auto;display:none;">
 
   <!-- 카드 컨테이너 (Figma: top:82px, left:20px, width:353px, gap:8px) -->
   <div style="padding:88px 20px 133px;display:flex;flex-direction:column;gap:8px;">
@@ -2159,29 +2164,23 @@
                     _startScrollTop = ap ? ap.scrollTop : 0;
                 }, { passive: true });
 
-                // [Mobile] 터치 이동 중 — 양방향 스와이프 즉시 트리거
+                // [Mobile] 터치 이동 중 — 홈→혜택만 즉시 트리거 (패널 스크롤 간섭 최소화)
                 fr.addEventListener('touchmove', (e) => {
-                    if (isAnimating || _touchTriggered) return;
+                    if (isAnimating || isInBenefitTab || _touchTriggered) return;
                     const dy = touchStartY - e.touches[0].clientY;
-                    if (!isInBenefitTab && dy > 30) {
+                    if (dy > 30) {
                         _touchTriggered = true;
                         triggerHomeExit();
-                    } else if (isInBenefitTab && dy < -30 && _startScrollTop <= 0) {
-                        // 터치 시작 시 이미 최상단이었을 때만 홈 복귀
-                        _touchTriggered = true;
-                        revertToGnb1();
                     }
                 }, { passive: true });
 
-                // [Mobile] 터치 종료 — 미트리거 시 fallback
+                // [Mobile] 터치 종료
                 fr.addEventListener('touchend', (e) => {
-                    if (isAnimating)
-                        return;
+                    if (isAnimating) return;
                     const dy = touchStartY - e.changedTouches[0].clientY;
-                    const ap = getActivePanel();
                     if (!isInBenefitTab && !_touchTriggered && dy > 40) {
                         triggerHomeExit();
-                    } else if (isInBenefitTab && !_touchTriggered && dy < -15 && _startScrollTop <= 0) {
+                    } else if (isInBenefitTab && dy < -50 && _startScrollTop <= 0) {
                         revertToGnb1();
                     }
                 }, { passive: true });
