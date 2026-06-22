@@ -72,7 +72,6 @@
                 background: transparent;
                 position: relative;
                 min-height: 812px;
-                padding-bottom: 150px;
             }
 
             #controls .preset {
@@ -1326,8 +1325,9 @@
                     <!-- /home-content-group -->
                     <!-- ── RIMOWA 배너 ── -->
                     <div id="rimowa-banner" style="
-          display:block;
-          margin-top:580px; margin-left:19.08px; margin-right:19.08px;
+          position:absolute;
+          left:19.08px; right:19.08px;
+          top:600.91px;
           height:106.092px;
           border-radius:26.718px;
           background:rgba(255,255,255,0.2);
@@ -2168,12 +2168,8 @@
                     if (isAnimating || _touchTriggered) return;
                     const dy = touchStartY - e.touches[0].clientY;
                     if (!isInBenefitTab && dy > 30) {
-                        const _sm = document.getElementById('scroll-main');
-                        const _atBottom = !_sm || (_sm.scrollHeight - _sm.scrollTop - _sm.clientHeight <= 5);
-                        if (_atBottom) {
-                            _touchTriggered = true;
-                            triggerHomeExit();
-                        }
+                        _touchTriggered = true;
+                        triggerHomeExit();
                     } else if (isInBenefitTab && dy < -30 && _startScrollTop <= 2) {
                         _touchTriggered = true;
                         revertToGnb1();
@@ -2184,9 +2180,7 @@
                     if (isAnimating || _touchTriggered) return;
                     const dy = touchStartY - e.changedTouches[0].clientY;
                     if (!isInBenefitTab && dy > 40) {
-                        const _sm2 = document.getElementById('scroll-main');
-                        const _atBottom2 = !_sm2 || (_sm2.scrollHeight - _sm2.scrollTop - _sm2.clientHeight <= 5);
-                        if (_atBottom2) triggerHomeExit();
+                        triggerHomeExit();
                     } else if (isInBenefitTab && dy < -40 && _startScrollTop <= 2) {
                         revertToGnb1();
                     }
