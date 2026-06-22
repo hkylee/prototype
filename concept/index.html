@@ -2150,15 +2150,15 @@
                     passive: true
                 });
 
-                // [Mobile] 터치 시작
+                // [Mobile] 터치 시작 — 패널 scrollTop 초기값 저장
                 let _touchTriggered = false;
+                let _startScrollTop = 0;
                 fr.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
                     _touchTriggered = false;
-                }
-                , {
-                    passive: true
-                });
+                    const ap = getActivePanel();
+                    _startScrollTop = ap ? ap.scrollTop : 0;
+                }, { passive: true });
 
                 // [Mobile] 터치 이동 중 — 양방향 스와이프 즉시 트리거
                 fr.addEventListener('touchmove', (e) => {
@@ -2167,12 +2167,10 @@
                     if (!isInBenefitTab && dy > 30) {
                         _touchTriggered = true;
                         triggerHomeExit();
-                    } else if (isInBenefitTab && dy < -30) {
-                        const ap = getActivePanel();
-                        if (ap && ap.scrollTop <= 10) {
-                            _touchTriggered = true;
-                            revertToGnb1();
-                        }
+                    } else if (isInBenefitTab && dy < -30 && _startScrollTop <= 0) {
+                        // 터치 시작 시 이미 최상단이었을 때만 홈 복귀
+                        _touchTriggered = true;
+                        revertToGnb1();
                     }
                 }, { passive: true });
 
@@ -2184,13 +2182,10 @@
                     const ap = getActivePanel();
                     if (!isInBenefitTab && !_touchTriggered && dy > 40) {
                         triggerHomeExit();
-                    } else if (isInBenefitTab && !_touchTriggered && dy < -15 && ap && ap.scrollTop <= 60) {
+                    } else if (isInBenefitTab && !_touchTriggered && dy < -15 && _startScrollTop <= 0) {
                         revertToGnb1();
                     }
-                }
-                , {
-                    passive: true
-                });
+                }, { passive: true });
             }
 
             // ── 키보드 / DimAi (홈 화면 전용, 스크롤 후 비활성) ──
