@@ -384,7 +384,7 @@
       transition:transform 0.7s cubic-bezier(0.25,1,0.5,1), opacity 1.4s ease;
     ">
             <div id="tab-panels" style="position:relative;width:100%;height:100%;">
-            <div id="panel-benefit" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:auto;will-change:transform;display:block;">
+            <div id="panel-benefit" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:pan-y;will-change:scroll-position;display:block;">
                 <div style="padding:79px 0 0 0;">
                     <div style="overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
                         <div style="width:max-content;display:flex;flex-direction:column;gap:6px;padding:0 19.08px;">
@@ -814,7 +814,7 @@
                 </div>
             </div>
             </div>
-            <div id="panel-shopping" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:auto;will-change:transform;display:none;">
+            <div id="panel-shopping" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:pan-y;will-change:scroll-position;display:none;">
 
   <!-- 2줄 가로 탭 (피그마 9360:34337) -->
   <!-- 2줄 가로 탭 (피그마 9360:34341) -->
@@ -1169,7 +1169,7 @@
     </div>
   </div><!-- /콘텐츠 카드 -->
 </div>
-            <div id="panel-my" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:auto;will-change:transform;display:none;">
+            <div id="panel-my" style="position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-y:contain;touch-action:pan-y;will-change:scroll-position;display:none;">
 
   <!-- 카드 컨테이너 (Figma: top:82px, left:20px, width:353px, gap:8px) -->
   <div style="padding:88px 20px 133px;display:flex;flex-direction:column;gap:8px;">
@@ -2151,15 +2151,13 @@
 
                 // [Mobile] 터치 시작 — 패널 scrollTop 초기값 저장
                 let _touchTriggered = false;
-                let _startScrollTop = 0;
+                // touchstart: DOM 쿼리 없이 최소한만 — iOS 스크롤 커밋 지연 방지
                 fr.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
                     _touchTriggered = false;
-                    const ap = getActivePanel();
-                    _startScrollTop = ap ? ap.scrollTop : 0;
                 }, { passive: true });
 
-                // [Mobile] 터치 이동 중 — 홈→혜택만 즉시 트리거 (패널 스크롤 간섭 최소화)
+                // touchmove: 홈→혜택 전환 전용 (isInBenefitTab 시 즉시 반환)
                 fr.addEventListener('touchmove', (e) => {
                     if (isAnimating || isInBenefitTab || _touchTriggered) return;
                     const dy = touchStartY - e.touches[0].clientY;
@@ -2169,14 +2167,15 @@
                     }
                 }, { passive: true });
 
-                // [Mobile] 터치 종료
+                // touchend: 혜택→홈 복귀 — 손 뗀 시점에 scrollTop 확인 (레이아웃 쿼리 최소화)
                 fr.addEventListener('touchend', (e) => {
                     if (isAnimating) return;
                     const dy = touchStartY - e.changedTouches[0].clientY;
                     if (!isInBenefitTab && !_touchTriggered && dy > 40) {
                         triggerHomeExit();
-                    } else if (isInBenefitTab && dy < -50 && _startScrollTop <= 0) {
-                        revertToGnb1();
+                    } else if (isInBenefitTab && dy < -50) {
+                        const ap = getActivePanel();
+                        if (ap && ap.scrollTop === 0) revertToGnb1();
                     }
                 }, { passive: true });
             }
