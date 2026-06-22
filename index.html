@@ -1707,6 +1707,9 @@
                     isAnimating = false;
                 }
                 , 1500);
+                // 스와이프 제스처로 인해 스크롤된 경우 초기화 (fadeout 위치 보정)
+                var _sm2 = document.getElementById('scroll-main');
+                if (_sm2) _sm2.scrollTop = 0;
                 const g = document.getElementById('home-content-group');
                 if (!g)
                     return;
@@ -1910,6 +1913,9 @@
             function revertToGnb1() {
                 if (!isInBenefitTab || isAnimating)
                     return;
+                // scroll-main 스크롤 위치 초기화 (스와이프 제스처로 인해 스크롤된 경우)
+                var _sm = document.getElementById('scroll-main');
+                if (_sm) _sm.scrollTop = 0;
                 // 테스트 완료 버튼 숨김
                 var _tcBtn2 = document.getElementById('btn-test-complete');
                 if (_tcBtn2) {
@@ -2081,6 +2087,11 @@
                         var _t = document.getElementById('gnb-tab-' + _i);
                         if (_t) _t.style.color = _i === 0 ? '#3617CE' : 'rgba(16,16,16,0.3)';
                     }
+                    // 애니메이션 완료 후 잔류 inline transform 제거 (stacking context 해소)
+                    var _gcg = document.getElementById('home-content-group');
+                    if (_gcg) { _gcg.style.removeProperty('transform'); }
+                    var _bgl = document.getElementById('bg-layer');
+                    if (_bgl) { _bgl.style.removeProperty('transform'); }
                 }, 1500);
             }
 
