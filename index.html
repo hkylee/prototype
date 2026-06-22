@@ -2139,6 +2139,11 @@
             // ── 키보드 / DimAi (홈 화면 전용, 스크롤 후 비활성) ──
             function showKeyboard() {
                 if (isInBenefitTab) return;
+                // home-content-group에 transform/opacity가 남아 있으면 stacking context가 생겨
+                // home-cards(z:500)가 dim(z:490) 아래로 갇힘 → transform을 제거해 stacking context 해소
+                var g = document.getElementById('home-content-group');
+                if (g) { g.style.transition = 'none'; g.style.opacity = '1'; g.style.transform = ''; }
+
                 var frm   = document.getElementById('frame');
                 var kb    = document.getElementById('s1-keyboard');
                 var dim   = document.getElementById('s1-dim');
