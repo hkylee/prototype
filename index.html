@@ -2151,33 +2151,38 @@
                     passive: true
                 });
 
-                // [Mobile] 터치 시작 — 패널 scrollTop 초기값 저장
                 let _touchTriggered = false;
-                // touchstart: DOM 쿼리 없이 최소한만 — iOS 스크롤 커밋 지연 방지
+                let _startScrollTop = 0;
                 fr.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
                     _touchTriggered = false;
-                }, { passive: true });
-
-                // touchmove: 홈→혜택 전환 전용 (isInBenefitTab 시 즉시 반환)
-                fr.addEventListener('touchmove', (e) => {
-                    if (isAnimating || isInBenefitTab || _touchTriggered) return;
-                    const dy = touchStartY - e.touches[0].clientY;
-                    if (dy > 30) {
-                        _touchTriggered = true;
-                        triggerHomeExit();
+                    if (isInBenefitTab) {
+                        const ap = getActivePanel();
+                        _startScrollTop = ap ? ap.scrollTop : 0;
+                    } else {
+                        _startScrollTop = 0;
                     }
                 }, { passive: true });
 
-                // touchend: 혜택→홈 복귀 — 손 뗀 시점에 scrollTop 확인 (레이아웃 쿼리 최소화)
-                fr.addEventListener('touchend', (e) => {
-                    if (isAnimating) return;
-                    const dy = touchStartY - e.changedTouches[0].clientY;
-                    if (!isInBenefitTab && !_touchTriggered && dy > 40) {
+                fr.addEventListener('touchmove', (e) => {
+                    if (isAnimating || _touchTriggered) return;
+                    const dy = touchStartY - e.touches[0].clientY;
+                    if (!isInBenefitTab && dy > 30) {
+                        _touchTriggered = true;
                         triggerHomeExit();
-                    } else if (isInBenefitTab && dy < -50) {
-                        const ap = getActivePanel();
-                        if (ap && ap.scrollTop === 0) revertToGnb1();
+                    } else if (isInBenefitTab && dy < -30 && _startScrollTop <= 2) {
+                        _touchTriggered = true;
+                        revertToGnb1();
+                    }
+                }, { passive: true });
+
+                fr.addEventListener('touchend', (e) => {
+                    if (isAnimating || _touchTriggered) return;
+                    const dy = touchStartY - e.changedTouches[0].clientY;
+                    if (!isInBenefitTab && dy > 40) {
+                        triggerHomeExit();
+                    } else if (isInBenefitTab && dy < -40 && _startScrollTop <= 2) {
+                        revertToGnb1();
                     }
                 }, { passive: true });
             }
