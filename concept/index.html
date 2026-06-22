@@ -8,6 +8,21 @@
         <link rel="preconnect" href="https://cdn.jsdelivr.net">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
         <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                overflow: hidden;
+                touch-action: none;
+            }
+
+            body {
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                background: #1a1a1a;
+            }
+
             *, *::before, *::after {
                 font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
                 box-sizing: border-box;
@@ -20,6 +35,7 @@
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
+                touch-action: pan-y;
             }
 
             #header {
