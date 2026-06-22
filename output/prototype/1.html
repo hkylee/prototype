@@ -375,9 +375,12 @@ iPhone20 Pro가 도착했어요</p>
             <img src="../../assets/images/scenario1/ico-mic.svg" style="width:13.359px; height:13.359px; display:block;" alt="">
           </div>
         </div>
-        <button id="s1-gnb-benefit" class="hbtn" aria-label="마이">
+        <div id="s1-gnb-benefit"
+             style="flex-shrink:0; width:49.618px; height:49.618px; border-radius:999px; overflow:hidden;
+                    background:rgba(255,255,255,0.5); box-shadow:0 0 19.084px rgba(0,0,0,0.05);
+                    display:flex; align-items:center; justify-content:center;">
           <img src="../../assets/images/scenario1/ico-benefit.svg" style="width:22.901px; height:22.901px; display:block; flex-shrink:0;" alt="">
-        </button>
+        </div>
       </div>
 
       <!-- ══ 키보드 시트 (z-50, 아래에서 슬라이드업) ══ -->
@@ -583,7 +586,7 @@ function hideKeyboard() {
   setTimeout(function() {
     tap.style.background  = 'rgba(255,255,255,0.5)';
     tap.style.boxShadow   = '0 0 19.084px rgba(0,0,0,0.05)';
-    benefit.style.width   = '48px';
+    benefit.style.width   = '49.618px';
     benefit.style.opacity = '1';
     wrap.style.gap        = '8px';
   }, 160);
