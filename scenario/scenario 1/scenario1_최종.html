@@ -7,6 +7,11 @@
 <title>SKT 혜택 홈 (Scenario 1)</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/assets/images/app-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SKT">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
@@ -528,7 +533,7 @@
         <g transform="translate(2,8) scale(1.013,1)"><path d="M2.258 12.124L1.008 2.124C0.933 1.527 1.399 1 2.0 1H17.735C18.336 1 18.802 1.527 18.727 2.124L17.477 12.124C17.415 12.624 16.989 13 16.485 13H3.25C2.746 13 2.321 12.624 2.258 12.124Z" stroke="#101010" stroke-width="2" stroke-linecap="round"/></g>
       </svg>
     </button>
-    <button class="hbtn" style="pointer-events:auto;" aria-label="메뉴">
+    <button class="hbtn" style="pointer-events:auto;" aria-label="메뉴" onclick="toggleScreen2()">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <line x1="3" y1="6"  x2="21" y2="6"  stroke="#101010" stroke-width="2" stroke-linecap="round"/>
         <line x1="3" y1="12" x2="21" y2="12" stroke="#101010" stroke-width="2" stroke-linecap="round"/>
@@ -540,7 +545,7 @@
   <div style="padding:8px 11px 100px; display:flex; flex-direction:column; gap:8px;">
 
       <!-- 프로필 카드 -->
-      <div style="background:rgba(255,255,255,0.9); border-radius:28px; height:80px; padding:24px 28px;
+      <div style="background:rgba(255,255,255,0.9); border-radius:28px; padding:24px 28px;
                   display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; gap:4px; align-items:center;">
           <div style="width:24px; height:24px; border-radius:30px; overflow:hidden; flex-shrink:0;">
@@ -550,9 +555,10 @@
           <span style="font-size:16px; font-weight:500; color:#000; letter-spacing:-0.64px; line-height:1.3;">김지훈님</span>
           <span style="font-size:12px; font-weight:500; color:rgba(16,16,16,0.6); letter-spacing:-0.48px; line-height:1.3;">010-1234-5678</span>
         </div>
-        <button id="s1-product-btn" onclick="openScreen3()" style="background:#ebeef6; border-radius:9999px; padding:6px 12px; border:none;
+        <button id="s1-product-btn" onclick="openScreen3()" style="background:#ebeef6; border-radius:9999px; padding:6px 12px; border:none; overflow:hidden;
+                       display:flex; align-items:center; justify-content:center;
                        font-family:inherit; cursor:pointer; flex-shrink:0;">
-          <span style="font-size:12px; font-weight:600; color:rgba(5,0,26,0.5); letter-spacing:-0.6px;">나의 상품 현황</span>
+          <span style="font-size:12px; font-weight:600; color:rgba(5,0,26,0.5); letter-spacing:-0.6px; line-height:1.3; white-space:nowrap;">나의 가입 현황</span>
         </button>
       </div>
 
@@ -834,29 +840,8 @@
 <div id="scroll-s2">
 <div style="width:100%; min-height:100%; background:#d2d4d9; padding-bottom:60px;">
 
-  <!-- ── 프로필 카드 (Figma: top:82px / shared-header bottom:86px → mt-[86px]) ── -->
-  <div class="mx-[20px] mt-[86px]">
-    <div class="bg-[rgba(255,255,255,0.4)] border border-[rgba(255,255,255,0.3)] rounded-[24px] flex items-center justify-between px-[22px] py-[24px]">
-
-      <!-- 유저정보: 프로필 이미지 + 이름 + 번호 (flex row, gap-[4px]) -->
-      <div class="flex gap-[4px] items-center min-w-0">
-        <div class="w-[24px] h-[24px] rounded-[30px] flex-shrink-0 overflow-hidden">
-          <img src="assets/scenario1-hk/img_profile_jihun.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:bottom;display:block;">
-        </div>
-        <span class="text-[20px] leading-[1.3] tracking-[-0.8px] font-[600] text-[#101010] whitespace-nowrap">김지훈님</span>
-        <span class="text-[14px] leading-[1.3] tracking-[-1.12px] font-[500] text-[#101010] whitespace-nowrap">010-1234-5678</span>
-      </div>
-
-      <!-- 회선 관리 버튼 (Figma: px-[10px] py-[8px], rounded-[20px], font-[600] 12px) -->
-      <button class="bg-[rgba(255,255,255,0.4)] flex items-center justify-center px-[10px] py-[8px] rounded-[20px] flex-shrink-0 border-0 cursor-pointer" style="font-family:inherit;">
-        <span class="text-[12px] leading-[1.3] tracking-[-0.36px] font-[600] text-black whitespace-nowrap">회선 관리</span>
-      </button>
-
-    </div>
-  </div>
-
-  <!-- ── 전체 메뉴 콘텐츠 (Figma: mx-[20px], mt-[32px], gap-[24px]) ── -->
-  <div class="mx-[20px] mt-[32px] flex flex-col gap-[24px] pb-[60px]">
+  <!-- ── 전체 메뉴 콘텐츠 (Figma: mx-[20px], mt-[86px], gap-[24px]) ── -->
+  <div class="mx-[20px] mt-[86px] flex flex-col gap-[24px] pb-[60px]">
 
     <!-- 타이틀 (Figma: px-[10px], text-[22px], tracking-[-1.76px], font-[500]) -->
     <div class="px-[10px]">
@@ -870,8 +855,10 @@
       <div class="flex flex-col gap-[16px]">
         <span class="text-[12px] leading-[1.3] tracking-[-0.24px] font-[600] text-[#898989] whitespace-nowrap">이용 현황 및 요금</span>
         <div class="flex flex-col gap-[8px]">
-          <div id="s2-product-tap" class="flex gap-[16px] items-center py-[8px] w-full cursor-pointer" onclick="openScreen3()">
-            <span class="flex-1 min-w-0 text-[14px] leading-[1.2] tracking-[-0.56px] font-[500] text-[#101010]">나의 상품 현황</span>
+          <div class="flex gap-[16px] items-center py-[8px] w-full">
+            <div class="flex-1 min-w-0">
+              <span id="s2-product-tap" class="text-[14px] leading-[1.2] tracking-[-0.56px] font-[500] text-[#101010] cursor-pointer" onclick="openScreen3()">나의 가입 현황</span>
+            </div>
             <span class="flex-1 min-w-0 text-[14px] leading-[1.2] tracking-[-0.56px] font-[500] text-[#101010]">데이터/통화 관리</span>
           </div>
           <div class="flex gap-[16px] items-center py-[8px] w-full">
@@ -992,7 +979,7 @@
     <button id="s3-back-btn" onclick="closeScreen3()" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;background:none;border:none;padding:0;cursor:pointer;margin-left:-10px;">
       <img src="assets/scenario1/ico_back.svg" style="width:8px;height:15px;display:block;" alt="">
     </button>
-    <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;flex:1;">나의 상품 현황</span>
+    <span style="font-size:16px;font-weight:600;color:#1c1c1e;letter-spacing:-1px;line-height:26px;flex:1;">나의 가입 현황</span>
   </div>
 
   <!-- 스크롤 영역 -->
@@ -1639,6 +1626,27 @@
     </div>
   </div>
 
+  <!-- 테스트 완료하기 버튼 오버레이 (2초 후 표시) -->
+  <div id="s6-test-complete-overlay"
+       onclick="window.location.href='https://skt-ut-prototype.vercel.app/scenario-home.html'"
+       style="position:absolute; bottom:100px; left:50%; transform:translateX(-50%);
+              z-index:500; cursor:pointer;
+              opacity:0; pointer-events:none;
+              transition:opacity 0.4s ease;">
+    <div style="background:#3d3d3d; border-radius:999px; padding:0 20px;
+                height:62px; min-width:250px;
+                display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+                gap:2px; box-shadow:0 4px 20px rgba(0,0,0,0.3); position:relative;">
+      <span style="font-size:16px; font-weight:600; color:#fff; letter-spacing:-0.5px; line-height:1.3; white-space:nowrap;">테스트 완료하기</span>
+      <span style="font-size:11px; font-weight:400; color:rgba(255,255,255,0.6); letter-spacing:-0.3px; line-height:1.3; white-space:nowrap;">다음 테스트로 넘어가시려면 눌러주세요.</span>
+      <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%);">
+        <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+          <path d="M1 1L7 7L1 13" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /screen-6 -->
 
 
@@ -2138,6 +2146,15 @@
     if (!s6) return;
     s6.classList.add('active');
     document.getElementById('scroll-s6').scrollTop = 0;
+    var overlay = document.getElementById('s6-test-complete-overlay');
+    if (overlay) {
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      setTimeout(function() {
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'auto';
+      }, 2000);
+    }
   }
   function closeScreen6() {
     window.location.reload();
